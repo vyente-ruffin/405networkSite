@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>405Network</title>
+    <!-- Application Insights -->
+    <script type="text/javascript">
+    !function(T,l,y){var S=T.location,k="script",D="instrumentationKey",C="ingestionendpoint",I="disableExceptionTracking",E="ai.device.",b="toLowerCase",w="crossOrigin",N="POST",e="appInsightsSDK",t=y.name||"appInsights";(y.name||T[e])&&(T[e]=t);var n=T[t]||function(d){var g=!1,f=!1,m={initialize:!0,queue:[],sv:"5",version:2,config:d};function v(e,t){var n={},a="Browser";return n[E+"id"]=a[b](),n[E+"type"]=a,n["ai.operation.name"]=S&&S.pathname||"_unknown_",n["ai.internal.sdkVersion"]="javascript:snippet_"+(m.sv||m.version),n}var p=d.url||y.src;function a(e){var t,n,a,i,r,o,s,c,u,p,l;if((g=!0)&&m.config[D]){for(t=function(){var e={},t=d.connectionString;if(t)for(var n=t.split(";"),a=0;a<n.length;a++){var i=n[a].split("=");2===i.length&&(e[i[0][b]()]=i[1])}if(!e[C]){var r=e.endpointsuffix;e[C]="https://"+(r?d.prefix+"."+r:"dc.applicationinsights.azure.com")}return e}(),i=t[C],r=t.location,o=t["disableexceptiontracking"],s=t.dbg||y.dbg,c=function(e){var t,n=(l=e.createElement(k)).src=p;return!w&&""!==w||"undefined"==n[w]||((t=e.createElement("meta")).httpEquiv="Content-Security-Policy",t.content="script-src "+n,l.nonce=n.getAttribute("nonce")),n}(l),c.onload=function(){try{m.queue=[],m.sv="5",m.version=2,d.extensionConfig=d.extensionConfig||{};var e=m.config.extensionConfig.ApplicationInsightsAnalytics=m.config.extensionConfig.ApplicationInsightsAnalytics||{};!0!==d[I]&&!0!==o&&(e.disableExceptionTracking=!1)}catch(e){}},c.onerror=function(){},l.head.appendChild(c),m.queue.push({name:"trackPageView",properties:v()}),m.queue.push({name:"trackTrace",properties:v(),message:"snippet_loaded"})}}}(window,document,{
+    src: "https://js.monitor.azure.com/scripts/b/ai.2.min.js",
+    crossOrigin: "anonymous",
+    cfg:{
+        connectionString: "InstrumentationKey=2f49a918-8965-48ca-8b5e-136158e372ba;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/"
+    }});
+    </script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
