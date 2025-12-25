@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>405Network</title>
+    <title>405Network | Information Technology, Reimagined</title>
+    <meta name="description" content="Managed IT services for small to medium businesses in Orange County, CA. 25+ years combined expertise.">
     <!-- Application Insights -->
     <script type="text/javascript">
     !function(T,l,y){var S=T.location,k="script",D="instrumentationKey",C="ingestionendpoint",I="disableExceptionTracking",E="ai.device.",b="toLowerCase",w="crossOrigin",N="POST",e="appInsightsSDK",t=y.name||"appInsights";(y.name||T[e])&&(T[e]=t);var n=T[t]||function(d){var g=!1,f=!1,m={initialize:!0,queue:[],sv:"5",version:2,config:d};function v(e,t){var n={},a="Browser";return n[E+"id"]=a[b](),n[E+"type"]=a,n["ai.operation.name"]=S&&S.pathname||"_unknown_",n["ai.internal.sdkVersion"]="javascript:snippet_"+(m.sv||m.version),n}var p=d.url||y.src;function a(e){var t,n,a,i,r,o,s,c,u,p,l;if((g=!0)&&m.config[D]){for(t=function(){var e={},t=d.connectionString;if(t)for(var n=t.split(";"),a=0;a<n.length;a++){var i=n[a].split("=");2===i.length&&(e[i[0][b]()]=i[1])}if(!e[C]){var r=e.endpointsuffix;e[C]="https://"+(r?d.prefix+"."+r:"dc.applicationinsights.azure.com")}return e}(),i=t[C],r=t.location,o=t["disableexceptiontracking"],s=t.dbg||y.dbg,c=function(e){var t,n=(l=e.createElement(k)).src=p;return!w&&""!==w||"undefined"==n[w]||((t=e.createElement("meta")).httpEquiv="Content-Security-Policy",t.content="script-src "+n,l.nonce=n.getAttribute("nonce")),n}(l),c.onload=function(){try{m.queue=[],m.sv="5",m.version=2,d.extensionConfig=d.extensionConfig||{};var e=m.config.extensionConfig.ApplicationInsightsAnalytics=m.config.extensionConfig.ApplicationInsightsAnalytics||{};!0!==d[I]&&!0!==o&&(e.disableExceptionTracking=!1)}catch(e){}},c.onerror=function(){},l.head.appendChild(c),m.queue.push({name:"trackPageView",properties:v()}),m.queue.push({name:"trackTrace",properties:v(),message:"snippet_loaded"})}}}(window,document,{
@@ -13,26 +14,1140 @@
         connectionString: "InstrumentationKey=2f49a918-8965-48ca-8b5e-136158e372ba;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/"
     }});
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        /* ===== CSS RESET & VARIABLES ===== */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
-            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-            color: white;
+            padding: 0;
+        }
+
+        :root {
+            --blue: #007bff;
+            --blue-dark: #0056b3;
+            --gold: #ffb700;
+            --gold-dark: #cc9300;
+            --platinum: #e5e4e2;
+            --black: #0D0D0D;
+            --white: #f8f8f8;
+            --gray: #6c757d;
+            --pink: #ff6b9d;
+            --green: #28a745;
+            --shadow: 8px 8px 0px var(--black);
+            --shadow-sm: 4px 4px 0px var(--black);
+            --shadow-hover: 2px 2px 0px var(--black);
+            --border: 3px solid var(--black);
+            --border-thick: 4px solid var(--black);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== KEYFRAME ANIMATIONS ===== */
+
+        /* Marquee - Left to Right */
+        @keyframes marquee-ltr {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Marquee - Right to Left */
+        @keyframes marquee-rtl {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(0%); }
+        }
+
+        /* Blink Effect */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Float Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(3deg); }
+            50% { transform: translateY(-10px) rotate(-2deg); }
+            75% { transform: translateY(-15px) rotate(1deg); }
+        }
+
+        /* Float Reverse */
+        @keyframes float-reverse {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(-2deg); }
+            50% { transform: translateY(-25px) rotate(3deg); }
+            75% { transform: translateY(-10px) rotate(-1deg); }
+        }
+
+        /* Pulse Ring */
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        /* Spin Slow */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== UTILITIES ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Dot Grid Background */
+        .dot-grid {
+            background-image: radial-gradient(rgba(0,0,0,0.15) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* ===== BUTTONS - PUSHABLE EFFECT ===== */
+        .btn {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-weight: 700;
+            text-decoration: none;
+            padding: 16px 32px;
+            border: var(--border);
+            box-shadow: var(--shadow);
+            transition: all 0.1s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .btn:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translate(6px, 6px);
+        }
+
+        .btn:active {
+            box-shadow: none;
+            transform: translate(8px, 8px);
+        }
+
+        .btn-primary {
+            background-color: var(--blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--blue-dark);
+        }
+
+        .btn-gold {
+            background-color: var(--gold);
+            color: var(--black);
+        }
+
+        .btn-gold:hover {
+            background-color: var(--gold-dark);
+        }
+
+        .btn-white {
+            background-color: var(--white);
+            color: var(--black);
+        }
+
+        .btn-black {
+            background-color: var(--black);
+            color: var(--white);
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background-color: var(--white);
+            border-bottom: var(--border-thick);
+            padding: 16px 0;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--black);
+        }
+
+        .logo span {
+            color: var(--blue);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a:not(.btn) {
+            font-family: var(--font-display);
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--black);
+            padding: 8px 16px;
+            transition: all 0.15s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-links a:not(.btn):hover {
+            background-color: var(--black);
+            color: var(--white);
+            border-color: var(--black);
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--green);
+            background: var(--white);
+            padding: 6px 12px;
+            border: 2px solid var(--black);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--green);
+            border-radius: 50%;
+            animation: blink 1s step-end infinite;
+            position: relative;
+        }
+
+        .status-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 2px solid var(--green);
+            border-radius: 50%;
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        /* ===== HERO SECTION ===== */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--white) 0%, #e8f4ff 50%, #fff8e6 100%);
+            z-index: -2;
+        }
+
+        /* Floating Decorative Shapes */
+        .floating-shapes {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            border: var(--border);
+        }
+
+        .shape-1 {
+            width: 80px;
+            height: 80px;
+            background-color: var(--blue);
+            top: 15%;
+            right: 10%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape-2 {
+            width: 60px;
+            height: 60px;
+            background-color: var(--gold);
+            top: 60%;
+            right: 20%;
+            animation: float-reverse 8s ease-in-out infinite;
+            transform: rotate(45deg);
+        }
+
+        .shape-3 {
+            width: 100px;
+            height: 100px;
+            background-color: var(--pink);
+            bottom: 20%;
+            right: 5%;
+            border-radius: 50%;
+            animation: float 7s ease-in-out infinite;
+        }
+
+        .shape-4 {
+            width: 40px;
+            height: 40px;
+            background-color: var(--white);
+            top: 30%;
+            right: 35%;
+            animation: float-reverse 5s ease-in-out infinite;
+            animation-delay: -2s;
+        }
+
+        .shape-5 {
+            width: 120px;
+            height: 120px;
+            border: 4px solid var(--blue);
+            background: transparent;
+            top: 10%;
+            right: 25%;
+            animation: spin-slow 20s linear infinite;
+        }
+
+        .shape-6 {
+            width: 50px;
+            height: 50px;
+            background-color: var(--green);
+            bottom: 30%;
+            right: 30%;
+            animation: float 9s ease-in-out infinite;
+            animation-delay: -3s;
+        }
+
+        .hero-content {
+            max-width: 700px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background-color: var(--gold);
+            color: var(--black);
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.875rem;
+            padding: 10px 20px;
+            border: var(--border);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(3.5rem, 10vw, 6rem);
+            font-weight: 700;
+            line-height: 1.05;
+            margin-bottom: 24px;
+        }
+
+        .hero-title span {
+            color: var(--blue);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-title span::after {
+            content: '';
+            position: absolute;
+            bottom: 0.1em;
+            left: 0;
+            right: 0;
+            height: 0.15em;
+            background-color: var(--gold);
+            z-index: -1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.35rem;
+            color: var(--gray);
+            margin-bottom: 40px;
+            max-width: 550px;
+            line-height: 1.7;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* ===== MARQUEE SECTION ===== */
+        .marquee-section {
+            padding: 16px 0;
+            background-color: var(--black);
+            border-top: var(--border-thick);
+            border-bottom: var(--border-thick);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-track {
+            display: flex;
+            animation: marquee-ltr 25s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        .marquee-content {
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        .marquee-item {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            padding: 0 24px;
+        }
+
+        .marquee-item.accent-blue { color: var(--blue); }
+        .marquee-item.accent-gold { color: var(--gold); }
+        .marquee-item.accent-pink { color: var(--pink); }
+
+        .marquee-divider {
+            color: var(--gray);
+            padding: 0 8px;
+        }
+
+        /* ===== SERVICES SECTION ===== */
+        #services {
+            padding: 120px 0;
+            background-color: var(--white);
+            position: relative;
+        }
+
+        #services::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(0,0,0,0.08) 1px, transparent 1px);
+            background-size: 32px 32px;
+            z-index: 0;
+        }
+
+        #services .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        .service-card {
+            background-color: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            padding: 40px 32px;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background-color: var(--blue);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translate(6px, 6px);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .service-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .service-desc {
+            color: var(--gray);
+            line-height: 1.7;
+        }
+
+        /* Card accent colors */
+        .service-card:nth-child(1)::before { background-color: var(--blue); }
+        .service-card:nth-child(2)::before { background-color: var(--gold); }
+        .service-card:nth-child(3)::before { background-color: var(--pink); }
+        .service-card:nth-child(4)::before { background-color: var(--green); }
+
+        /* ===== STATS SECTION ===== */
+        .stats-section {
+            padding: 80px 0;
+            background-color: var(--blue);
+            border-top: var(--border-thick);
+            border-bottom: var(--border-thick);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
             text-align: center;
         }
-        h1 { font-size: 3rem; margin-bottom: 0.5rem; }
-        p { font-size: 1.2rem; opacity: 0.8; }
+
+        .stat-item {
+            color: var(--white);
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 1.125rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* ===== PRICING SECTION ===== */
+        #pricing {
+            padding: 120px 0;
+            background-color: var(--black);
+            color: var(--white);
+        }
+
+        #pricing .section-title {
+            color: var(--white);
+        }
+
+        #pricing .section-subtitle {
+            color: var(--platinum);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 0;
+            border: 4px solid var(--white);
+        }
+
+        .pricing-card {
+            padding: 48px 36px;
+            border-right: 4px solid var(--white);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .pricing-card:last-child {
+            border-right: none;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .pricing-card.silver {
+            background-color: var(--black);
+        }
+
+        .pricing-card.gold {
+            background-color: var(--blue);
+        }
+
+        .pricing-card.platinum {
+            background-color: var(--gold);
+            color: var(--black);
+        }
+
+        .pricing-badge {
+            display: inline-block;
+            background-color: var(--black);
+            color: var(--gold);
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 6px 14px;
+            margin-bottom: 16px;
+            width: fit-content;
+            letter-spacing: 0.05em;
+        }
+
+        .pricing-tier {
+            font-family: var(--font-display);
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .pricing-target {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 36px;
+            flex-grow: 1;
+        }
+
+        .pricing-features li {
+            padding: 10px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .pricing-features li::before {
+            content: "✓";
+            font-weight: 700;
+            color: var(--green);
+            font-size: 1.1rem;
+        }
+
+        .pricing-card.platinum .pricing-features li::before {
+            color: var(--black);
+        }
+
+        .pricing-cta {
+            margin-top: auto;
+        }
+
+        .pricing-cta .btn {
+            width: 100%;
+            text-align: center;
+            padding: 18px 32px;
+        }
+
+        .pricing-card.silver .btn {
+            background-color: var(--white);
+            color: var(--black);
+        }
+
+        .pricing-card.gold .btn {
+            background-color: var(--white);
+            color: var(--blue);
+        }
+
+        .pricing-card.platinum .btn {
+            background-color: var(--black);
+            color: var(--white);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            padding: 80px 0 40px;
+            background-color: var(--white);
+            border-top: var(--border-thick);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 48px;
+            margin-bottom: 64px;
+        }
+
+        .footer-brand {
+            max-width: 400px;
+        }
+
+        .footer-brand .logo {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .footer-tagline {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 1.125rem;
+        }
+
+        .footer-info {
+            font-size: 0.95rem;
+            color: var(--gray);
+            line-height: 1.8;
+        }
+
+        .footer-links h4 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 1.125rem;
+        }
+
+        .footer-links a {
+            display: block;
+            color: var(--gray);
+            text-decoration: none;
+            padding: 6px 0;
+            transition: all 0.15s ease;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--blue);
+            transform: translateX(4px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 2px solid var(--black);
+            font-size: 0.95rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* ===== REVEAL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal-up {
+            transform: translateY(60px);
+        }
+
+        .reveal-left {
+            transform: translateX(-60px);
+        }
+
+        .reveal-right {
+            transform: translateX(60px);
+        }
+
+        .reveal-zoom {
+            transform: scale(0.85);
+        }
+
+        .reveal-rotate {
+            transform: rotate(-5deg) translateY(40px);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) translateX(0) scale(1) rotate(0);
+        }
+
+        /* Stagger delays */
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav-links a:not(.btn) {
+                display: none;
+            }
+
+            .status-indicator {
+                display: none;
+            }
+
+            .floating-shapes {
+                opacity: 0.5;
+            }
+
+            .shape-5, .shape-6 {
+                display: none;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card {
+                border-right: none;
+                border-bottom: 4px solid var(--white);
+            }
+
+            .pricing-card:last-child {
+                border-bottom: none;
+            }
+
+            .pricing-card:hover {
+                transform: none;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .hero-cta .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            .marquee-item {
+                font-size: 1.25rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div>
-        <h1>405Network</h1>
-        <p>CI/CD verified: Dec 22, 2024 @ 9:25 PM PST</p>
-    </div>
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="container">
+            <a href="#" class="logo"><span>405</span>Network</a>
+            <div class="nav-links">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>SYSTEMS ONLINE</span>
+                </div>
+                <a href="#services">Services</a>
+                <a href="#pricing">Pricing</a>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeBRCLx9K78KhcanobwXIDd9fmf3AgdXb6NbJpk-oio46CU_g/viewform" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="hero">
+        <div class="hero-bg"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+            <div class="shape shape-6"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge reveal reveal-up">
+                    <span>Est. 2011</span>
+                    <span>|</span>
+                    <span>Orange County, CA</span>
+                </div>
+                <h1 class="hero-title reveal reveal-up stagger-1">
+                    Information Technology,<br>
+                    <span>Reimagined.</span>
+                </h1>
+                <p class="hero-subtitle reveal reveal-up stagger-2">
+                    Let 405Network be your CTO, Cloud, Infrastructure and AI Officer.
+                    25+ years combined expertise serving small to medium businesses.
+                </p>
+                <div class="hero-cta reveal reveal-up stagger-3">
+                    <a href="#pricing" class="btn btn-primary">View Pricing</a>
+                    <a href="#services" class="btn btn-gold">Our Services</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <section class="marquee-section">
+        <div class="marquee-track">
+            <div class="marquee-content">
+                <span class="marquee-item">MANAGED IT SERVICES</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item accent-blue">CLOUD SOLUTIONS</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item">24/7 SUPPORT</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item accent-gold">CYBERSECURITY</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item">AZURE & DEVOPS</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item accent-pink">NETWORK MONITORING</span>
+                <span class="marquee-divider">///</span>
+            </div>
+            <div class="marquee-content">
+                <span class="marquee-item">MANAGED IT SERVICES</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item accent-blue">CLOUD SOLUTIONS</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item">24/7 SUPPORT</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item accent-gold">CYBERSECURITY</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item">AZURE & DEVOPS</span>
+                <span class="marquee-divider">///</span>
+                <span class="marquee-item accent-pink">NETWORK MONITORING</span>
+                <span class="marquee-divider">///</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title reveal reveal-up">What We Do</h2>
+                <p class="section-subtitle reveal reveal-up stagger-1">Comprehensive IT support plans tailored to meet the unique needs of your business.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card reveal reveal-left stagger-1">
+                    <span class="service-icon">💬</span>
+                    <h3 class="service-title">Support & Communication</h3>
+                    <p class="service-desc">Text-based support from technical experts with Slack/Microsoft Teams integration for real-time collaboration.</p>
+                </div>
+                <div class="service-card reveal reveal-up stagger-2">
+                    <span class="service-icon">💻</span>
+                    <h3 class="service-title">Device Management</h3>
+                    <p class="service-desc">Windows and macOS device management, optimization, and ongoing maintenance for your entire fleet.</p>
+                </div>
+                <div class="service-card reveal reveal-up stagger-3">
+                    <span class="service-icon">☁️</span>
+                    <h3 class="service-title">Cloud & Administration</h3>
+                    <p class="service-desc">G-Suite administration, Microsoft Azure cloud services, and DevOps expertise to scale your operations.</p>
+                </div>
+                <div class="service-card reveal reveal-right stagger-4">
+                    <span class="service-icon">🖥️</span>
+                    <h3 class="service-title">Infrastructure</h3>
+                    <p class="service-desc">Server performance optimization, network monitoring, and proactive maintenance to keep you running.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item reveal reveal-zoom stagger-1">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Years Combined Experience</div>
+                </div>
+                <div class="stat-item reveal reveal-zoom stagger-2">
+                    <div class="stat-number">2011</div>
+                    <div class="stat-label">Established</div>
+                </div>
+                <div class="stat-item reveal reveal-zoom stagger-3">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Platinum Support</div>
+                </div>
+                <div class="stat-item reveal reveal-zoom stagger-4">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Client Focused</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title reveal reveal-up">Simple, Transparent Pricing</h2>
+                <p class="section-subtitle reveal reveal-up stagger-1">Choose the plan that fits your business needs.</p>
+            </div>
+            <div class="pricing-grid reveal reveal-zoom stagger-2">
+                <!-- SILVER -->
+                <div class="pricing-card silver">
+                    <h3 class="pricing-tier">Silver Plan</h3>
+                    <p class="pricing-target">Small businesses with essential IT support needs</p>
+                    <ul class="pricing-features">
+                        <li>Remote Monitoring and Management (RMM)</li>
+                        <li>Help Desk Support</li>
+                        <li>Patch Management</li>
+                        <li>Antivirus and Anti-malware Protection</li>
+                        <li>Basic Backup and Disaster Recovery (BDR)</li>
+                    </ul>
+                    <div class="pricing-cta">
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeBRCLx9K78KhcanobwXIDd9fmf3AgdXb6NbJpk-oio46CU_g/viewform" class="btn">Learn More →</a>
+                    </div>
+                </div>
+
+                <!-- GOLD -->
+                <div class="pricing-card gold">
+                    <div class="pricing-badge">MOST POPULAR</div>
+                    <h3 class="pricing-tier">Gold Plan</h3>
+                    <p class="pricing-target">Medium-sized businesses needing advanced IT support</p>
+                    <ul class="pricing-features">
+                        <li>All Silver Plan Services</li>
+                        <li>Extended Help Desk Support (12x5)</li>
+                        <li>Bi-weekly Patch Management</li>
+                        <li>Advanced Threat Detection</li>
+                        <li>Comprehensive Backup and Disaster Recovery</li>
+                    </ul>
+                    <div class="pricing-cta">
+                        <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill" class="btn">Learn More →</a>
+                    </div>
+                </div>
+
+                <!-- PLATINUM -->
+                <div class="pricing-card platinum">
+                    <h3 class="pricing-tier">Platinum Plan</h3>
+                    <p class="pricing-target">Large businesses with complex IT needs</p>
+                    <ul class="pricing-features">
+                        <li>All Gold Plan Services</li>
+                        <li>24x7 Help Desk Support</li>
+                        <li>Weekly Patch Management</li>
+                        <li>Full Suite Security Solutions</li>
+                        <li>Advanced Business Continuity</li>
+                        <li>Strategic IT Consulting</li>
+                    </ul>
+                    <div class="pricing-cta">
+                        <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill" class="btn">Learn More →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand reveal reveal-left">
+                    <a href="#" class="logo"><span>405</span>Network</a>
+                    <p class="footer-tagline">Information Technology, Reimagined.</p>
+                    <p class="footer-info">
+                        Orange County, CA<br>
+                        Established 2011<br>
+                        25+ years combined IT expertise
+                    </p>
+                </div>
+                <div class="footer-links reveal reveal-right stagger-1">
+                    <h4>Quick Links</h4>
+                    <a href="#services">Services</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeBRCLx9K78KhcanobwXIDd9fmf3AgdXb6NbJpk-oio46CU_g/viewform">Contact Us</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2024 405Network Inc. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ENHANCED SCROLL ANIMATIONS -->
+    <script>
+        // Intersection Observer for multiple reveal types
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -60px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all reveal elements
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Parallax effect for floating shapes
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrollY = window.scrollY;
+                    const shapes = document.querySelectorAll('.shape');
+                    shapes.forEach((shape, index) => {
+                        const speed = 0.05 + (index * 0.02);
+                        const yPos = scrollY * speed;
+                        shape.style.transform = `translateY(${yPos}px) ${shape.classList.contains('shape-2') ? 'rotate(45deg)' : ''}`;
+                    });
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        // Add loaded class for initial animations
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+        });
+    </script>
 </body>
 </html>
