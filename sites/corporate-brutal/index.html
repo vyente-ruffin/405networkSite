@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <meta name="description" content="Let 405Network be your Chief Technology (CTO), Cloud, Infrastructure and AI Officer. Comprehensive IT support for SMBs in Orange County, CA.">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter + Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1a1a2e;
+            --electric-blue: #4361ee;
+            --white: #ffffff;
+            --black: #000000;
+            --silver-blue: #007bff;
+            --gold: #ffb700;
+            --platinum: #e5e4e2;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
+            color: var(--navy);
+            overflow-x: hidden;
+        }
+
+        .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* Brutal Shadow System */
+        .brutal-shadow {
+            box-shadow: 6px 6px 0px var(--black);
+        }
+
+        .brutal-shadow-lg {
+            box-shadow: 12px 12px 0px var(--black);
+        }
+
+        .brutal-shadow-navy {
+            box-shadow: 6px 6px 0px var(--navy);
+        }
+
+        .brutal-shadow-blue {
+            box-shadow: 6px 6px 0px var(--electric-blue);
+        }
+
+        .brutal-border {
+            border: 3px solid var(--black);
+        }
+
+        .brutal-border-navy {
+            border: 3px solid var(--navy);
+        }
+
+        /* Pushable Buttons */
+        .btn-push {
+            border: 3px solid var(--black);
+            box-shadow: 6px 6px 0px var(--black);
+            transition: all 0.15s ease;
+            position: relative;
+        }
+
+        .btn-push:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 2px 2px 0px var(--black);
+        }
+
+        .btn-push:active {
+            transform: translate(6px, 6px);
+            box-shadow: none;
+        }
+
+        /* Neo Card System */
+        .neo-card {
+            border: 3px solid var(--black);
+            box-shadow: 6px 6px 0px var(--black);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .neo-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 10px 10px 0px var(--electric-blue);
+        }
+
+        /* Mac-style Window Controls */
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .window-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--black);
+        }
+
+        .dot-red { background: #ff5f57; }
+        .dot-yellow { background: #febc2e; }
+        .dot-green { background: #28c840; }
+
+        /* Reveal Animations */
+        .reveal {
+            transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(60px);
+        }
+
+        .reveal-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+
+        .reveal-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+        }
+
+        .reveal-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .reveal-scale.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Staggered reveal delays */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+        .delay-5 { transition-delay: 0.5s; }
+
+        /* Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .marquee-track {
+            animation: marquee 30s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        /* Status Indicator Blink */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .status-blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        /* Pricing Number Style */
+        .price-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+        }
+
+        /* Oversized Section Numbers */
+        .section-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12rem;
+            font-weight: 700;
+            line-height: 0.8;
+            opacity: 0.08;
+            position: absolute;
+            top: 0;
+            right: 0;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--navy);
+            border: 2px solid var(--gray-100);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--electric-blue);
+        }
+
+        /* Diagonal Stripes Background */
+        .stripes {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(67, 97, 238, 0.03) 10px,
+                rgba(67, 97, 238, 0.03) 20px
+            );
+        }
+
+        /* Checkerboard Pattern */
+        .checkerboard {
+            background-image:
+                linear-gradient(45deg, rgba(26, 26, 46, 0.02) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(26, 26, 46, 0.02) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(26, 26, 46, 0.02) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(26, 26, 46, 0.02) 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        /* Grid Pattern */
+        .grid-pattern {
+            background-image:
+                linear-gradient(rgba(26, 26, 46, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(26, 26, 46, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Tier Badge Colors */
+        .tier-silver { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
+        .tier-gold { background: linear-gradient(135deg, #ffb700 0%, #cc9200 100%); }
+        .tier-platinum { background: linear-gradient(135deg, #e5e4e2 0%, #c0bfbd 100%); color: var(--navy); }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- NAVIGATION -->
+    <header class="sticky top-0 z-50 bg-white border-b-3 border-black" style="border-bottom: 3px solid #000;">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-navy brutal-border flex items-center justify-center" style="background: var(--navy);">
+                    <span class="text-white font-display font-bold text-lg">405</span>
+                </div>
+                <span class="font-display font-bold text-xl hidden sm:block">405Network</span>
+            </a>
+
+            <!-- Status Indicator -->
+            <div class="hidden md:flex items-center gap-2 bg-gray-100 px-4 py-2 brutal-border" style="background: var(--gray-100);">
+                <span class="w-2 h-2 rounded-full bg-green-500 status-blink"></span>
+                <span class="font-mono text-sm font-semibold tracking-wider">ONLINE</span>
+            </div>
+
+            <!-- CTA -->
+            <a href="#pricing" class="btn-push bg-electric-blue text-white font-display font-semibold px-6 py-3" style="background: var(--electric-blue);">
+                Get Started
+            </a>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+
+        <!-- HERO SECTION -->
+        <section class="min-h-[90vh] relative overflow-hidden grid-pattern">
+            <div class="container mx-auto px-6 py-16 md:py-24 lg:py-32">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <!-- Left: Text Content -->
+                    <div class="relative z-10">
+                        <!-- Eyebrow -->
+                        <div class="inline-flex items-center gap-2 mb-6 reveal reveal-left">
+                            <span class="w-12 h-1 bg-electric-blue" style="background: var(--electric-blue);"></span>
+                            <span class="font-mono text-sm font-semibold tracking-widest text-gray-600">EST. 2011</span>
+                        </div>
+
+                        <!-- Headline -->
+                        <h1 class="font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[0.9] mb-8 reveal reveal-up delay-1">
+                            Information
+                            <br>
+                            <span class="text-electric-blue" style="color: var(--electric-blue);">Technology,</span>
+                            <br>
+                            Reimagined
+                        </h1>
+
+                        <!-- Subheadline -->
+                        <p class="text-xl md:text-2xl text-gray-700 mb-10 max-w-xl leading-relaxed reveal reveal-up delay-2">
+                            Let 405Network be your Chief Technology, Cloud, Infrastructure and AI Officer.
+                        </p>
+
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 reveal reveal-up delay-3">
+                            <a href="#pricing" class="btn-push bg-navy text-white font-display font-semibold px-8 py-4 text-lg text-center" style="background: var(--navy);">
+                                View Plans
+                            </a>
+                            <a href="#services" class="btn-push bg-white text-navy font-display font-semibold px-8 py-4 text-lg text-center" style="color: var(--navy);">
+                                Our Services
+                            </a>
+                        </div>
+
+                        <!-- Trust Badges -->
+                        <div class="flex flex-wrap gap-6 mt-12 reveal reveal-up delay-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-3xl font-display font-bold">25+</span>
+                                <span class="text-sm text-gray-600 leading-tight">Years Combined<br>IT Expertise</span>
+                            </div>
+                            <div class="w-px h-12 bg-gray-300"></div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-3xl font-display font-bold">SMB</span>
+                                <span class="text-sm text-gray-600 leading-tight">Focused<br>Solutions</span>
+                            </div>
+                            <div class="w-px h-12 bg-gray-300"></div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-3xl font-display font-bold">OC</span>
+                                <span class="text-sm text-gray-600 leading-tight">Orange County<br>California</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Visual Element -->
+                    <div class="relative reveal reveal-right delay-2">
+                        <!-- Main Feature Card -->
+                        <div class="neo-card bg-navy p-8 md:p-12" style="background: var(--navy);">
+                            <!-- Window Controls -->
+                            <div class="window-controls mb-6">
+                                <div class="window-dot dot-red"></div>
+                                <div class="window-dot dot-yellow"></div>
+                                <div class="window-dot dot-green"></div>
+                            </div>
+
+                            <!-- Terminal-style Content -->
+                            <div class="font-mono text-sm md:text-base text-gray-300 space-y-2">
+                                <p><span class="text-green-400">$</span> 405network --status</p>
+                                <p class="text-white">Systems: <span class="text-green-400">OPERATIONAL</span></p>
+                                <p class="text-white">Uptime: <span class="text-electric-blue" style="color: var(--electric-blue);">99.99%</span></p>
+                                <p class="text-white">Response: <span class="text-gold" style="color: var(--gold);">&lt; 1 hour</span></p>
+                                <p><span class="text-green-400">$</span> <span class="status-blink">_</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Floating Badge -->
+                        <div class="absolute -top-4 -right-4 bg-electric-blue text-white brutal-border px-4 py-2 font-display font-semibold rotate-3" style="background: var(--electric-blue);">
+                            MSP
+                        </div>
+
+                        <!-- Floating Stats Card -->
+                        <div class="absolute -bottom-6 -left-6 bg-white brutal-shadow p-4">
+                            <p class="font-display font-bold text-2xl">24/7</p>
+                            <p class="text-sm text-gray-600">Monitoring</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Background Number -->
+            <div class="section-number" style="right: -2rem; top: 2rem;">01</div>
+        </section>
+
+        <!-- MARQUEE SECTION -->
+        <section class="bg-navy py-4 overflow-hidden" style="background: var(--navy);">
+            <div class="flex whitespace-nowrap">
+                <div class="marquee-track flex items-center gap-8 font-display text-xl md:text-2xl font-bold text-white opacity-80">
+                    <span>★ MANAGED IT</span>
+                    <span>★ CLOUD SOLUTIONS</span>
+                    <span>★ CYBERSECURITY</span>
+                    <span>★ HELPDESK</span>
+                    <span>★ AZURE DEVOPS</span>
+                    <span>★ G-SUITE</span>
+                    <span>★ DEVICE MANAGEMENT</span>
+                    <span>★ NETWORK MONITORING</span>
+                    <span>★ MANAGED IT</span>
+                    <span>★ CLOUD SOLUTIONS</span>
+                    <span>★ CYBERSECURITY</span>
+                    <span>★ HELPDESK</span>
+                    <span>★ AZURE DEVOPS</span>
+                    <span>★ G-SUITE</span>
+                    <span>★ DEVICE MANAGEMENT</span>
+                    <span>★ NETWORK MONITORING</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVICES SECTION -->
+        <section id="services" class="py-20 md:py-32 relative stripes">
+            <div class="container mx-auto px-6">
+                <!-- Section Header -->
+                <div class="max-w-3xl mb-16 reveal reveal-up">
+                    <span class="inline-block font-mono text-sm font-semibold tracking-widest text-electric-blue mb-4" style="color: var(--electric-blue);">WHAT WE DO</span>
+                    <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                        Comprehensive IT Support
+                    </h2>
+                    <p class="text-xl text-gray-600">
+                        Tailored solutions to meet the unique needs of your business.
+                    </p>
+                </div>
+
+                <!-- Services Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                    <!-- Service 1: Support -->
+                    <div class="neo-card bg-white p-6 reveal reveal-up delay-1">
+                        <div class="window-controls mb-4">
+                            <div class="window-dot dot-red"></div>
+                            <div class="window-dot dot-yellow"></div>
+                            <div class="window-dot dot-green"></div>
+                        </div>
+                        <div class="text-4xl mb-4">💬</div>
+                        <h3 class="font-display text-xl font-bold mb-3">Support & Communication</h3>
+                        <ul class="text-gray-600 space-y-2 text-sm">
+                            <li>→ Text-based technical support</li>
+                            <li>→ Slack integration</li>
+                            <li>→ Microsoft Teams integration</li>
+                            <li>→ Real-time collaboration</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service 2: Device Management -->
+                    <div class="neo-card bg-white p-6 reveal reveal-up delay-2">
+                        <div class="window-controls mb-4">
+                            <div class="window-dot dot-red"></div>
+                            <div class="window-dot dot-yellow"></div>
+                            <div class="window-dot dot-green"></div>
+                        </div>
+                        <div class="text-4xl mb-4">💻</div>
+                        <h3 class="font-display text-xl font-bold mb-3">Device Management</h3>
+                        <ul class="text-gray-600 space-y-2 text-sm">
+                            <li>→ Windows optimization</li>
+                            <li>→ macOS management</li>
+                            <li>→ Patch management</li>
+                            <li>→ Remote monitoring</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service 3: Cloud -->
+                    <div class="neo-card bg-white p-6 reveal reveal-up delay-3">
+                        <div class="window-controls mb-4">
+                            <div class="window-dot dot-red"></div>
+                            <div class="window-dot dot-yellow"></div>
+                            <div class="window-dot dot-green"></div>
+                        </div>
+                        <div class="text-4xl mb-4">☁️</div>
+                        <h3 class="font-display text-xl font-bold mb-3">Cloud & Administration</h3>
+                        <ul class="text-gray-600 space-y-2 text-sm">
+                            <li>→ G-Suite administration</li>
+                            <li>→ Microsoft Azure</li>
+                            <li>→ Azure DevOps</li>
+                            <li>→ Cloud migration</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service 4: Infrastructure -->
+                    <div class="neo-card bg-white p-6 reveal reveal-up delay-4">
+                        <div class="window-controls mb-4">
+                            <div class="window-dot dot-red"></div>
+                            <div class="window-dot dot-yellow"></div>
+                            <div class="window-dot dot-green"></div>
+                        </div>
+                        <div class="text-4xl mb-4">🔧</div>
+                        <h3 class="font-display text-xl font-bold mb-3">Infrastructure</h3>
+                        <ul class="text-gray-600 space-y-2 text-sm">
+                            <li>→ Server optimization</li>
+                            <li>→ Network monitoring</li>
+                            <li>→ Performance tuning</li>
+                            <li>→ Maintenance</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Background Number -->
+            <div class="section-number" style="left: -2rem; top: 4rem;">02</div>
+        </section>
+
+        <!-- PRICING SECTION -->
+        <section id="pricing" class="py-20 md:py-32 bg-gray-100 relative checkerboard" style="background: var(--gray-100);">
+            <div class="container mx-auto px-6">
+
+                <!-- Section Header -->
+                <div class="text-center max-w-3xl mx-auto mb-16 reveal reveal-up">
+                    <span class="inline-block font-mono text-sm font-semibold tracking-widest text-electric-blue mb-4" style="color: var(--electric-blue);">PRICING</span>
+                    <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                        Simple, Transparent Pricing
+                    </h2>
+                    <p class="text-xl text-gray-600">
+                        Choose the plan that fits your business needs.
+                    </p>
+                </div>
+
+                <!-- Pricing Cards -->
+                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+                    <!-- SILVER PLAN -->
+                    <div class="neo-card bg-white p-8 reveal reveal-up delay-1">
+                        <!-- Tier Badge -->
+                        <div class="tier-silver text-white brutal-border px-4 py-1 inline-block font-display font-semibold text-sm mb-6">
+                            SILVER
+                        </div>
+
+                        <!-- Plan Name -->
+                        <h3 class="font-display text-2xl font-bold mb-2">Essential</h3>
+                        <p class="text-gray-600 mb-6">For small businesses with essential IT support needs</p>
+
+                        <!-- Divider -->
+                        <div class="w-full h-1 bg-silver-blue mb-6" style="background: var(--silver-blue);"></div>
+
+                        <!-- Features -->
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Remote Monitoring & Management (RMM)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Help Desk Support</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Patch Management</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Antivirus & Anti-malware</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Basic Backup & Disaster Recovery</span>
+                            </li>
+                        </ul>
+
+                        <!-- CTA -->
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeBRCLx9K78KhcanobwXIDd9fmf3AgdXb6NbJpk-oio46CU_g/viewform"
+                           target="_blank"
+                           class="btn-push block w-full text-center bg-silver-blue text-white font-display font-semibold py-4" style="background: var(--silver-blue);">
+                            Learn More
+                        </a>
+                    </div>
+
+                    <!-- GOLD PLAN -->
+                    <div class="neo-card bg-white p-8 relative reveal reveal-up delay-2">
+                        <!-- Popular Badge -->
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-navy text-white brutal-border px-4 py-1 font-display font-semibold text-sm" style="background: var(--navy);">
+                            POPULAR
+                        </div>
+
+                        <!-- Tier Badge -->
+                        <div class="tier-gold text-navy brutal-border px-4 py-1 inline-block font-display font-semibold text-sm mb-6" style="color: var(--navy);">
+                            GOLD
+                        </div>
+
+                        <!-- Plan Name -->
+                        <h3 class="font-display text-2xl font-bold mb-2">Advanced</h3>
+                        <p class="text-gray-600 mb-6">For growing businesses needing advanced support</p>
+
+                        <!-- Divider -->
+                        <div class="w-full h-1 bg-gold mb-6" style="background: var(--gold);"></div>
+
+                        <!-- Features -->
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>All Silver Plan Services</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Extended Help Desk (12x5)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Bi-weekly Patch Management</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Advanced Threat Detection</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Comprehensive Backup & DR</span>
+                            </li>
+                        </ul>
+
+                        <!-- CTA -->
+                        <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill"
+                           target="_blank"
+                           class="btn-push block w-full text-center bg-gold text-navy font-display font-semibold py-4" style="background: var(--gold); color: var(--navy);">
+                            Learn More
+                        </a>
+                    </div>
+
+                    <!-- PLATINUM PLAN -->
+                    <div class="neo-card bg-white p-8 reveal reveal-up delay-3">
+                        <!-- Tier Badge -->
+                        <div class="tier-platinum brutal-border px-4 py-1 inline-block font-display font-semibold text-sm mb-6">
+                            PLATINUM
+                        </div>
+
+                        <!-- Plan Name -->
+                        <h3 class="font-display text-2xl font-bold mb-2">Enterprise</h3>
+                        <p class="text-gray-600 mb-6">For businesses with complex IT requirements</p>
+
+                        <!-- Divider -->
+                        <div class="w-full h-1 bg-platinum mb-6" style="background: linear-gradient(90deg, #e5e4e2, #c0bfbd);"></div>
+
+                        <!-- Features -->
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>All Gold Plan Services</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>24/7 Help Desk Support</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Weekly Patch Management</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Full Suite Security Solutions</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Business Continuity Planning</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-500 font-bold">✓</span>
+                                <span>Strategic IT Consulting</span>
+                            </li>
+                        </ul>
+
+                        <!-- CTA -->
+                        <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill"
+                           target="_blank"
+                           class="btn-push block w-full text-center bg-navy text-white font-display font-semibold py-4" style="background: var(--navy);">
+                            Learn More
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Background Number -->
+            <div class="section-number" style="right: -2rem; top: 4rem;">03</div>
+        </section>
+
+        <!-- WHY 405NETWORK SECTION -->
+        <section class="py-20 md:py-32 relative overflow-hidden">
+            <div class="container mx-auto px-6">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+                    <!-- Left: Content -->
+                    <div class="reveal reveal-left">
+                        <span class="inline-block font-mono text-sm font-semibold tracking-widest text-electric-blue mb-4" style="color: var(--electric-blue);">WHY US</span>
+                        <h2 class="font-display text-4xl md:text-5xl font-bold mb-8">
+                            Your Virtual CTO, Cloud &amp; AI Officer
+                        </h2>
+                        <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                            At 405Network, we offer comprehensive IT support plans tailored to meet the unique needs of your business. We become an extension of your team.
+                        </p>
+
+                        <!-- Feature List -->
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-electric-blue brutal-border flex items-center justify-center shrink-0" style="background: var(--electric-blue);">
+                                    <span class="text-white text-xl">⚡</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-display font-bold text-lg mb-1">Rapid Response</h4>
+                                    <p class="text-gray-600">Fast support when you need it most. We understand downtime costs money.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-gold brutal-border flex items-center justify-center shrink-0" style="background: var(--gold);">
+                                    <span class="text-navy text-xl">🛡️</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-display font-bold text-lg mb-1">Proactive Security</h4>
+                                    <p class="text-gray-600">Stay ahead of threats with continuous monitoring and protection.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-navy brutal-border flex items-center justify-center shrink-0" style="background: var(--navy);">
+                                    <span class="text-white text-xl">📈</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-display font-bold text-lg mb-1">Scalable Solutions</h4>
+                                    <p class="text-gray-600">Grow your IT infrastructure seamlessly as your business expands.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Stats Grid -->
+                    <div class="grid grid-cols-2 gap-6 reveal reveal-right">
+                        <div class="neo-card bg-navy p-8 text-center" style="background: var(--navy);">
+                            <span class="price-number text-5xl md:text-6xl text-white block mb-2">25+</span>
+                            <span class="text-gray-300 text-sm">Years Combined Experience</span>
+                        </div>
+                        <div class="neo-card bg-electric-blue p-8 text-center" style="background: var(--electric-blue);">
+                            <span class="price-number text-5xl md:text-6xl text-white block mb-2">99%</span>
+                            <span class="text-blue-100 text-sm">Client Satisfaction</span>
+                        </div>
+                        <div class="neo-card bg-gold p-8 text-center" style="background: var(--gold);">
+                            <span class="price-number text-5xl md:text-6xl text-navy block mb-2" style="color: var(--navy);">24/7</span>
+                            <span class="text-amber-800 text-sm">Monitoring Available</span>
+                        </div>
+                        <div class="neo-card bg-white p-8 text-center">
+                            <span class="price-number text-5xl md:text-6xl text-navy block mb-2" style="color: var(--navy);">&lt;1hr</span>
+                            <span class="text-gray-600 text-sm">Response Time</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Background Number -->
+            <div class="section-number" style="left: -2rem; top: 4rem;">04</div>
+        </section>
+
+        <!-- CTA SECTION -->
+        <section class="py-20 md:py-32 bg-navy relative overflow-hidden" style="background: var(--navy);">
+            <!-- Decorative Elements -->
+            <div class="absolute top-10 left-10 w-20 h-20 border-4 border-electric-blue opacity-20" style="border-color: var(--electric-blue);"></div>
+            <div class="absolute bottom-10 right-10 w-32 h-32 border-4 border-gold opacity-20" style="border-color: var(--gold);"></div>
+            <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-electric-blue opacity-10" style="background: var(--electric-blue);"></div>
+
+            <div class="container mx-auto px-6 text-center relative z-10">
+                <div class="max-w-4xl mx-auto reveal reveal-up">
+                    <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8">
+                        Ready to Reimagine Your IT?
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+                        Join the growing number of businesses in Orange County that trust 405Network for their technology needs.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                        <a href="#pricing" class="btn-push bg-electric-blue text-white font-display font-bold text-lg px-10 py-5" style="background: var(--electric-blue);">
+                            Get Started Today
+                        </a>
+                        <a href="mailto:info@405network.com" class="btn-push bg-white text-navy font-display font-bold text-lg px-10 py-5" style="color: var(--navy);">
+                            Contact Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t-3 border-black py-12" style="border-top: 3px solid #000;">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+
+                <!-- Brand -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-navy brutal-border flex items-center justify-center" style="background: var(--navy);">
+                            <span class="text-white font-display font-bold text-lg">405</span>
+                        </div>
+                        <span class="font-display font-bold text-xl">405Network Inc.</span>
+                    </div>
+                    <p class="text-gray-600 max-w-md mb-4">
+                        Information Technology, Reimagined. Serving Orange County businesses since 2011.
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        Orange County, California
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-display font-bold text-lg mb-4 underline decoration-4 decoration-electric-blue" style="text-decoration-color: var(--electric-blue);">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#services" class="text-gray-600 hover:text-navy transition-colors font-medium">→ Services</a></li>
+                        <li><a href="#pricing" class="text-gray-600 hover:text-navy transition-colors font-medium">→ Pricing</a></li>
+                        <li><a href="mailto:info@405network.com" class="text-gray-600 hover:text-navy transition-colors font-medium">→ Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <h4 class="font-display font-bold text-lg mb-4 underline decoration-4 decoration-gold" style="text-decoration-color: var(--gold);">System Status</h4>
+                    <div class="flex items-center gap-2 bg-gray-100 px-4 py-3 brutal-border inline-block" style="background: var(--gray-100);">
+                        <span class="w-3 h-3 rounded-full bg-green-500 status-blink"></span>
+                        <span class="font-mono text-sm font-semibold">ALL SYSTEMS OPERATIONAL</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-t-2 border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-600 text-sm">
+                    &copy; 2024 405Network Inc. All rights reserved.
+                </p>
+                <div class="flex gap-6 text-sm font-medium">
+                    <a href="#" class="text-gray-600 hover:text-navy transition-colors">Privacy</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="#" class="text-gray-600 hover:text-navy transition-colors">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCROLL REVEAL SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const revealElements = document.querySelectorAll('.reveal');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observerCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+            revealElements.forEach(el => {
+                observer.observe(el);
+            });
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

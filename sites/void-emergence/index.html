@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        /* ═══════════════════════════════════════════════════════════════════════════
+           VOID EMERGENCE - V11 | 405Network Inc.
+           Blue Noise Dithering + Particle Emergence from the Void
+           ═══════════════════════════════════════════════════════════════════════════ */
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           CSS RESET & ROOT VARIABLES
+           ───────────────────────────────────────────────────────────────────────────── */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --void: #000000;
+            --matter: #FFFFFF;
+            --emergence: #00FF88;
+            --emergence-dim: rgba(0, 255, 136, 0.3);
+            --emergence-glow: rgba(0, 255, 136, 0.5);
+            --font-primary: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --ease-emergence: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-void: cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           BASE STYLES
+           ───────────────────────────────────────────────────────────────────────────── */
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--emergence) var(--void);
+        }
+
+        html::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        html::-webkit-scrollbar-track {
+            background: var(--void);
+        }
+
+        html::-webkit-scrollbar-thumb {
+            background: var(--emergence);
+            border-radius: 3px;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--void);
+            color: var(--matter);
+            overflow-x: hidden;
+            cursor: none;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            cursor: none;
+        }
+
+        button {
+            cursor: none;
+            font-family: inherit;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           CUSTOM CURSOR - GLOWING GREEN DOT WITH PARTICLE TRAILS
+           ───────────────────────────────────────────────────────────────────────────── */
+        .cursor-main {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: var(--emergence);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            transform: translate(-50%, -50%);
+            box-shadow:
+                0 0 20px var(--emergence),
+                0 0 40px var(--emergence-glow),
+                0 0 60px var(--emergence-dim);
+            mix-blend-mode: screen;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--emergence);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            mix-blend-mode: screen;
+        }
+
+        .cursor-particles {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .cursor-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--emergence);
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           FILM GRAIN OVERLAY
+           ───────────────────────────────────────────────────────────────────────────── */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.08;
+        }
+
+        .grain-overlay svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           WEBGL CANVAS CONTAINER
+           ───────────────────────────────────────────────────────────────────────────── */
+        #webgl-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        #webgl-container canvas {
+            display: block;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           VOID EMERGENCE TEXT EFFECT
+           ───────────────────────────────────────────────────────────────────────────── */
+        .void-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .void-text-char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            filter: blur(10px);
+        }
+
+        .void-text-char.emerged {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+            transition: all 0.8s var(--ease-emergence);
+        }
+
+        .particle-text {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .particle-text::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                var(--emergence-dim) 50%,
+                transparent 100%
+            );
+            transform: translateX(-100%);
+            animation: particle-scan 3s ease-in-out infinite;
+        }
+
+        @keyframes particle-scan {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           NAVIGATION
+           ───────────────────────────────────────────────────────────────────────────── */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo-icon {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--emergence);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-logo-icon::before {
+            content: '405';
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--emergence);
+        }
+
+        .nav-logo-icon::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--emergence);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-logo:hover .nav-logo-icon::after {
+            opacity: 0.1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            position: relative;
+            padding: 8px 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--emergence);
+            transition: width 0.3s var(--ease-emergence);
+        }
+
+        .nav-link:hover {
+            color: var(--emergence);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 12px 24px;
+            background: transparent;
+            border: 1px solid var(--emergence);
+            color: var(--emergence);
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--emergence);
+            transform: translateY(100%);
+            transition: transform 0.3s var(--ease-emergence);
+        }
+
+        .nav-cta span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-cta:hover {
+            color: var(--void);
+        }
+
+        .nav-cta:hover::before {
+            transform: translateY(0);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           HERO SECTION
+           ───────────────────────────────────────────────────────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 48px 80px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 100px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--emergence);
+            margin-bottom: 32px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--emergence);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 700;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            margin-bottom: 32px;
+        }
+
+        .hero-title-line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero-title-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        .hero-title .accent {
+            color: var(--emergence);
+            text-shadow:
+                0 0 40px var(--emergence-glow),
+                0 0 80px var(--emergence-dim);
+        }
+
+        .hero-tagline {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto 48px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .btn-primary {
+            padding: 18px 40px;
+            background: var(--emergence);
+            color: var(--void);
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--matter);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s var(--ease-emergence);
+        }
+
+        .btn-primary span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary:hover::before {
+            transform: scaleX(1);
+        }
+
+        .btn-secondary {
+            padding: 18px 40px;
+            background: transparent;
+            color: var(--matter);
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--emergence);
+            color: var(--emergence);
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+        }
+
+        .hero-scroll-text {
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(180deg, var(--emergence) 0%, transparent 100%);
+            animation: scroll-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scroll-pulse {
+            0%, 100% { transform: scaleY(1); opacity: 1; }
+            50% { transform: scaleY(0.5); opacity: 0.5; }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           SECTION COMMON STYLES
+           ───────────────────────────────────────────────────────────────────────────── */
+        section {
+            padding: 120px 48px;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--emergence);
+            margin-bottom: 24px;
+        }
+
+        .section-label::before,
+        .section-label::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: var(--emergence);
+            opacity: 0.5;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+        .section-title .highlight {
+            color: var(--emergence);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           SERVICES SECTION
+           ───────────────────────────────────────────────────────────────────────────── */
+        .services {
+            background: linear-gradient(180deg, var(--void) 0%, rgba(0, 255, 136, 0.02) 50%, var(--void) 100%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 48px 32px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.5s var(--ease-emergence);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--emergence), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s var(--ease-emergence);
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, var(--emergence-dim) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover {
+            border-color: var(--emergence-dim);
+            transform: translateY(-8px);
+        }
+
+        .service-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .service-card:hover::after {
+            opacity: 1;
+        }
+
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            border: 1px solid var(--emergence);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--emergence);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .service-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-description {
+            font-size: 0.9375rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-features {
+            list-style: none;
+            margin-top: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-features li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8125rem;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 6px 0;
+        }
+
+        .service-features li::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--emergence);
+            border-radius: 50%;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           PRICING SECTION
+           ───────────────────────────────────────────────────────────────────────────── */
+        .pricing {
+            background: var(--void);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--emergence);
+            background: rgba(0, 255, 136, 0.03);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: var(--emergence);
+            color: var(--void);
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-align: center;
+        }
+
+        .pricing-card.featured .pricing-header {
+            padding-top: 24px;
+        }
+
+        .pricing-tier {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--emergence);
+            margin-bottom: 8px;
+        }
+
+        .pricing-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .pricing-currency {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .pricing-amount {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.03em;
+        }
+
+        .pricing-period {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-left: 8px;
+        }
+
+        .pricing-description {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            font-size: 0.9375rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--emergence);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: var(--matter);
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card.featured .pricing-cta {
+            background: var(--emergence);
+            color: var(--void);
+            border-color: var(--emergence);
+        }
+
+        .pricing-cta:hover {
+            background: var(--emergence);
+            color: var(--void);
+            border-color: var(--emergence);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           ABOUT SECTION
+           ───────────────────────────────────────────────────────────────────────────── */
+        .about {
+            background: linear-gradient(180deg, var(--void) 0%, rgba(0, 255, 136, 0.02) 100%);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about-visual {
+            position: relative;
+            aspect-ratio: 1;
+        }
+
+        .about-visual-inner {
+            position: absolute;
+            inset: 0;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-visual-year {
+            font-size: clamp(6rem, 15vw, 12rem);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            color: rgba(0, 255, 136, 0.1);
+            position: absolute;
+        }
+
+        .about-visual-text {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--emergence);
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .about-stats {
+            position: absolute;
+            inset: 20px;
+            border: 1px dashed rgba(0, 255, 136, 0.3);
+        }
+
+        .about-stat {
+            position: absolute;
+            text-align: center;
+        }
+
+        .about-stat:nth-child(1) { top: 20px; left: 20px; }
+        .about-stat:nth-child(2) { top: 20px; right: 20px; }
+        .about-stat:nth-child(3) { bottom: 20px; left: 20px; }
+        .about-stat:nth-child(4) { bottom: 20px; right: 20px; }
+
+        .about-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--emergence);
+        }
+
+        .about-stat-label {
+            font-size: 0.6875rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .about-text h3 {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        .about-text p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .about-location {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .about-location svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--emergence);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .about-location span {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           CONTACT SECTION
+           ───────────────────────────────────────────────────────────────────────────── */
+        .contact {
+            background: var(--void);
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .contact-info p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .contact-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .contact-method {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-method:hover {
+            border-color: var(--emergence);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .contact-method-icon {
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--emergence-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-method-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--emergence);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .contact-method-text {
+            flex: 1;
+        }
+
+        .contact-method-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 4px;
+        }
+
+        .contact-method-value {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .contact-form {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 48px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--matter);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--emergence);
+            background: rgba(0, 255, 136, 0.03);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 18px 40px;
+            background: var(--emergence);
+            color: var(--void);
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .form-submit:hover {
+            background: var(--matter);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           FOOTER
+           ───────────────────────────────────────────────────────────────────────────── */
+        .footer {
+            padding: 80px 48px 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto 60px;
+        }
+
+        .footer-brand h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .footer-brand p {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.7;
+            max-width: 300px;
+        }
+
+        .footer-links h5 {
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--emergence);
+            margin-bottom: 20px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--emergence);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-copyright {
+            font-size: 0.8125rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-legal a {
+            font-size: 0.8125rem;
+            color: rgba(255, 255, 255, 0.4);
+            transition: color 0.3s ease;
+        }
+
+        .footer-legal a:hover {
+            color: var(--emergence);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           DITHER EMERGENCE OVERLAY EFFECT
+           ───────────────────────────────────────────────────────────────────────────── */
+        .dither-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9997;
+            background: var(--void);
+            mix-blend-mode: multiply;
+        }
+
+        .emergence-particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9996;
+        }
+
+        .emergence-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--emergence);
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           LOADING SCREEN
+           ───────────────────────────────────────────────────────────────────────────── */
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: var(--void);
+            z-index: 20000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .loader-text {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--emergence);
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--emergence);
+            transition: width 0.3s ease;
+        }
+
+        .loader-progress {
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           RESPONSIVE STYLES
+           ───────────────────────────────────────────────────────────────────────────── */
+        @media (max-width: 1024px) {
+            .about-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 80px 24px;
+            }
+
+            .nav {
+                padding: 16px 24px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 100px 24px 60px;
+            }
+
+            .pricing-grid,
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .cursor-main,
+            .cursor-trail {
+                display: none;
+            }
+
+            body {
+                cursor: auto;
+            }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────────
+           UTILITY CLASSES
+           ───────────────────────────────────────────────────────────────────────────── */
+        .text-emergence { color: var(--emergence); }
+        .text-dim { color: rgba(255, 255, 255, 0.5); }
+        .mono { font-family: var(--font-mono); }
+        .uppercase { text-transform: uppercase; }
+        .tracking-wide { letter-spacing: 0.1em; }
+    </style>
+</head>
+<body>
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         LOADING SCREEN
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="loader" id="loader">
+        <div class="loader-text">VOID EMERGENCE</div>
+        <div class="loader-bar" id="loader-bar"></div>
+        <div class="loader-progress" id="loader-progress">0%</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         CUSTOM CURSOR
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="cursor-main" id="cursor-main"></div>
+    <div class="cursor-particles" id="cursor-particles"></div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         FILM GRAIN OVERLAY
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="grain-overlay">
+        <svg>
+            <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
+                <feColorMatrix type="saturate" values="0"/>
+            </filter>
+            <rect width="100%" height="100%" filter="url(#grain)"/>
+        </svg>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         WEBGL CONTAINER
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <div id="webgl-container"></div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         NAVIGATION
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <nav class="nav">
+        <a href="#" class="nav-logo">
+            <div class="nav-logo-icon"></div>
+            <span>405Network</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#services" class="nav-link">Services</a></li>
+            <li><a href="#pricing" class="nav-link">Pricing</a></li>
+            <li><a href="#about" class="nav-link">About</a></li>
+            <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <a href="#contact" class="nav-cta"><span>Get Started</span></a>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         HERO SECTION
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>Orange County, CA • Est. 2011</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="hero-title-line">
+                    <span class="hero-title-word">Information</span>
+                </span>
+                <span class="hero-title-line">
+                    <span class="hero-title-word">Technology,</span>
+                </span>
+                <span class="hero-title-line">
+                    <span class="hero-title-word accent">Reimagined</span>
+                </span>
+            </h1>
+            <p class="hero-tagline">
+                Enterprise-grade IT solutions that emerge from complexity to deliver clarity.
+                We transform how businesses operate through intelligent technology.
+            </p>
+            <div class="hero-cta-group">
+                <button class="btn-primary"><span>Start Your Journey</span></button>
+                <button class="btn-secondary">View Services</button>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <span class="hero-scroll-text">Scroll to Emerge</span>
+            <div class="hero-scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         SERVICES SECTION
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <div class="section-label">What We Do</div>
+            <h2 class="section-title">Services that <span class="highlight">Emerge</span><br>from the Void</h2>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                </div>
+                <h3 class="service-title">Support & Communication</h3>
+                <p class="service-description">24/7 helpdesk support with multi-channel communication systems that keep your business connected and operational.</p>
+                <ul class="service-features">
+                    <li>24/7 Technical Support</li>
+                    <li>Unified Communications</li>
+                    <li>VoIP Solutions</li>
+                    <li>Collaboration Tools</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                </div>
+                <h3 class="service-title">Device Management</h3>
+                <p class="service-description">Comprehensive endpoint management ensuring security, updates, and optimal performance across all devices.</p>
+                <ul class="service-features">
+                    <li>MDM Solutions</li>
+                    <li>Patch Management</li>
+                    <li>Asset Tracking</li>
+                    <li>Remote Monitoring</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+                </div>
+                <h3 class="service-title">Cloud & Admin</h3>
+                <p class="service-description">Cloud infrastructure management and administration services that scale with your business needs.</p>
+                <ul class="service-features">
+                    <li>Microsoft 365 Admin</li>
+                    <li>Cloud Migration</li>
+                    <li>Identity Management</li>
+                    <li>Backup Solutions</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                </div>
+                <h3 class="service-title">Infrastructure</h3>
+                <p class="service-description">Enterprise network design, implementation, and maintenance for robust, secure connectivity.</p>
+                <ul class="service-features">
+                    <li>Network Design</li>
+                    <li>Server Management</li>
+                    <li>Security Solutions</li>
+                    <li>Disaster Recovery</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         PRICING SECTION
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <div class="section-label">Investment</div>
+            <h2 class="section-title">Transparent <span class="highlight">Pricing</span></h2>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <div class="pricing-tier">Tier 01</div>
+                    <h3 class="pricing-name">Silver</h3>
+                    <div class="pricing-price">
+                        <span class="pricing-currency">$</span>
+                        <span class="pricing-amount">49</span>
+                        <span class="pricing-period">/user/month</span>
+                    </div>
+                    <p class="pricing-description">Essential IT support for growing teams</p>
+                </div>
+                <ul class="pricing-features">
+                    <li>Business Hours Support (9-5)</li>
+                    <li>Email & Chat Support</li>
+                    <li>Basic Device Management</li>
+                    <li>Microsoft 365 Administration</li>
+                    <li>Monthly Security Reports</li>
+                    <li>Cloud Backup (50GB/user)</li>
+                </ul>
+                <button class="pricing-cta">Get Started</button>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-header">
+                    <div class="pricing-tier">Tier 02</div>
+                    <h3 class="pricing-name">Gold</h3>
+                    <div class="pricing-price">
+                        <span class="pricing-currency">$</span>
+                        <span class="pricing-amount">79</span>
+                        <span class="pricing-period">/user/month</span>
+                    </div>
+                    <p class="pricing-description">Comprehensive IT for established businesses</p>
+                </div>
+                <ul class="pricing-features">
+                    <li>Extended Hours Support (7AM-9PM)</li>
+                    <li>Priority Phone Support</li>
+                    <li>Advanced Device Management</li>
+                    <li>Full Microsoft 365 Suite</li>
+                    <li>Weekly Security Monitoring</li>
+                    <li>Cloud Backup (200GB/user)</li>
+                    <li>VoIP Phone System</li>
+                    <li>Quarterly Business Reviews</li>
+                </ul>
+                <button class="pricing-cta">Get Started</button>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <div class="pricing-tier">Tier 03</div>
+                    <h3 class="pricing-name">Platinum</h3>
+                    <div class="pricing-price">
+                        <span class="pricing-currency">$</span>
+                        <span class="pricing-amount">129</span>
+                        <span class="pricing-period">/user/month</span>
+                    </div>
+                    <p class="pricing-description">Enterprise-grade IT for demanding operations</p>
+                </div>
+                <ul class="pricing-features">
+                    <li>24/7/365 Support</li>
+                    <li>Dedicated Account Manager</li>
+                    <li>Enterprise Device Management</li>
+                    <li>Complete Cloud Administration</li>
+                    <li>Real-time Security Operations</li>
+                    <li>Unlimited Cloud Backup</li>
+                    <li>Advanced VoIP & UC</li>
+                    <li>Monthly Strategy Sessions</li>
+                    <li>Disaster Recovery Planning</li>
+                </ul>
+                <button class="pricing-cta">Get Started</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         ABOUT SECTION
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <section class="about" id="about">
+        <div class="about-content">
+            <div class="about-visual">
+                <div class="about-visual-inner">
+                    <span class="about-visual-year">2011</span>
+                    <div class="about-stats">
+                        <div class="about-stat">
+                            <div class="about-stat-value">13+</div>
+                            <div class="about-stat-label">Years</div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="about-stat-value">500+</div>
+                            <div class="about-stat-label">Clients</div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="about-stat-value">99.9%</div>
+                            <div class="about-stat-label">Uptime</div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="about-stat-value">24/7</div>
+                            <div class="about-stat-label">Support</div>
+                        </div>
+                    </div>
+                </div>
+                <span class="about-visual-text">Established in Orange County</span>
+            </div>
+            <div class="about-text">
+                <h3>Emerging from the void of complexity since 2011</h3>
+                <p>
+                    405Network Inc. was founded with a singular vision: to transform the chaotic landscape
+                    of business IT into something elegant, efficient, and empowering.
+                </p>
+                <p>
+                    Based in Orange County, California, we've spent over a decade helping businesses of all
+                    sizes navigate the ever-evolving technology landscape. Our approach combines deep technical
+                    expertise with a commitment to understanding your unique business needs.
+                </p>
+                <p>
+                    We believe technology should be invisible when it works and immediately responsive when
+                    you need support. That's the 405Network difference.
+                </p>
+                <div class="about-location">
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <span>Orange County, California</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         CONTACT SECTION
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <section class="contact" id="contact">
+        <div class="section-header">
+            <div class="section-label">Get in Touch</div>
+            <h2 class="section-title">Ready to <span class="highlight">Emerge</span>?</h2>
+        </div>
+        <div class="contact-content">
+            <div class="contact-info">
+                <h3>Let's transform your IT</h3>
+                <p>
+                    Whether you're looking to optimize your current infrastructure, migrate to the cloud,
+                    or need reliable ongoing support, we're here to help your business emerge from
+                    technology chaos into clarity.
+                </p>
+                <div class="contact-methods">
+                    <a href="tel:+1234567890" class="contact-method">
+                        <div class="contact-method-icon">
+                            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </div>
+                        <div class="contact-method-text">
+                            <div class="contact-method-label">Phone</div>
+                            <div class="contact-method-value">(949) 555-0405</div>
+                        </div>
+                    </a>
+                    <a href="mailto:info@405network.com" class="contact-method">
+                        <div class="contact-method-icon">
+                            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                        <div class="contact-method-text">
+                            <div class="contact-method-label">Email</div>
+                            <div class="contact-method-value">info@405network.com</div>
+                        </div>
+                    </a>
+                    <div class="contact-method">
+                        <div class="contact-method-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <div class="contact-method-text">
+                            <div class="contact-method-label">Hours</div>
+                            <div class="contact-method-value">24/7 Support Available</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form class="contact-form" id="contact-form">
+                <div class="form-group">
+                    <label class="form-label" for="name">Full Name</label>
+                    <input type="text" id="name" class="form-input" placeholder="John Smith" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="john@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="company">Company Name</label>
+                    <input type="text" id="company" class="form-input" placeholder="Your Company">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="message">Message</label>
+                    <textarea id="message" class="form-textarea" placeholder="Tell us about your IT needs..." required></textarea>
+                </div>
+                <button type="submit" class="form-submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         FOOTER
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h4>405Network Inc.</h4>
+                <p>Information Technology, Reimagined. Enterprise-grade IT solutions for businesses that demand excellence.</p>
+            </div>
+            <div class="footer-links">
+                <h5>Services</h5>
+                <ul>
+                    <li><a href="#services">Support & Communication</a></li>
+                    <li><a href="#services">Device Management</a></li>
+                    <li><a href="#services">Cloud & Admin</a></li>
+                    <li><a href="#services">Infrastructure</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h5>Company</h5>
+                <ul>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h5>Resources</h5>
+                <ul>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Case Studies</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Status Page</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-copyright">
+                &copy; 2024 405Network Inc. All rights reserved.
+            </div>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         JAVASCRIPT - VOID EMERGENCE SYSTEM
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <script>
+        /* ═══════════════════════════════════════════════════════════════════════════
+           VOID EMERGENCE V11 - MAIN JAVASCRIPT
+           Blue Noise Dithering + Particle Emergence from the Infinite Void
+           ═══════════════════════════════════════════════════════════════════════════ */
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // CONFIGURATION
+        // ─────────────────────────────────────────────────────────────────────────────
+        const CONFIG = {
+            colors: {
+                void: 0x000000,
+                matter: 0xffffff,
+                emergence: 0x00ff88
+            },
+            particles: {
+                count: 15000,
+                size: 2,
+                emergenceSpeed: 0.002,
+                noiseScale: 0.003,
+                noiseStrength: 50
+            },
+            cursor: {
+                trailCount: 20,
+                particleCount: 30,
+                lerp: 0.15
+            },
+            loader: {
+                duration: 2500
+            }
+        };
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // STATE MANAGEMENT
+        // ─────────────────────────────────────────────────────────────────────────────
+        const state = {
+            mouse: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+            targetMouse: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+            scroll: 0,
+            loaded: false,
+            time: 0
+        };
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // UTILITY FUNCTIONS
+        // ─────────────────────────────────────────────────────────────────────────────
+        const lerp = (start, end, factor) => start + (end - start) * factor;
+        const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+        const map = (value, inMin, inMax, outMin, outMax) =>
+            ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+
+        // Blue noise hash function
+        const hash = (p) => {
+            const dot = p.x * 127.1 + p.y * 311.7;
+            return (Math.sin(dot) * 43758.5453) % 1;
+        };
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // THREE.JS WEBGL SCENE
+        // ─────────────────────────────────────────────────────────────────────────────
+        class VoidEmergenceScene {
+            constructor() {
+                this.container = document.getElementById('webgl-container');
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+
+                this.init();
+                this.createParticles();
+                this.createShaderMaterial();
+                this.setupEventListeners();
+                this.animate();
+            }
+
+            init() {
+                // Scene
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(CONFIG.colors.void);
+
+                // Camera
+                this.camera = new THREE.PerspectiveCamera(
+                    75,
+                    this.width / this.height,
+                    0.1,
+                    1000
+                );
+                this.camera.position.z = 500;
+
+                // Renderer
+                this.renderer = new THREE.WebGLRenderer({
+                    antialias: true,
+                    alpha: true
+                });
+                this.renderer.setSize(this.width, this.height);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.container.appendChild(this.renderer.domElement);
+            }
+
+            createParticles() {
+                const count = CONFIG.particles.count;
+                this.positions = new Float32Array(count * 3);
+                this.originalPositions = new Float32Array(count * 3);
+                this.velocities = new Float32Array(count * 3);
+                this.emergence = new Float32Array(count);
+
+                for (let i = 0; i < count; i++) {
+                    const i3 = i * 3;
+
+                    // Spread particles in a cube
+                    this.positions[i3] = (Math.random() - 0.5) * 1500;
+                    this.positions[i3 + 1] = (Math.random() - 0.5) * 1500;
+                    this.positions[i3 + 2] = (Math.random() - 0.5) * 800;
+
+                    // Store original positions
+                    this.originalPositions[i3] = this.positions[i3];
+                    this.originalPositions[i3 + 1] = this.positions[i3 + 1];
+                    this.originalPositions[i3 + 2] = this.positions[i3 + 2];
+
+                    // Initial velocities
+                    this.velocities[i3] = (Math.random() - 0.5) * 0.5;
+                    this.velocities[i3 + 1] = (Math.random() - 0.5) * 0.5;
+                    this.velocities[i3 + 2] = (Math.random() - 0.5) * 0.5;
+
+                    // Emergence factor (0 = void, 1 = emerged)
+                    this.emergence[i] = Math.random();
+                }
+
+                this.geometry = new THREE.BufferGeometry();
+                this.geometry.setAttribute('position', new THREE.BufferAttribute(this.positions, 3));
+                this.geometry.setAttribute('emergence', new THREE.BufferAttribute(this.emergence, 1));
+            }
+
+            createShaderMaterial() {
+                // Blue Noise Dithering Shader
+                const vertexShader = `
+                    attribute float emergence;
+                    varying float vEmergence;
+                    varying vec2 vUv;
+                    uniform float uTime;
+                    uniform float uScroll;
+                    uniform vec2 uMouse;
+
+                    // Blue noise hash function
+                    float hash(vec2 p) {
+                        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+                    }
+
+                    // Blue noise function
+                    float blueNoise(vec2 uv, float time) {
+                        float n = hash(uv * 500.0 + time);
+                        n += hash(uv * 250.0 - time * 0.5) * 0.5;
+                        n += hash(uv * 125.0 + time * 0.25) * 0.25;
+                        return n / 1.75;
+                    }
+
+                    void main() {
+                        vEmergence = emergence;
+                        vUv = uv;
+
+                        vec3 pos = position;
+
+                        // Apply blue noise displacement
+                        float noise = blueNoise(position.xy * 0.001, uTime * 0.5);
+
+                        // Mouse influence
+                        vec2 mousePos = uMouse * 2.0 - 1.0;
+                        float mouseDistance = distance(pos.xy * 0.001, mousePos);
+                        float mouseInfluence = smoothstep(0.5, 0.0, mouseDistance) * 50.0;
+
+                        // Emergence animation
+                        float emergenceFactor = smoothstep(0.0, 1.0, emergence + sin(uTime * 0.5 + pos.x * 0.01) * 0.1);
+
+                        // Apply scroll-based movement
+                        pos.y += uScroll * 0.5;
+                        pos.z += sin(uTime * 0.3 + pos.x * 0.01) * 20.0 * emergenceFactor;
+
+                        // Dither effect - particles pop in and out
+                        float dither = step(noise, emergenceFactor);
+                        pos *= mix(0.0, 1.0, dither);
+
+                        // Mouse repulsion
+                        pos.x += mouseInfluence * sin(uTime + pos.y * 0.01);
+                        pos.y += mouseInfluence * cos(uTime + pos.x * 0.01);
+
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        gl_Position = projectionMatrix * mvPosition;
+
+                        // Size attenuation with emergence
+                        float size = ${CONFIG.particles.size.toFixed(1)} * emergenceFactor;
+                        gl_PointSize = size * (300.0 / -mvPosition.z);
+                    }
+                `;
+
+                const fragmentShader = `
+                    varying float vEmergence;
+                    varying vec2 vUv;
+                    uniform float uTime;
+
+                    void main() {
+                        // Circular point shape
+                        vec2 center = gl_PointCoord - vec2(0.5);
+                        float dist = length(center);
+                        if (dist > 0.5) discard;
+
+                        // Emergence color transition
+                        vec3 voidColor = vec3(0.0);
+                        vec3 emergenceColor = vec3(0.0, 1.0, 0.533); // #00FF88
+                        vec3 matterColor = vec3(1.0);
+
+                        // Color based on emergence level
+                        vec3 color = mix(voidColor, emergenceColor, smoothstep(0.0, 0.5, vEmergence));
+                        color = mix(color, matterColor, smoothstep(0.5, 1.0, vEmergence) * 0.3);
+
+                        // Soft edge
+                        float alpha = 1.0 - smoothstep(0.3, 0.5, dist);
+                        alpha *= vEmergence;
+
+                        // Pulsing glow
+                        alpha *= 0.7 + sin(uTime * 2.0 + vEmergence * 10.0) * 0.3;
+
+                        gl_FragColor = vec4(color, alpha);
+                    }
+                `;
+
+                this.material = new THREE.ShaderMaterial({
+                    vertexShader,
+                    fragmentShader,
+                    uniforms: {
+                        uTime: { value: 0 },
+                        uScroll: { value: 0 },
+                        uMouse: { value: new THREE.Vector2(0.5, 0.5) }
+                    },
+                    transparent: true,
+                    depthWrite: false,
+                    blending: THREE.AdditiveBlending
+                });
+
+                this.particles = new THREE.Points(this.geometry, this.material);
+                this.scene.add(this.particles);
+            }
+
+            setupEventListeners() {
+                window.addEventListener('resize', () => this.onResize());
+            }
+
+            onResize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+
+                this.camera.aspect = this.width / this.height;
+                this.camera.updateProjectionMatrix();
+
+                this.renderer.setSize(this.width, this.height);
+            }
+
+            updateParticles(time) {
+                const positions = this.geometry.attributes.position.array;
+                const emergence = this.geometry.attributes.emergence.array;
+
+                for (let i = 0; i < CONFIG.particles.count; i++) {
+                    const i3 = i * 3;
+
+                    // Gradual emergence
+                    emergence[i] = Math.min(1, emergence[i] + CONFIG.particles.emergenceSpeed);
+
+                    // Subtle movement
+                    positions[i3] += Math.sin(time * 0.5 + i * 0.1) * 0.1;
+                    positions[i3 + 1] += Math.cos(time * 0.3 + i * 0.05) * 0.1;
+                }
+
+                this.geometry.attributes.position.needsUpdate = true;
+                this.geometry.attributes.emergence.needsUpdate = true;
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                state.time += 0.01;
+
+                // Update uniforms
+                this.material.uniforms.uTime.value = state.time;
+                this.material.uniforms.uScroll.value = state.scroll;
+                this.material.uniforms.uMouse.value.set(
+                    state.mouse.x / window.innerWidth,
+                    1 - state.mouse.y / window.innerHeight
+                );
+
+                // Update particles
+                this.updateParticles(state.time);
+
+                // Rotate scene slightly
+                this.particles.rotation.y = Math.sin(state.time * 0.1) * 0.1;
+                this.particles.rotation.x = Math.cos(state.time * 0.08) * 0.05;
+
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // CUSTOM CURSOR SYSTEM
+        // ─────────────────────────────────────────────────────────────────────────────
+        class CursorSystem {
+            constructor() {
+                this.main = document.getElementById('cursor-main');
+                this.particlesContainer = document.getElementById('cursor-particles');
+                this.trails = [];
+                this.particles = [];
+                this.history = [];
+
+                this.createTrails();
+                this.createParticles();
+                this.setupEventListeners();
+                this.animate();
+            }
+
+            createTrails() {
+                for (let i = 0; i < CONFIG.cursor.trailCount; i++) {
+                    const trail = document.createElement('div');
+                    trail.className = 'cursor-trail';
+                    trail.style.width = `${6 - i * 0.2}px`;
+                    trail.style.height = `${6 - i * 0.2}px`;
+                    document.body.appendChild(trail);
+                    this.trails.push({
+                        element: trail,
+                        x: window.innerWidth / 2,
+                        y: window.innerHeight / 2
+                    });
+                }
+            }
+
+            createParticles() {
+                for (let i = 0; i < CONFIG.cursor.particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'cursor-particle';
+                    this.particlesContainer.appendChild(particle);
+                    this.particles.push({
+                        element: particle,
+                        x: 0,
+                        y: 0,
+                        vx: 0,
+                        vy: 0,
+                        life: 0,
+                        active: false
+                    });
+                }
+            }
+
+            setupEventListeners() {
+                document.addEventListener('mousemove', (e) => {
+                    state.targetMouse.x = e.clientX;
+                    state.targetMouse.y = e.clientY;
+
+                    // Store history for trail
+                    this.history.unshift({ x: e.clientX, y: e.clientY });
+                    if (this.history.length > 50) this.history.pop();
+
+                    // Spawn particles on movement
+                    this.spawnParticle(e.clientX, e.clientY);
+                });
+
+                // Scale cursor on interactive elements
+                document.querySelectorAll('a, button, input, textarea').forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        this.main.style.transform = 'translate(-50%, -50%) scale(2)';
+                        this.main.style.background = 'transparent';
+                        this.main.style.border = '1px solid var(--emergence)';
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        this.main.style.transform = 'translate(-50%, -50%) scale(1)';
+                        this.main.style.background = 'var(--emergence)';
+                        this.main.style.border = 'none';
+                    });
+                });
+            }
+
+            spawnParticle(x, y) {
+                const particle = this.particles.find(p => !p.active);
+                if (particle) {
+                    particle.x = x;
+                    particle.y = y;
+                    particle.vx = (Math.random() - 0.5) * 4;
+                    particle.vy = (Math.random() - 0.5) * 4;
+                    particle.life = 1;
+                    particle.active = true;
+                }
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                // Lerp main cursor
+                state.mouse.x = lerp(state.mouse.x, state.targetMouse.x, CONFIG.cursor.lerp);
+                state.mouse.y = lerp(state.mouse.y, state.targetMouse.y, CONFIG.cursor.lerp);
+
+                // Update main cursor
+                this.main.style.left = `${state.mouse.x}px`;
+                this.main.style.top = `${state.mouse.y}px`;
+
+                // Update trails
+                this.trails.forEach((trail, i) => {
+                    const historyIndex = Math.floor(i * 2);
+                    if (this.history[historyIndex]) {
+                        trail.x = lerp(trail.x, this.history[historyIndex].x, 0.3);
+                        trail.y = lerp(trail.y, this.history[historyIndex].y, 0.3);
+                    }
+
+                    trail.element.style.left = `${trail.x}px`;
+                    trail.element.style.top = `${trail.y}px`;
+                    trail.element.style.opacity = (1 - i / CONFIG.cursor.trailCount) * 0.5;
+                });
+
+                // Update particles
+                this.particles.forEach(particle => {
+                    if (particle.active) {
+                        particle.x += particle.vx;
+                        particle.y += particle.vy;
+                        particle.life -= 0.02;
+                        particle.vy += 0.1; // Gravity
+
+                        if (particle.life <= 0) {
+                            particle.active = false;
+                        }
+
+                        particle.element.style.left = `${particle.x}px`;
+                        particle.element.style.top = `${particle.y}px`;
+                        particle.element.style.opacity = particle.life;
+                        particle.element.style.transform = `scale(${particle.life})`;
+                    }
+                });
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // GSAP ANIMATIONS
+        // ─────────────────────────────────────────────────────────────────────────────
+        class AnimationSystem {
+            constructor() {
+                gsap.registerPlugin(ScrollTrigger);
+                this.setupScrollAnimations();
+                this.setupHeroAnimations();
+            }
+
+            setupHeroAnimations() {
+                const tl = gsap.timeline({ delay: 0.5 });
+
+                // Badge animation
+                tl.to('.hero-badge', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: 'power3.out'
+                });
+
+                // Title words emergence
+                tl.to('.hero-title-word', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    stagger: 0.2,
+                    ease: 'power4.out'
+                }, '-=0.4');
+
+                // Tagline
+                tl.to('.hero-tagline', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: 'power3.out'
+                }, '-=0.5');
+
+                // CTA buttons
+                tl.to('.hero-cta-group', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: 'power3.out'
+                }, '-=0.4');
+
+                // Scroll indicator
+                tl.to('.hero-scroll', {
+                    opacity: 1,
+                    duration: 0.6,
+                    ease: 'power2.out'
+                }, '-=0.2');
+            }
+
+            setupScrollAnimations() {
+                // Track scroll position
+                ScrollTrigger.create({
+                    trigger: 'body',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    onUpdate: (self) => {
+                        state.scroll = self.progress * 1000;
+                    }
+                });
+
+                // Service cards emergence
+                gsap.utils.toArray('.service-card').forEach((card, i) => {
+                    gsap.to(card, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        delay: i * 0.1,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    });
+                });
+
+                // Pricing cards emergence with scale
+                gsap.utils.toArray('.pricing-card').forEach((card, i) => {
+                    gsap.to(card, {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        duration: 0.8,
+                        delay: i * 0.15,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    });
+                });
+
+                // Section headers
+                gsap.utils.toArray('.section-header').forEach(header => {
+                    gsap.from(header, {
+                        opacity: 0,
+                        y: 50,
+                        duration: 1,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: header,
+                            start: 'top 80%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    });
+                });
+
+                // About section parallax
+                gsap.to('.about-visual-year', {
+                    y: -100,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: '.about',
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 1
+                    }
+                });
+
+                // Stats counter animation
+                gsap.utils.toArray('.about-stat-value').forEach(stat => {
+                    const value = stat.textContent;
+                    const isPercent = value.includes('%');
+                    const isPlus = value.includes('+');
+                    const numValue = parseFloat(value);
+
+                    gsap.from(stat, {
+                        textContent: 0,
+                        duration: 2,
+                        ease: 'power2.out',
+                        snap: { textContent: isPercent ? 0.1 : 1 },
+                        scrollTrigger: {
+                            trigger: stat,
+                            start: 'top 80%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        onUpdate: function() {
+                            const current = Math.round(this.targets()[0].textContent);
+                            if (isPercent) {
+                                stat.textContent = current + '%';
+                            } else if (isPlus) {
+                                stat.textContent = current + '+';
+                            } else if (value.includes('/')) {
+                                stat.textContent = '24/7';
+                            }
+                        }
+                    });
+                });
+
+                // Contact form emergence
+                gsap.from('.contact-form', {
+                    opacity: 0,
+                    x: 50,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: '.contact-form',
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+
+                gsap.from('.contact-info', {
+                    opacity: 0,
+                    x: -50,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: '.contact-info',
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+
+                // Contact methods stagger
+                gsap.from('.contact-method', {
+                    opacity: 0,
+                    y: 30,
+                    duration: 0.6,
+                    stagger: 0.15,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: '.contact-methods',
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // LOADING SYSTEM
+        // ─────────────────────────────────────────────────────────────────────────────
+        class LoadingSystem {
+            constructor(onComplete) {
+                this.loader = document.getElementById('loader');
+                this.loaderBar = document.getElementById('loader-bar');
+                this.loaderProgress = document.getElementById('loader-progress');
+                this.onComplete = onComplete;
+                this.progress = 0;
+
+                this.simulate();
+            }
+
+            simulate() {
+                const interval = setInterval(() => {
+                    this.progress += Math.random() * 15;
+                    this.progress = Math.min(this.progress, 100);
+
+                    this.loaderBar.style.setProperty('--progress', `${this.progress}%`);
+                    this.loaderBar.querySelector('::after') ||
+                        (this.loaderBar.style.cssText = `--progress: ${this.progress}%`);
+
+                    // Manually update the bar width
+                    const afterElement = this.loaderBar;
+                    afterElement.style.background = `linear-gradient(90deg, var(--emergence) ${this.progress}%, rgba(255,255,255,0.1) ${this.progress}%)`;
+
+                    this.loaderProgress.textContent = `${Math.round(this.progress)}%`;
+
+                    if (this.progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => this.complete(), 500);
+                    }
+                }, 100);
+            }
+
+            complete() {
+                gsap.to(this.loader, {
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: 'power2.inOut',
+                    onComplete: () => {
+                        this.loader.style.display = 'none';
+                        this.onComplete();
+                    }
+                });
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // SMOOTH SCROLL
+        // ─────────────────────────────────────────────────────────────────────────────
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    gsap.to(window, {
+                        duration: 1,
+                        scrollTo: {
+                            y: target,
+                            offsetY: 100
+                        },
+                        ease: 'power3.inOut'
+                    });
+                }
+            });
+        });
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // FORM HANDLING
+        // ─────────────────────────────────────────────────────────────────────────────
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const button = this.querySelector('.form-submit');
+            const originalText = button.textContent;
+
+            button.textContent = 'Sending...';
+            button.disabled = true;
+
+            // Simulate form submission
+            setTimeout(() => {
+                button.textContent = 'Message Sent!';
+                button.style.background = 'var(--emergence)';
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                    this.reset();
+                }, 2000);
+            }, 1500);
+        });
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // INITIALIZATION
+        // ─────────────────────────────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize loading system first
+            new LoadingSystem(() => {
+                state.loaded = true;
+
+                // Initialize main systems after loading
+                new VoidEmergenceScene();
+                new CursorSystem();
+                new AnimationSystem();
+            });
+        });
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // PERFORMANCE OPTIMIZATION
+        // ─────────────────────────────────────────────────────────────────────────────
+        // Throttle scroll events
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    state.scroll = window.scrollY;
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        // Reduce motion for accessibility
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            gsap.globalTimeline.timeScale(0);
+        }
+
+        // ─────────────────────────────────────────────────────────────────────────────
+        // CONSOLE BRANDING
+        // ─────────────────────────────────────────────────────────────────────────────
+        console.log(
+            '%c405Network Inc.%c\nVOID EMERGENCE V11\nInformation Technology, Reimagined',
+            'color: #00FF88; font-size: 24px; font-weight: bold; text-shadow: 0 0 10px #00FF88;',
+            'color: #fff; font-size: 12px;'
+        );
+    </script>
+</body>
+</html>
