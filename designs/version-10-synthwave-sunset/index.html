@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --space-purple: #1a0a2e;
+            --deep-purple: #0d0518;
+            --magenta: #ff2d95;
+            --orange: #ff7849;
+            --yellow: #ffd319;
+            --cyan: #00ffff;
+            --hot-pink: #ff6ec7;
+            --violet: #9b4dca;
+            --grid-color: rgba(255, 45, 149, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Custom Gradient Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--deep-purple);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--magenta), var(--orange), var(--yellow));
+            border-radius: 6px;
+            border: 2px solid var(--deep-purple);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--cyan), var(--magenta), var(--orange));
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-color: var(--magenta) var(--deep-purple);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--deep-purple);
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* CRT Scanlines Overlay */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            animation: scanline-flicker 0.1s infinite;
+        }
+
+        @keyframes scanline-flicker {
+            0%, 100% { opacity: 0.95; }
+            50% { opacity: 1; }
+        }
+
+        /* Animated Sunset Gradient Background */
+        .sunset-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background: linear-gradient(
+                180deg,
+                var(--space-purple) 0%,
+                #2d1b4e 15%,
+                #4a1942 30%,
+                var(--magenta) 50%,
+                var(--orange) 70%,
+                var(--yellow) 90%,
+                #fff5a0 100%
+            );
+            background-size: 100% 200%;
+            animation: sunset-pulse 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes sunset-pulse {
+            0% { background-position: 0% 0%; filter: saturate(1); }
+            50% { background-position: 0% 30%; filter: saturate(1.2); }
+            100% { background-position: 0% 0%; filter: saturate(1.1); }
+        }
+
+        /* Sun Element */
+        .sun {
+            position: fixed;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, var(--yellow) 0%, var(--orange) 40%, var(--magenta) 100%);
+            box-shadow:
+                0 0 60px var(--orange),
+                0 0 120px var(--magenta),
+                0 0 200px rgba(255, 45, 149, 0.5);
+            z-index: -2;
+            animation: sun-glow 4s ease-in-out infinite alternate;
+            clip-path: polygon(
+                0% 0%, 100% 0%, 100% 15%, 0% 15%,
+                0% 25%, 100% 25%, 100% 35%, 0% 35%,
+                0% 45%, 100% 45%, 100% 55%, 0% 55%,
+                0% 65%, 100% 65%, 100% 100%, 0% 100%
+            );
+        }
+
+        @keyframes sun-glow {
+            0% {
+                box-shadow: 0 0 60px var(--orange), 0 0 120px var(--magenta), 0 0 200px rgba(255, 45, 149, 0.5);
+                transform: translateX(-50%) scale(1);
+            }
+            100% {
+                box-shadow: 0 0 80px var(--yellow), 0 0 160px var(--orange), 0 0 240px rgba(255, 120, 73, 0.6);
+                transform: translateX(-50%) scale(1.02);
+            }
+        }
+
+        /* Perspective Grid Horizon */
+        .grid-horizon {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200%;
+            height: 50%;
+            z-index: -1;
+            perspective: 500px;
+            overflow: hidden;
+        }
+
+        .grid-floor {
+            position: absolute;
+            bottom: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background-image:
+                linear-gradient(var(--grid-color) 2px, transparent 2px),
+                linear-gradient(90deg, var(--grid-color) 2px, transparent 2px);
+            background-size: 80px 40px;
+            transform: rotateX(60deg);
+            transform-origin: center bottom;
+            animation: grid-scroll 2s linear infinite;
+        }
+
+        @keyframes grid-scroll {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 40px; }
+        }
+
+        .grid-glow {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to top,
+                rgba(255, 45, 149, 0.3) 0%,
+                transparent 50%
+            );
+        }
+
+        /* Floating Geometric Shapes */
+        .shapes-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.6;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 70px solid var(--cyan);
+            filter: drop-shadow(0 0 20px var(--cyan));
+            animation: float 18s ease-in-out infinite, rotate-slow 25s linear infinite;
+        }
+
+        .circle {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--magenta);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--magenta), inset 0 0 20px rgba(255, 45, 149, 0.3);
+            animation: float 22s ease-in-out infinite reverse, pulse-glow 3s ease-in-out infinite;
+        }
+
+        .diamond {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--orange), var(--yellow));
+            transform: rotate(45deg);
+            box-shadow: 0 0 30px var(--orange);
+            animation: float 20s ease-in-out infinite, rotate-slow 30s linear infinite reverse;
+        }
+
+        .hexagon {
+            width: 60px;
+            height: 35px;
+            background: var(--hot-pink);
+            position: relative;
+            box-shadow: 0 0 25px var(--hot-pink);
+            animation: float 24s ease-in-out infinite;
+        }
+
+        .hexagon::before,
+        .hexagon::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+        }
+
+        .hexagon::before {
+            bottom: 100%;
+            border-bottom: 17px solid var(--hot-pink);
+        }
+
+        .hexagon::after {
+            top: 100%;
+            border-top: 17px solid var(--hot-pink);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-30px) translateX(15px); }
+            50% { transform: translateY(-15px) translateX(-10px); }
+            75% { transform: translateY(-40px) translateX(20px); }
+        }
+
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px var(--magenta), inset 0 0 20px rgba(255, 45, 149, 0.3); }
+            50% { box-shadow: 0 0 40px var(--magenta), inset 0 0 30px rgba(255, 45, 149, 0.5); }
+        }
+
+        /* Shape Positions */
+        .shape-1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .shape-2 { top: 20%; right: 10%; animation-delay: -5s; }
+        .shape-3 { top: 40%; left: 8%; animation-delay: -10s; }
+        .shape-4 { top: 15%; left: 30%; animation-delay: -3s; }
+        .shape-5 { top: 30%; right: 5%; animation-delay: -7s; }
+        .shape-6 { top: 5%; right: 25%; animation-delay: -12s; }
+        .shape-7 { top: 25%; left: 15%; animation-delay: -15s; }
+        .shape-8 { top: 8%; left: 50%; animation-delay: -8s; }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(13, 5, 24, 0.9) 0%, transparent 100%);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--cyan);
+            text-decoration: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--magenta), var(--orange));
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--magenta);
+        }
+
+        .nav-links a:hover {
+            color: var(--magenta);
+            text-shadow: 0 0 20px var(--magenta);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 60px;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #fff 0%, var(--cyan) 50%, var(--magenta) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: title-glow 3s ease-in-out infinite alternate;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        @keyframes title-glow {
+            0% { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5)); }
+            100% { filter: drop-shadow(0 0 40px rgba(255, 45, 149, 0.8)); }
+        }
+
+        .hero .tagline {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: var(--yellow);
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--yellow);
+            letter-spacing: 3px;
+        }
+
+        .hero .location {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            color: var(--cyan);
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        .hero .location span {
+            color: var(--magenta);
+        }
+
+        /* Neon Glow Buttons */
+        .neon-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 18px 45px;
+            border: 2px solid var(--cyan);
+            background: transparent;
+            color: var(--cyan);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 0 20px rgba(0, 255, 255, 0.3),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .neon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .neon-btn:hover {
+            background: var(--cyan);
+            color: var(--deep-purple);
+            box-shadow:
+                0 0 40px var(--cyan),
+                0 0 80px rgba(0, 255, 255, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .neon-btn:hover::before {
+            left: 100%;
+        }
+
+        .neon-btn.magenta {
+            border-color: var(--magenta);
+            color: var(--magenta);
+            box-shadow:
+                0 0 20px rgba(255, 45, 149, 0.3),
+                inset 0 0 20px rgba(255, 45, 149, 0.1);
+        }
+
+        .neon-btn.magenta:hover {
+            background: var(--magenta);
+            color: #fff;
+            box-shadow:
+                0 0 40px var(--magenta),
+                0 0 80px rgba(255, 45, 149, 0.5);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 100px 40px;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 150px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            margin: 20px auto 0;
+            box-shadow: 0 0 15px var(--magenta);
+        }
+
+        /* Services Section */
+        .services {
+            background: linear-gradient(180deg, rgba(13, 5, 24, 0.9) 0%, rgba(26, 10, 46, 0.8) 100%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, rgba(26, 10, 46, 0.9) 0%, rgba(13, 5, 24, 0.9) 100%);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(0, 255, 255, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--cyan);
+            box-shadow:
+                0 0 30px rgba(0, 255, 255, 0.3),
+                0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            display: block;
+            filter: drop-shadow(0 0 20px currentColor);
+        }
+
+        .service-card:nth-child(1) .service-icon { color: var(--cyan); }
+        .service-card:nth-child(2) .service-icon { color: var(--magenta); }
+        .service-card:nth-child(3) .service-icon { color: var(--orange); }
+        .service-card:nth-child(4) .service-icon { color: var(--yellow); }
+
+        .service-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .service-card p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.7;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            background: linear-gradient(180deg, rgba(26, 10, 46, 0.8) 0%, rgba(13, 5, 24, 0.95) 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: linear-gradient(180deg, rgba(26, 10, 46, 0.95) 0%, rgba(13, 5, 24, 0.95) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .pricing-card.silver { border-color: #c0c0c0; }
+        .pricing-card.gold { border-color: var(--yellow); }
+        .pricing-card.platinum { border-color: var(--cyan); }
+
+        .pricing-card.featured {
+            transform: scale(1.05);
+            border-width: 3px;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-15px) scale(1.02);
+        }
+
+        .pricing-card.featured:hover {
+            transform: translateY(-15px) scale(1.07);
+        }
+
+        .tier-badge {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 8px 20px;
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .silver .tier-badge {
+            background: linear-gradient(90deg, #a8a8a8, #e0e0e0, #a8a8a8);
+            color: #333;
+        }
+
+        .gold .tier-badge {
+            background: linear-gradient(90deg, var(--orange), var(--yellow), var(--orange));
+            color: #333;
+            box-shadow: 0 0 20px rgba(255, 211, 25, 0.5);
+        }
+
+        .platinum .tier-badge {
+            background: linear-gradient(90deg, var(--cyan), #fff, var(--cyan));
+            color: var(--deep-purple);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+        }
+
+        .pricing-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 30px 0 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .silver h3 { color: #c0c0c0; text-shadow: 0 0 20px rgba(192, 192, 192, 0.5); }
+        .gold h3 { color: var(--yellow); text-shadow: 0 0 20px rgba(255, 211, 25, 0.5); }
+        .platinum h3 { color: var(--cyan); text-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+
+        .price {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin: 20px 0;
+        }
+
+        .silver .price { color: #e0e0e0; }
+        .gold .price {
+            background: linear-gradient(180deg, var(--yellow), var(--orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .platinum .price {
+            background: linear-gradient(180deg, #fff, var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .price span {
+            font-size: 1.2rem;
+            font-weight: 400;
+            opacity: 0.7;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .pricing-features li::before {
+            content: '>';
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: bold;
+        }
+
+        .silver .pricing-features li::before { color: #c0c0c0; }
+        .gold .pricing-features li::before { color: var(--yellow); }
+        .platinum .pricing-features li::before { color: var(--cyan); }
+
+        .pricing-card .neon-btn {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .silver .neon-btn {
+            border-color: #c0c0c0;
+            color: #c0c0c0;
+            box-shadow: 0 0 20px rgba(192, 192, 192, 0.2);
+        }
+
+        .silver .neon-btn:hover {
+            background: #c0c0c0;
+            color: var(--deep-purple);
+            box-shadow: 0 0 40px rgba(192, 192, 192, 0.5);
+        }
+
+        .gold .neon-btn {
+            border-color: var(--yellow);
+            color: var(--yellow);
+            box-shadow: 0 0 20px rgba(255, 211, 25, 0.3);
+        }
+
+        .gold .neon-btn:hover {
+            background: linear-gradient(90deg, var(--yellow), var(--orange));
+            color: var(--deep-purple);
+            box-shadow: 0 0 40px rgba(255, 211, 25, 0.6);
+        }
+
+        /* Contact Section */
+        .contact {
+            background: linear-gradient(180deg, rgba(13, 5, 24, 0.95) 0%, var(--deep-purple) 100%);
+            text-align: center;
+        }
+
+        .contact-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .contact-intro {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 50px;
+            line-height: 1.8;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .contact-item {
+            text-align: center;
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .contact-item:nth-child(1) .contact-icon { color: var(--cyan); filter: drop-shadow(0 0 15px var(--cyan)); }
+        .contact-item:nth-child(2) .contact-icon { color: var(--magenta); filter: drop-shadow(0 0 15px var(--magenta)); }
+        .contact-item:nth-child(3) .contact-icon { color: var(--yellow); filter: drop-shadow(0 0 15px var(--yellow)); }
+
+        .contact-item h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .contact-item p, .contact-item a {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item a:hover {
+            color: var(--cyan);
+            text-shadow: 0 0 10px var(--cyan);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--deep-purple);
+            border-top: 1px solid rgba(255, 45, 149, 0.3);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-year {
+            color: var(--cyan);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .nav-links a {
+                font-size: 0.8rem;
+            }
+
+            section {
+                padding: 60px 20px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .neon-btn {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .pricing-card.featured:hover {
+                transform: translateY(-10px) scale(1);
+            }
+
+            .sun {
+                width: 200px;
+                height: 200px;
+                bottom: 20%;
+            }
+        }
+
+        /* Glitch Effect for Logo on Hover */
+        .logo:hover {
+            animation: glitch 0.3s ease;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* VHS Tracking Effect */
+        .vhs-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            z-index: 9998;
+            animation: vhs-track 8s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes vhs-track {
+            0% { top: -10px; opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { top: 100vh; opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- CRT Scanlines Overlay -->
+    <div class="scanlines"></div>
+
+    <!-- VHS Tracking Line -->
+    <div class="vhs-line"></div>
+
+    <!-- Animated Sunset Background -->
+    <div class="sunset-bg"></div>
+
+    <!-- Synthwave Sun -->
+    <div class="sun"></div>
+
+    <!-- Perspective Grid Horizon -->
+    <div class="grid-horizon">
+        <div class="grid-floor"></div>
+        <div class="grid-glow"></div>
+    </div>
+
+    <!-- Floating Geometric Shapes -->
+    <div class="shapes-container">
+        <div class="shape triangle shape-1"></div>
+        <div class="shape circle shape-2"></div>
+        <div class="shape diamond shape-3"></div>
+        <div class="shape hexagon shape-4"></div>
+        <div class="shape triangle shape-5"></div>
+        <div class="shape circle shape-6"></div>
+        <div class="shape diamond shape-7"></div>
+        <div class="shape triangle shape-8"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">405NETWORK</div>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>405Network</h1>
+                <p class="tagline">Information Technology, Reimagined</p>
+                <p class="location">Orange County, CA <span>//</span> Est. 2011</p>
+                <div class="hero-buttons">
+                    <a href="#pricing" class="neon-btn">Get Started</a>
+                    <a href="#services" class="neon-btn magenta">Our Services</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <span class="service-icon">&#9743;</span>
+                    <h3>Support & Communication</h3>
+                    <p>24/7 technical support with rapid response times. Multi-channel communication solutions including VoIP, unified messaging, and collaboration platforms.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">&#9881;</span>
+                    <h3>Device Management</h3>
+                    <p>Comprehensive MDM solutions for all endpoints. Automated deployment, security policies, and seamless updates across your entire device fleet.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">&#9729;</span>
+                    <h3>Cloud & Admin</h3>
+                    <p>Full cloud infrastructure management. Microsoft 365, Google Workspace, and hybrid cloud solutions with expert administration.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">&#9000;</span>
+                    <h3>Infrastructure</h3>
+                    <p>Network design, implementation, and maintenance. Servers, storage, security, and disaster recovery built for the future.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="pricing">
+            <h2 class="section-title">Pricing Tiers</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card silver">
+                    <span class="tier-badge">Silver</span>
+                    <h3>Silver</h3>
+                    <div class="price">$49<span>/user/mo</span></div>
+                    <ul class="pricing-features">
+                        <li>Email & Chat Support</li>
+                        <li>Basic Device Management</li>
+                        <li>Cloud Email Hosting</li>
+                        <li>Security Monitoring</li>
+                        <li>Monthly Reports</li>
+                    </ul>
+                    <a href="#contact" class="neon-btn">Select Plan</a>
+                </div>
+                <div class="pricing-card gold featured">
+                    <span class="tier-badge">Most Popular</span>
+                    <h3>Gold</h3>
+                    <div class="price">$79<span>/user/mo</span></div>
+                    <ul class="pricing-features">
+                        <li>Priority Phone Support</li>
+                        <li>Advanced MDM Suite</li>
+                        <li>Full Cloud Management</li>
+                        <li>Threat Detection & Response</li>
+                        <li>Weekly Reports & Analytics</li>
+                        <li>VoIP Solutions</li>
+                    </ul>
+                    <a href="#contact" class="neon-btn">Select Plan</a>
+                </div>
+                <div class="pricing-card platinum">
+                    <span class="tier-badge">Platinum</span>
+                    <h3>Platinum</h3>
+                    <div class="price">$129<span>/user/mo</span></div>
+                    <ul class="pricing-features">
+                        <li>24/7 Dedicated Support</li>
+                        <li>Enterprise Device Fleet</li>
+                        <li>Hybrid Cloud Architecture</li>
+                        <li>Advanced Security Suite</li>
+                        <li>Real-Time Monitoring</li>
+                        <li>Custom Infrastructure</li>
+                        <li>Disaster Recovery</li>
+                    </ul>
+                    <a href="#contact" class="neon-btn">Select Plan</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <h2 class="section-title">Connect With Us</h2>
+            <div class="contact-content">
+                <p class="contact-intro">Ready to reimagine your IT infrastructure? Let's build the future together.</p>
+                <div class="contact-grid">
+                    <div class="contact-item">
+                        <span class="contact-icon">&#9993;</span>
+                        <h4>Email</h4>
+                        <a href="mailto:info@405network.com">info@405network.com</a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">&#9742;</span>
+                        <h4>Phone</h4>
+                        <a href="tel:+17145551234">(714) 555-1234</a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">&#9906;</span>
+                        <h4>Location</h4>
+                        <p>Orange County, CA</p>
+                    </div>
+                </div>
+                <a href="mailto:info@405network.com" class="neon-btn">Start Your Journey</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">405NETWORK</div>
+        <p class="footer-text">&copy; <span class="footer-year">2025</span> 405Network Inc. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Parallax effect for floating shapes
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.shape');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.5;
+                const xOffset = (x - 0.5) * speed * 30;
+                const yOffset = (y - 0.5) * speed * 30;
+                shape.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            });
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe service and pricing cards
+        document.querySelectorAll('.service-card, .pricing-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Dynamic year update
+        document.querySelector('.footer-year').textContent = new Date().getFullYear();
+
+        // Add glowing cursor trail effect
+        const cursor = document.createElement('div');
+        cursor.style.cssText = `
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.6), transparent);
+            pointer-events: none;
+            z-index: 9997;
+            transition: transform 0.1s ease;
+            mix-blend-mode: screen;
+        `;
+        document.body.appendChild(cursor);
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+        });
+
+        // Random VHS glitch effect
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                document.body.style.transform = `translateX(${(Math.random() - 0.5) * 4}px)`;
+                setTimeout(() => {
+                    document.body.style.transform = 'translateX(0)';
+                }, 50);
+            }
+        }, 100);
+    </script>
+</body>
+</html>

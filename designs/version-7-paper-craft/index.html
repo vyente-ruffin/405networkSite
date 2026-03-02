@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Courier+Prime:wght@400;700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #FDF6E3;
+            --cream-dark: #F5ECD3;
+            --rust: #D35400;
+            --rust-light: #E67E22;
+            --forest: #27AE60;
+            --forest-dark: #1E8449;
+            --navy: #2C3E50;
+            --navy-light: #34495E;
+            --shadow-hard: 8px 8px 0px var(--navy);
+            --shadow-pressed: 2px 2px 0px var(--navy);
+            --shadow-lift: 12px 12px 0px var(--navy);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Paper airplane cursor */
+        html {
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%232C3E50' d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/%3E%3C/svg%3E") 0 12, auto;
+        }
+
+        a, button, .btn {
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'%3E%3Cpath fill='%23D35400' d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/%3E%3C/svg%3E") 0 12, pointer;
+        }
+
+        body {
+            font-family: 'Karla', sans-serif;
+            background-color: var(--cream);
+            color: var(--navy);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Checkerboard pattern background */
+        .checkerboard {
+            background-image:
+                linear-gradient(45deg, var(--cream-dark) 25%, transparent 25%),
+                linear-gradient(-45deg, var(--cream-dark) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, var(--cream-dark) 75%),
+                linear-gradient(-45deg, transparent 75%, var(--cream-dark) 75%);
+            background-size: 40px 40px;
+            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+        }
+
+        /* Text stroke utility */
+        .text-stroke {
+            -webkit-text-stroke: 2px var(--navy);
+            color: transparent;
+        }
+
+        .text-stroke-rust {
+            -webkit-text-stroke: 2px var(--rust);
+            color: transparent;
+        }
+
+        /* Neo-brutalist button */
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 4px solid var(--navy);
+            background: var(--rust);
+            color: var(--cream);
+            box-shadow: var(--shadow-hard);
+            transition: all 0.1s ease;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .btn:hover {
+            background: var(--rust-light);
+        }
+
+        .btn:active {
+            box-shadow: var(--shadow-pressed);
+            transform: translate(6px, 6px);
+        }
+
+        .btn-forest {
+            background: var(--forest);
+        }
+
+        .btn-forest:hover {
+            background: var(--forest-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--navy);
+        }
+
+        .btn-outline:hover {
+            background: var(--navy);
+            color: var(--cream);
+        }
+
+        /* Paper card effect */
+        .paper-card {
+            background: var(--cream);
+            border: 4px solid var(--navy);
+            box-shadow: var(--shadow-hard);
+            transition: all 0.3s ease;
+        }
+
+        .paper-card:hover {
+            box-shadow: var(--shadow-lift);
+            transform: translate(-4px, -4px);
+        }
+
+        /* Folded corner effect */
+        .folded-corner {
+            position: relative;
+        }
+
+        .folded-corner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, transparent 50%, var(--navy) 50%);
+        }
+
+        .folded-corner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, transparent 50%, var(--cream-dark) 50%);
+            transform: translate(-4px, 4px);
+        }
+
+        /* Scroll reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px) rotateX(-10deg);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) rotateX(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-100px) rotate(-5deg);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-left.visible {
+            opacity: 1;
+            transform: translateX(0) rotate(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(100px) rotate(5deg);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-right.visible {
+            opacity: 1;
+            transform: translateX(0) rotate(0);
+        }
+
+        /* Stagger delays */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+
+        /* ============================================
+           NAVIGATION
+        ============================================ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--cream);
+            border-bottom: 4px solid var(--navy);
+        }
+
+        .logo {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 1.5rem;
+            color: var(--navy);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--rust);
+            border: 3px solid var(--navy);
+            box-shadow: 4px 4px 0px var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--cream);
+            transform: rotate(-3deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: var(--navy);
+            padding: 12px 20px;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a:hover {
+            border-color: var(--navy);
+            background: var(--cream-dark);
+            box-shadow: 4px 4px 0px var(--navy);
+            transform: translate(-2px, -2px);
+        }
+
+        /* ============================================
+           HERO SECTION
+        ============================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 40px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(45deg, var(--cream-dark) 25%, transparent 25%),
+                linear-gradient(-45deg, var(--cream-dark) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, var(--cream-dark) 75%),
+                linear-gradient(-45deg, transparent 75%, var(--cream-dark) 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+            opacity: 0.5;
+        }
+
+        /* Floating paper elements */
+        .paper-float {
+            position: absolute;
+            background: var(--cream);
+            border: 3px solid var(--navy);
+            box-shadow: 6px 6px 0px var(--navy);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .paper-float-1 {
+            width: 80px;
+            height: 100px;
+            top: 20%;
+            right: 10%;
+            transform: rotate(15deg);
+            animation-delay: 0s;
+        }
+
+        .paper-float-2 {
+            width: 60px;
+            height: 80px;
+            top: 60%;
+            right: 15%;
+            transform: rotate(-10deg);
+            animation-delay: 2s;
+        }
+
+        .paper-float-3 {
+            width: 100px;
+            height: 60px;
+            top: 40%;
+            left: 5%;
+            transform: rotate(5deg);
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(var(--rotation, 0deg)); }
+            50% { transform: translateY(-20px) rotate(calc(var(--rotation, 0deg) + 3deg)); }
+        }
+
+        .paper-float-1 { --rotation: 15deg; }
+        .paper-float-2 { --rotation: -10deg; }
+        .paper-float-3 { --rotation: 5deg; }
+
+        .hero-content {
+            max-width: 900px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            padding: 8px 16px;
+            background: var(--forest);
+            color: var(--cream);
+            border: 3px solid var(--navy);
+            box-shadow: 4px 4px 0px var(--navy);
+            margin-bottom: 24px;
+            transform: rotate(-2deg);
+        }
+
+        .hero h1 {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 0.95;
+            margin-bottom: 8px;
+            color: var(--navy);
+        }
+
+        .hero h1 .outline {
+            display: block;
+            -webkit-text-stroke: 3px var(--navy);
+            color: transparent;
+        }
+
+        .hero-tagline {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--rust);
+            margin-bottom: 24px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-tagline::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--navy) 0px,
+                var(--navy) 8px,
+                transparent 8px,
+                transparent 16px
+            );
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin-bottom: 40px;
+            color: var(--navy-light);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hero-location {
+            margin-top: 60px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+        }
+
+        .location-pin {
+            width: 40px;
+            height: 40px;
+            background: var(--cream);
+            border: 3px solid var(--navy);
+            box-shadow: 4px 4px 0px var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* ============================================
+           SERVICES SECTION
+        ============================================ */
+        .services {
+            padding: 100px 40px;
+            background: var(--navy);
+            position: relative;
+        }
+
+        .services::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--cream) 0px,
+                var(--cream) 20px,
+                var(--navy) 20px,
+                var(--navy) 40px
+            );
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            color: var(--cream);
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--cream);
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: var(--cream);
+            border: 4px solid var(--navy);
+            padding: 40px 32px;
+            position: relative;
+            box-shadow: 12px 12px 0px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, transparent 50%, var(--cream-dark) 50%);
+            border: 4px solid var(--navy);
+            border-top: none;
+            border-right: none;
+        }
+
+        .service-card:hover {
+            transform: translate(-8px, -8px);
+            box-shadow: 20px 20px 0px rgba(0,0,0,0.3);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--rust);
+            border: 4px solid var(--navy);
+            box-shadow: 6px 6px 0px var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 24px;
+            transform: rotate(-3deg);
+        }
+
+        .service-card:nth-child(2) .service-icon {
+            background: var(--forest);
+            transform: rotate(3deg);
+        }
+
+        .service-card:nth-child(3) .service-icon {
+            background: var(--navy);
+            color: var(--cream);
+            transform: rotate(-5deg);
+        }
+
+        .service-card:nth-child(4) .service-icon {
+            background: var(--rust-light);
+            transform: rotate(2deg);
+        }
+
+        .service-card h3 {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 1.5rem;
+            color: var(--navy);
+            margin-bottom: 12px;
+        }
+
+        .service-card p {
+            font-size: 1rem;
+            color: var(--navy-light);
+            margin-bottom: 20px;
+        }
+
+        .service-link {
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--rust);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: gap 0.2s ease;
+        }
+
+        .service-link:hover {
+            gap: 16px;
+        }
+
+        /* ============================================
+           PRICING SECTION
+        ============================================ */
+        .pricing {
+            padding: 100px 40px;
+            background: var(--cream);
+            position: relative;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .pricing-header h2 {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            color: var(--navy);
+            margin-bottom: 16px;
+        }
+
+        .pricing-header .outline-text {
+            display: block;
+            -webkit-text-stroke: 3px var(--navy);
+            color: transparent;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--cream);
+            border: 4px solid var(--navy);
+            box-shadow: 12px 12px 0px var(--navy);
+            padding: 40px 32px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translate(-6px, -6px);
+            box-shadow: 18px 18px 0px var(--navy);
+        }
+
+        .pricing-card.featured {
+            background: var(--navy);
+            color: var(--cream);
+            transform: scale(1.05) rotate(-1deg);
+            z-index: 2;
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) rotate(-1deg) translate(-6px, -6px);
+        }
+
+        .pricing-tier {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            padding: 8px 16px;
+            background: var(--forest);
+            color: var(--cream);
+            border: 3px solid var(--navy);
+            box-shadow: 4px 4px 0px var(--navy);
+            display: inline-block;
+            margin-bottom: 24px;
+            transform: rotate(-2deg);
+        }
+
+        .pricing-card.featured .pricing-tier {
+            background: var(--rust);
+        }
+
+        .pricing-price {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .pricing-price span {
+            font-size: 1.5rem;
+            vertical-align: top;
+        }
+
+        .pricing-unit {
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
+            opacity: 0.7;
+            margin-bottom: 32px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 2px dashed;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pricing-card:not(.featured) .pricing-features li {
+            border-color: var(--navy);
+        }
+
+        .pricing-card.featured .pricing-features li {
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--forest);
+            border: 2px solid var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--cream);
+            flex-shrink: 0;
+        }
+
+        .pricing-card.featured .check-icon {
+            background: var(--rust);
+            border-color: var(--cream);
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        .pricing-card.featured .btn {
+            background: var(--cream);
+            color: var(--navy);
+        }
+
+        .pricing-card.featured .btn:hover {
+            background: var(--cream-dark);
+        }
+
+        /* ============================================
+           CONTACT SECTION
+        ============================================ */
+        .contact {
+            padding: 100px 40px;
+            background: var(--rust);
+            position: relative;
+        }
+
+        .contact::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--cream) 0px,
+                var(--cream) 20px,
+                var(--rust) 20px,
+                var(--rust) 40px
+            );
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .contact-content h2 {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            color: var(--cream);
+            margin-bottom: 24px;
+            line-height: 1.1;
+        }
+
+        .contact-content p {
+            font-size: 1.2rem;
+            color: var(--cream);
+            opacity: 0.9;
+            margin-bottom: 32px;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
+            color: var(--cream);
+        }
+
+        .contact-item-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--cream);
+            border: 3px solid var(--navy);
+            box-shadow: 4px 4px 0px var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .contact-form-wrapper {
+            background: var(--cream);
+            border: 4px solid var(--navy);
+            box-shadow: 12px 12px 0px var(--navy);
+            padding: 40px;
+            position: relative;
+        }
+
+        .contact-form-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, transparent 50%, var(--cream-dark) 50%);
+            border: 4px solid var(--navy);
+            border-top: none;
+            border-right: none;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            color: var(--navy);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 16px;
+            font-family: 'Karla', sans-serif;
+            font-size: 1rem;
+            border: 3px solid var(--navy);
+            background: var(--cream);
+            color: var(--navy);
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: 4px 4px 0px var(--navy);
+            transform: translate(-2px, -2px);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* ============================================
+           FOOTER
+        ============================================ */
+        footer {
+            padding: 60px 40px;
+            background: var(--navy);
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 2rem;
+            color: var(--cream);
+            margin-bottom: 24px;
+            display: inline-block;
+        }
+
+        .footer-tagline {
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
+            color: var(--cream);
+            opacity: 0.7;
+            margin-bottom: 32px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            color: var(--cream);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--rust);
+        }
+
+        .footer-copyright {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.85rem;
+            color: var(--cream);
+            opacity: 0.5;
+        }
+
+        .footer-paper-strip {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--rust) 0px,
+                var(--rust) 16px,
+                var(--forest) 16px,
+                var(--forest) 32px,
+                var(--cream) 32px,
+                var(--cream) 48px
+            );
+            margin-top: 40px;
+        }
+
+        /* ============================================
+           DECORATIVE ELEMENTS
+        ============================================ */
+        .tape {
+            position: absolute;
+            width: 120px;
+            height: 40px;
+            background: rgba(253, 246, 227, 0.7);
+            border: 2px solid var(--navy);
+            transform: rotate(-45deg);
+            z-index: 10;
+        }
+
+        .paper-clip {
+            position: absolute;
+            width: 30px;
+            height: 60px;
+            border: 4px solid var(--navy);
+            border-radius: 15px 15px 0 0;
+            z-index: 10;
+        }
+
+        .paper-clip::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            border: 4px solid var(--navy);
+            border-radius: 10px 10px 0 0;
+            top: 10px;
+            left: 1px;
+            background: var(--cream);
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 768px) {
+            nav {
+                padding: 16px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 100px 20px 60px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-buttons .btn {
+                text-align: center;
+            }
+
+            .services,
+            .pricing,
+            .contact {
+                padding: 80px 20px;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .pricing-card.featured:hover {
+                transform: translate(-6px, -6px);
+            }
+
+            .paper-float {
+                display: none;
+            }
+        }
+
+        /* ============================================
+           LOADING ANIMATION
+        ============================================ */
+        .page-loader {
+            position: fixed;
+            inset: 0;
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-paper {
+            width: 80px;
+            height: 100px;
+            background: var(--cream);
+            border: 4px solid var(--cream);
+            margin: 0 auto 24px;
+            animation: paperFold 1.5s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        @keyframes paperFold {
+            0%, 100% { transform: rotateX(0deg); }
+            50% { transform: rotateX(-30deg); }
+        }
+
+        .loader-text {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 1.5rem;
+            color: var(--cream);
+            letter-spacing: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <div class="loader-paper"></div>
+            <div class="loader-text">LOADING</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo">
+            <div class="logo-icon">405</div>
+            <span>Network</span>
+        </a>
+        <div class="nav-links">
+            <a href="#services">Services</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+
+        <!-- Floating paper elements -->
+        <div class="paper-float paper-float-1"></div>
+        <div class="paper-float paper-float-2"></div>
+        <div class="paper-float paper-float-3"></div>
+
+        <div class="hero-content">
+            <div class="hero-badge reveal">Est. 2011</div>
+            <h1 class="reveal delay-1">
+                405NETWORK
+                <span class="outline">INC.</span>
+            </h1>
+            <div class="hero-tagline reveal delay-2">Information Technology, Reimagined</div>
+            <p class="reveal delay-3">
+                We bring warmth to technology. Like a well-crafted letter in a digital world,
+                our IT solutions are thoughtfully designed for businesses that value
+                both reliability and humanity.
+            </p>
+            <div class="hero-buttons reveal delay-4">
+                <a href="#pricing" class="btn">View Plans</a>
+                <a href="#contact" class="btn btn-outline">Get in Touch</a>
+            </div>
+            <div class="hero-location reveal delay-4">
+                <div class="location-pin">📍</div>
+                <span>Orange County, California</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <h2 class="reveal">Our Services</h2>
+            <p class="reveal delay-1">Handcrafted IT solutions, tailored to your business</p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card reveal delay-1">
+                <div class="service-icon">💬</div>
+                <h3>Support & Communication</h3>
+                <p>Round-the-clock technical support with a human touch. We speak your language, not jargon.</p>
+                <a href="#contact" class="service-link">Learn more →</a>
+            </div>
+
+            <div class="service-card reveal delay-2">
+                <div class="service-icon">📱</div>
+                <h3>Device Management</h3>
+                <p>Keep every device in your fleet running smoothly. From laptops to servers, we've got you covered.</p>
+                <a href="#contact" class="service-link">Learn more →</a>
+            </div>
+
+            <div class="service-card reveal delay-3">
+                <div class="service-icon">☁️</div>
+                <h3>Cloud & Admin</h3>
+                <p>Seamless cloud migrations and administration. Your data, accessible anywhere, secured everywhere.</p>
+                <a href="#contact" class="service-link">Learn more →</a>
+            </div>
+
+            <div class="service-card reveal delay-4">
+                <div class="service-icon">🏗️</div>
+                <h3>Infrastructure</h3>
+                <p>Build a foundation that grows with you. Modern infrastructure designed for tomorrow's challenges.</p>
+                <a href="#contact" class="service-link">Learn more →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing checkerboard" id="pricing">
+        <div class="pricing-header">
+            <h2 class="reveal">
+                Simple
+                <span class="outline-text">Pricing</span>
+            </h2>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Silver -->
+            <div class="pricing-card reveal delay-1">
+                <div class="pricing-tier">Silver</div>
+                <div class="pricing-price"><span>$</span>49</div>
+                <div class="pricing-unit">per user / month</div>
+                <ul class="pricing-features">
+                    <li><span class="check-icon">✓</span> Business hours support</li>
+                    <li><span class="check-icon">✓</span> Basic device management</li>
+                    <li><span class="check-icon">✓</span> Email administration</li>
+                    <li><span class="check-icon">✓</span> Monthly health reports</li>
+                    <li><span class="check-icon">✓</span> Security monitoring</li>
+                </ul>
+                <a href="#contact" class="btn btn-outline">Get Started</a>
+            </div>
+
+            <!-- Gold (Featured) -->
+            <div class="pricing-card featured reveal delay-2">
+                <div class="pricing-tier">Gold</div>
+                <div class="pricing-price"><span>$</span>79</div>
+                <div class="pricing-unit">per user / month</div>
+                <ul class="pricing-features">
+                    <li><span class="check-icon">✓</span> Extended hours support</li>
+                    <li><span class="check-icon">✓</span> Full device management</li>
+                    <li><span class="check-icon">✓</span> Cloud administration</li>
+                    <li><span class="check-icon">✓</span> Weekly health reports</li>
+                    <li><span class="check-icon">✓</span> Advanced security suite</li>
+                    <li><span class="check-icon">✓</span> Priority response</li>
+                </ul>
+                <a href="#contact" class="btn">Get Started</a>
+            </div>
+
+            <!-- Platinum -->
+            <div class="pricing-card reveal delay-3">
+                <div class="pricing-tier">Platinum</div>
+                <div class="pricing-price"><span>$</span>129</div>
+                <div class="pricing-unit">per user / month</div>
+                <ul class="pricing-features">
+                    <li><span class="check-icon">✓</span> 24/7 dedicated support</li>
+                    <li><span class="check-icon">✓</span> Complete IT management</li>
+                    <li><span class="check-icon">✓</span> Infrastructure planning</li>
+                    <li><span class="check-icon">✓</span> Real-time monitoring</li>
+                    <li><span class="check-icon">✓</span> Enterprise security</li>
+                    <li><span class="check-icon">✓</span> Dedicated account manager</li>
+                </ul>
+                <a href="#contact" class="btn btn-forest">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <div class="contact-content reveal-left">
+                <h2>Let's Write Your IT Story Together</h2>
+                <p>Ready to reimagine your technology? Drop us a line - we'd love to hear from you.</p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-item-icon">📧</div>
+                        <span>hello@405network.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon">📞</div>
+                        <span>(949) 555-0405</span>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon">📍</div>
+                        <span>Orange County, CA</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-wrapper reveal-right">
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="john@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Your Message</label>
+                        <textarea id="message" name="message" placeholder="Tell us about your IT needs..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-forest">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">405NETWORK</div>
+        <div class="footer-tagline">Information Technology, Reimagined</div>
+        <div class="footer-links">
+            <a href="#services">Services</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#contact">Contact</a>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+        <div class="footer-copyright">
+            © 2011-2024 405Network Inc. All rights reserved.
+        </div>
+        <div class="footer-paper-strip"></div>
+    </footer>
+
+    <script>
+        // Page loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('pageLoader').classList.add('hidden');
+            }, 800);
+        });
+
+        // Scroll reveal animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all reveal elements
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Form submission (prevent default for demo)
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Create paper airplane animation
+            const btn = this.querySelector('.btn');
+            const originalText = btn.textContent;
+            btn.textContent = '✈️ Sent!';
+            btn.style.background = 'var(--forest)';
+
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+                this.reset();
+            }, 2000);
+        });
+
+        // Add slight parallax to floating papers
+        document.addEventListener('mousemove', (e) => {
+            const papers = document.querySelectorAll('.paper-float');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            papers.forEach((paper, index) => {
+                const speed = (index + 1) * 10;
+                paper.style.transform += ` translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+
+        // Button press effect sound simulation (visual feedback)
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transition = 'all 0.05s ease';
+            });
+            btn.addEventListener('mouseup', function() {
+                this.style.transition = 'all 0.1s ease';
+            });
+        });
+    </script>
+</body>
+</html>

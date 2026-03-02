@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DORKSENSE ULTRATHINK</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Archivo+Black&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brutal-pink': '#FF6B9D',
+                        'brutal-yellow': '#FFE66D',
+                        'brutal-blue': '#4ECDC4',
+                        'brutal-purple': '#C44DFF',
+                        'brutal-orange': '#FF8C42',
+                        'brutal-lime': '#BAFF29',
+                        'brutal-red': '#FF3366',
+                        'brutal-cyan': '#00F5FF',
+                    },
+                    fontFamily: {
+                        'mono': ['Space Mono', 'monospace'],
+                        'black': ['Archivo Black', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'brutal': '8px 8px 0px 0px #000000',
+                        'brutal-lg': '12px 12px 0px 0px #000000',
+                        'brutal-xl': '16px 16px 0px 0px #000000',
+                        'brutal-hover': '4px 4px 0px 0px #000000',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            scroll-behavior: smooth;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23FF6B9D' stroke='%23000' stroke-width='3'/%3E%3C/svg%3E") 16 16, auto;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(-1deg); }
+            75% { transform: translateX(5px) rotate(1deg); }
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: #000; }
+            50% { border-color: #FF6B9D; }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce-brutal {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .shake-hover:hover {
+            animation: shake 0.3s ease-in-out infinite;
+        }
+
+        .glitch-hover:hover {
+            animation: glitch 0.3s ease-in-out infinite;
+        }
+
+        .spin-slow {
+            animation: spin-slow 20s linear infinite;
+        }
+
+        .rainbow-bg {
+            background: linear-gradient(90deg, #FF6B9D, #FFE66D, #4ECDC4, #C44DFF, #FF8C42, #BAFF29, #FF6B9D);
+            background-size: 400% 400%;
+            animation: rainbow 8s ease infinite;
+        }
+
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+
+        .brutal-link {
+            position: relative;
+            display: inline-block;
+        }
+
+        .brutal-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: #000;
+            transition: width 0.3s ease;
+        }
+
+        .brutal-link:hover::after {
+            width: 100%;
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-scale {
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .scroll-scale.revealed {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .scroll-rotate {
+            transform: rotate(-10deg) scale(0.9);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .scroll-rotate.revealed {
+            transform: rotate(0deg) scale(1);
+            opacity: 1;
+        }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+
+        .text-stroke {
+            -webkit-text-stroke: 3px #000;
+            paint-order: stroke fill;
+        }
+
+        .brutal-card {
+            transition: all 0.2s ease;
+        }
+
+        .brutal-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px 0px #000;
+        }
+
+        .brutal-btn {
+            transition: all 0.15s ease;
+        }
+
+        .brutal-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px #000;
+        }
+
+        .brutal-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px #000;
+        }
+
+        .striped-bg {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(0,0,0,0.05) 10px,
+                rgba(0,0,0,0.05) 20px
+            );
+        }
+
+        .dotted-bg {
+            background-image: radial-gradient(#000 2px, transparent 2px);
+            background-size: 20px 20px;
+        }
+
+        .zigzag-border {
+            background: linear-gradient(135deg, #000 25%, transparent 25%) -10px 0,
+                        linear-gradient(225deg, #000 25%, transparent 25%) -10px 0,
+                        linear-gradient(315deg, #000 25%, transparent 25%),
+                        linear-gradient(45deg, #000 25%, transparent 25%);
+            background-size: 20px 20px;
+            background-color: #FFE66D;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #FFE66D;
+            border: 3px solid #000;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #FF6B9D;
+            border: 3px solid #000;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 1000;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .blob {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        }
+
+        .morph-blob {
+            animation: morph 8s ease-in-out infinite;
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+            75% { border-radius: 60% 40% 60% 30% / 70% 30% 50% 60%; }
+        }
+
+        .parallax {
+            transition: transform 0.1s ease-out;
+        }
+
+        .clip-brutalist {
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
+        }
+
+        .clip-brutalist-alt {
+            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%, 0 15%);
+        }
+    </style>
+</head>
+<body class="bg-brutal-yellow font-mono custom-scrollbar overflow-x-hidden">
+
+    <div class="noise-overlay"></div>
+
+    <!-- NAVIGATION -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b-4 border-black">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                <a href="#" class="text-xl md:text-2xl font-black tracking-tight glitch-hover">
+                    DORK<span class="text-brutal-pink">SENSE</span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="#about" class="brutal-link font-bold">ABOUT</a>
+                    <a href="#features" class="brutal-link font-bold">FEATURES</a>
+                    <a href="#work" class="brutal-link font-bold">WORK</a>
+                    <a href="#contact" class="brutal-link font-bold">CONTACT</a>
+                </div>
+                <button class="brutal-btn bg-brutal-pink border-4 border-black px-4 py-2 font-bold shadow-brutal-hover">
+                    THINK NOW
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="min-h-screen pt-20 relative overflow-hidden">
+        <!-- Floating shapes -->
+        <div class="absolute top-32 left-10 w-20 h-20 bg-brutal-blue border-4 border-black float-animation" style="animation-delay: 0s;"></div>
+        <div class="absolute top-48 right-20 w-16 h-16 bg-brutal-purple border-4 border-black rounded-full float-animation" style="animation-delay: 0.5s;"></div>
+        <div class="absolute bottom-32 left-1/4 w-24 h-24 bg-brutal-orange border-4 border-black rotate-45 float-animation" style="animation-delay: 1s;"></div>
+        <div class="absolute top-1/3 right-1/4 w-12 h-12 bg-brutal-lime border-4 border-black spin-slow"></div>
+        <div class="absolute bottom-40 right-10 w-32 h-32 bg-brutal-red border-4 border-black blob morph-blob float-animation" style="animation-delay: 1.5s;"></div>
+
+        <div class="container mx-auto px-4 pt-16 md:pt-32">
+            <div class="max-w-6xl mx-auto">
+                <!-- Main headline -->
+                <div class="relative mb-8">
+                    <h1 class="text-6xl md:text-[12rem] font-black leading-none tracking-tighter">
+                        <span class="block text-stroke text-transparent bg-clip-text rainbow-bg glitch-hover">ULTRA</span>
+                        <span class="block text-black -mt-4 md:-mt-12">THINK</span>
+                    </h1>
+                    <div class="absolute -top-8 right-0 md:right-20 bg-brutal-cyan border-4 border-black px-4 py-2 rotate-12 shadow-brutal shake-hover">
+                        <span class="font-bold text-sm md:text-lg">NEW!</span>
+                    </div>
+                </div>
+
+                <!-- Subheadline -->
+                <div class="flex flex-col md:flex-row items-start md:items-end gap-8 mb-12">
+                    <div class="bg-black text-white p-6 md:p-8 border-4 border-black max-w-xl brutal-card">
+                        <p class="text-lg md:text-2xl font-bold leading-relaxed">
+                            WHERE <span class="text-brutal-pink">CHAOS</span> MEETS
+                            <span class="text-brutal-lime">CLARITY</span> AND
+                            <span class="text-brutal-cyan">IDEAS</span> BECOME
+                            <span class="text-brutal-orange">REALITY</span>
+                        </p>
+                    </div>
+                    <div class="flex gap-4">
+                        <button class="brutal-btn bg-brutal-pink border-4 border-black px-8 py-4 font-black text-xl shadow-brutal">
+                            EXPLORE
+                        </button>
+                        <button class="brutal-btn bg-white border-4 border-black px-8 py-4 font-black text-xl shadow-brutal">
+                            LEARN
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Marquee -->
+                <div class="marquee-container bg-black text-white py-4 border-y-4 border-black -mx-4 px-4">
+                    <div class="marquee-content">
+                        <span class="text-2xl md:text-4xl font-black tracking-wide">
+                            DORKSENSE ULTRATHINK /// CREATIVE CHAOS /// BRUTAL DESIGN /// MAXIMUM IMPACT ///
+                            DORKSENSE ULTRATHINK /// CREATIVE CHAOS /// BRUTAL DESIGN /// MAXIMUM IMPACT ///
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+            <div class="w-8 h-12 border-4 border-black bg-white rounded-full flex justify-center pt-2">
+                <div class="w-2 h-3 bg-black rounded-full animate-bounce"></div>
+            </div>
+            <span class="font-bold text-sm">SCROLL</span>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="py-20 md:py-32 bg-brutal-blue relative">
+        <div class="absolute top-0 left-0 right-0 h-8 zigzag-border"></div>
+
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
+                    <div class="scroll-reveal">
+                        <div class="bg-brutal-yellow border-4 border-black p-2 inline-block mb-6 shadow-brutal rotate-[-2deg]">
+                            <span class="font-black text-lg md:text-xl">// ABOUT US</span>
+                        </div>
+                        <h2 class="text-4xl md:text-7xl font-black mb-6 leading-tight">
+                            WE DON'T DO <span class="text-white text-stroke">BORING</span>
+                        </h2>
+                        <p class="text-lg md:text-xl font-bold mb-8 leading-relaxed">
+                            Dorksense Ultrathink is a creative powerhouse that smashes conventional design thinking. We embrace the raw, the bold, and the unapologetically weird.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="bg-white border-4 border-black px-4 py-2 font-bold shadow-brutal-hover brutal-card">
+                                BOLD IDEAS
+                            </div>
+                            <div class="bg-brutal-pink border-4 border-black px-4 py-2 font-bold shadow-brutal-hover brutal-card">
+                                RAW DESIGN
+                            </div>
+                            <div class="bg-brutal-lime border-4 border-black px-4 py-2 font-bold shadow-brutal-hover brutal-card">
+                                PURE CHAOS
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scroll-rotate">
+                        <div class="relative">
+                            <div class="bg-white border-4 border-black p-8 shadow-brutal-xl brutal-card">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-brutal-purple border-4 border-black p-4 text-center">
+                                        <span class="block text-4xl md:text-6xl font-black text-white">99</span>
+                                        <span class="font-bold text-sm">PROJECTS</span>
+                                    </div>
+                                    <div class="bg-brutal-orange border-4 border-black p-4 text-center">
+                                        <span class="block text-4xl md:text-6xl font-black">∞</span>
+                                        <span class="font-bold text-sm">IDEAS</span>
+                                    </div>
+                                    <div class="bg-brutal-cyan border-4 border-black p-4 text-center">
+                                        <span class="block text-4xl md:text-6xl font-black">0</span>
+                                        <span class="font-bold text-sm">BORING</span>
+                                    </div>
+                                    <div class="bg-brutal-red border-4 border-black p-4 text-center">
+                                        <span class="block text-4xl md:text-6xl font-black text-white">!!!</span>
+                                        <span class="font-bold text-sm">IMPACT</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-black"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section id="features" class="py-20 md:py-32 bg-white striped-bg">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 scroll-reveal">
+                    <h2 class="text-5xl md:text-8xl font-black mb-4">
+                        WHAT WE <span class="rainbow-bg bg-clip-text text-transparent">DO</span>
+                    </h2>
+                    <p class="text-xl md:text-2xl font-bold">CREATIVE DESTRUCTION AT ITS FINEST</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6 md:gap-8">
+                    <!-- Feature 1 -->
+                    <div class="scroll-scale stagger-1 brutal-card bg-brutal-pink border-4 border-black p-6 md:p-8 shadow-brutal clip-brutalist">
+                        <div class="w-16 h-16 bg-black text-white flex items-center justify-center text-3xl font-black mb-6">
+                            01
+                        </div>
+                        <h3 class="text-2xl md:text-3xl font-black mb-4">BRUTAL BRANDING</h3>
+                        <p class="font-bold text-lg">Identities that punch through the noise. No pastels. No compromises. Just raw, memorable impact.</p>
+                        <div class="mt-6 flex gap-2">
+                            <span class="bg-black text-white px-3 py-1 text-sm font-bold">LOGOS</span>
+                            <span class="bg-black text-white px-3 py-1 text-sm font-bold">IDENTITY</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="scroll-scale stagger-2 brutal-card bg-brutal-lime border-4 border-black p-6 md:p-8 shadow-brutal">
+                        <div class="w-16 h-16 bg-black text-white flex items-center justify-center text-3xl font-black mb-6">
+                            02
+                        </div>
+                        <h3 class="text-2xl md:text-3xl font-black mb-4">CHAOTIC WEB</h3>
+                        <p class="font-bold text-lg">Websites that break rules, bend expectations, and make users actually remember you.</p>
+                        <div class="mt-6 flex gap-2">
+                            <span class="bg-black text-white px-3 py-1 text-sm font-bold">UI/UX</span>
+                            <span class="bg-black text-white px-3 py-1 text-sm font-bold">DEV</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="scroll-scale stagger-3 brutal-card bg-brutal-purple border-4 border-black p-6 md:p-8 shadow-brutal clip-brutalist-alt">
+                        <div class="w-16 h-16 bg-white text-black flex items-center justify-center text-3xl font-black mb-6">
+                            03
+                        </div>
+                        <h3 class="text-2xl md:text-3xl font-black mb-4 text-white">MAXIMUM STRATEGY</h3>
+                        <p class="font-bold text-lg text-white">Ideas engineered for impact. We think different because thinking normal is overrated.</p>
+                        <div class="mt-6 flex gap-2">
+                            <span class="bg-white text-black px-3 py-1 text-sm font-bold">THINK</span>
+                            <span class="bg-white text-black px-3 py-1 text-sm font-bold">PLAN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extra features row -->
+                <div class="grid md:grid-cols-2 gap-6 md:gap-8 mt-8">
+                    <div class="scroll-reveal stagger-4 brutal-card bg-brutal-orange border-4 border-black p-6 md:p-8 shadow-brutal">
+                        <div class="flex items-start gap-6">
+                            <div class="w-20 h-20 bg-black text-white flex items-center justify-center text-4xl font-black flex-shrink-0">
+                                04
+                            </div>
+                            <div>
+                                <h3 class="text-2xl md:text-3xl font-black mb-2">MOTION MADNESS</h3>
+                                <p class="font-bold">Animations that demand attention and refuse to be ignored.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scroll-reveal stagger-5 brutal-card bg-brutal-cyan border-4 border-black p-6 md:p-8 shadow-brutal">
+                        <div class="flex items-start gap-6">
+                            <div class="w-20 h-20 bg-black text-white flex items-center justify-center text-4xl font-black flex-shrink-0">
+                                05
+                            </div>
+                            <div>
+                                <h3 class="text-2xl md:text-3xl font-black mb-2">RADICAL PRINT</h3>
+                                <p class="font-bold">Physical media with digital energy. Posters, zines, and beyond.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WORK SECTION -->
+    <section id="work" class="py-20 md:py-32 bg-black text-white dotted-bg">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-16">
+                    <div class="scroll-reveal">
+                        <h2 class="text-5xl md:text-8xl font-black">
+                            SELECTED<br><span class="text-brutal-pink">WORK</span>
+                        </h2>
+                    </div>
+                    <div class="scroll-reveal mt-6 md:mt-0">
+                        <button class="brutal-btn bg-brutal-yellow text-black border-4 border-white px-8 py-4 font-black text-xl">
+                            VIEW ALL →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Work grid -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Work item 1 -->
+                    <div class="scroll-scale stagger-1 group relative">
+                        <div class="bg-brutal-blue border-4 border-white aspect-[4/3] brutal-card overflow-hidden">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <span class="text-8xl md:text-[10rem] font-black group-hover:scale-110 transition-transform duration-300">A1</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between items-start">
+                            <div>
+                                <h3 class="text-2xl font-black">CHAOS BRAND</h3>
+                                <p class="font-bold text-brutal-pink">BRANDING / 2024</p>
+                            </div>
+                            <span class="text-4xl font-black group-hover:translate-x-2 transition-transform">→</span>
+                        </div>
+                    </div>
+
+                    <!-- Work item 2 -->
+                    <div class="scroll-scale stagger-2 group relative">
+                        <div class="bg-brutal-purple border-4 border-white aspect-[4/3] brutal-card overflow-hidden">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <span class="text-8xl md:text-[10rem] font-black text-white group-hover:scale-110 transition-transform duration-300">B2</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between items-start">
+                            <div>
+                                <h3 class="text-2xl font-black">NEON DREAMS</h3>
+                                <p class="font-bold text-brutal-lime">WEB / 2024</p>
+                            </div>
+                            <span class="text-4xl font-black group-hover:translate-x-2 transition-transform">→</span>
+                        </div>
+                    </div>
+
+                    <!-- Work item 3 -->
+                    <div class="scroll-scale stagger-3 group relative">
+                        <div class="bg-brutal-orange border-4 border-white aspect-[4/3] brutal-card overflow-hidden">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <span class="text-8xl md:text-[10rem] font-black group-hover:scale-110 transition-transform duration-300">C3</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between items-start">
+                            <div>
+                                <h3 class="text-2xl font-black">ULTRA MOTION</h3>
+                                <p class="font-bold text-brutal-cyan">MOTION / 2023</p>
+                            </div>
+                            <span class="text-4xl font-black group-hover:translate-x-2 transition-transform">→</span>
+                        </div>
+                    </div>
+
+                    <!-- Work item 4 -->
+                    <div class="scroll-scale stagger-4 group relative">
+                        <div class="rainbow-bg border-4 border-white aspect-[4/3] brutal-card overflow-hidden">
+                            <div class="w-full h-full flex items-center justify-center bg-black/50">
+                                <span class="text-8xl md:text-[10rem] font-black text-white group-hover:scale-110 transition-transform duration-300">D4</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between items-start">
+                            <div>
+                                <h3 class="text-2xl font-black">RAINBOW RIOT</h3>
+                                <p class="font-bold text-brutal-yellow">CAMPAIGN / 2023</p>
+                            </div>
+                            <span class="text-4xl font-black group-hover:translate-x-2 transition-transform">→</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS SECTION -->
+    <section class="py-20 md:py-32 bg-brutal-red">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center scroll-reveal">
+                <div class="bg-white border-4 border-black p-8 md:p-16 shadow-brutal-xl">
+                    <div class="text-6xl md:text-8xl font-black mb-8">"</div>
+                    <p class="text-2xl md:text-4xl font-black leading-tight mb-8">
+                        DORKSENSE ULTRATHINK COMPLETELY BROKE MY BRAIN IN THE BEST WAY POSSIBLE.
+                        <span class="text-brutal-pink">I'LL NEVER SEE DESIGN THE SAME.</span>
+                    </p>
+                    <div class="flex items-center justify-center gap-4">
+                        <div class="w-16 h-16 bg-brutal-purple border-4 border-black rounded-full"></div>
+                        <div class="text-left">
+                            <p class="font-black text-lg">ANONYMOUS GENIUS</p>
+                            <p class="font-bold text-brutal-blue">CEO OF THINKING</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="py-20 md:py-32 bg-brutal-lime relative overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute top-10 left-10 w-32 h-32 border-4 border-black spin-slow"></div>
+            <div class="absolute bottom-10 right-10 w-48 h-48 border-4 border-black blob morph-blob"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 border-4 border-black rounded-full opacity-20"></div>
+        </div>
+
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-4xl mx-auto text-center scroll-scale">
+                <h2 class="text-5xl md:text-[10rem] font-black leading-none mb-8">
+                    LET'S<br>THINK
+                </h2>
+                <p class="text-xl md:text-3xl font-bold mb-12">
+                    Ready to make something <span class="text-brutal-purple">absolutely unhinged</span>?
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="brutal-btn bg-black text-white border-4 border-black px-12 py-6 font-black text-2xl shadow-brutal">
+                        START PROJECT
+                    </button>
+                    <button class="brutal-btn bg-white border-4 border-black px-12 py-6 font-black text-2xl shadow-brutal">
+                        SAY HELLO
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="py-20 md:py-32 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-16">
+                    <div class="scroll-reveal">
+                        <h2 class="text-4xl md:text-6xl font-black mb-8">
+                            GET IN <span class="text-brutal-pink">TOUCH</span>
+                        </h2>
+                        <div class="space-y-6">
+                            <div class="brutal-card bg-brutal-yellow border-4 border-black p-6 shadow-brutal">
+                                <p class="font-black text-lg">EMAIL</p>
+                                <a href="mailto:think@dorksense.com" class="text-2xl md:text-3xl font-bold brutal-link">THINK@DORKSENSE.COM</a>
+                            </div>
+                            <div class="brutal-card bg-brutal-cyan border-4 border-black p-6 shadow-brutal">
+                                <p class="font-black text-lg">PHONE</p>
+                                <a href="tel:+1234567890" class="text-2xl md:text-3xl font-bold brutal-link">+1 (234) 567-890</a>
+                            </div>
+                            <div class="brutal-card bg-brutal-purple border-4 border-black p-6 shadow-brutal text-white">
+                                <p class="font-black text-lg">LOCATION</p>
+                                <p class="text-2xl md:text-3xl font-bold">THE INTERNET</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scroll-rotate">
+                        <form class="bg-brutal-orange border-4 border-black p-8 shadow-brutal-xl">
+                            <div class="mb-6">
+                                <label class="block font-black text-lg mb-2">YOUR NAME</label>
+                                <input type="text" class="w-full border-4 border-black p-4 font-bold focus:outline-none focus:ring-4 focus:ring-brutal-pink" placeholder="TYPE HERE...">
+                            </div>
+                            <div class="mb-6">
+                                <label class="block font-black text-lg mb-2">YOUR EMAIL</label>
+                                <input type="email" class="w-full border-4 border-black p-4 font-bold focus:outline-none focus:ring-4 focus:ring-brutal-pink" placeholder="TYPE HERE...">
+                            </div>
+                            <div class="mb-6">
+                                <label class="block font-black text-lg mb-2">YOUR MESSAGE</label>
+                                <textarea rows="4" class="w-full border-4 border-black p-4 font-bold resize-none focus:outline-none focus:ring-4 focus:ring-brutal-pink" placeholder="TYPE HERE..."></textarea>
+                            </div>
+                            <button type="submit" class="brutal-btn w-full bg-black text-white border-4 border-black p-4 font-black text-xl shadow-brutal">
+                                SEND IT →
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-black text-white py-12 border-t-4 border-brutal-pink">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div>
+                        <p class="text-4xl md:text-6xl font-black">
+                            DORK<span class="text-brutal-pink">SENSE</span>
+                        </p>
+                        <p class="font-bold text-brutal-yellow mt-2">ULTRATHINK /// 2024</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <a href="#" class="brutal-btn bg-brutal-pink border-4 border-white w-12 h-12 flex items-center justify-center font-black text-xl">X</a>
+                        <a href="#" class="brutal-btn bg-brutal-blue border-4 border-white w-12 h-12 flex items-center justify-center font-black text-xl">IG</a>
+                        <a href="#" class="brutal-btn bg-brutal-lime text-black border-4 border-white w-12 h-12 flex items-center justify-center font-black text-xl">LI</a>
+                        <a href="#" class="brutal-btn bg-brutal-purple border-4 border-white w-12 h-12 flex items-center justify-center font-black text-xl">BE</a>
+                    </div>
+                </div>
+                <div class="mt-12 pt-8 border-t-4 border-white/20 text-center">
+                    <p class="font-bold">DESIGNED WITH CHAOS /// BUILT WITH LOVE /// NO RULES WERE FOLLOWED</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT FOR SCROLL ANIMATIONS -->
+    <script>
+        // Scroll reveal animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal, .scroll-scale, .scroll-rotate').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Parallax effect on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const parallaxElements = document.querySelectorAll('.float-animation');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+
+            parallaxElements.forEach((el, index) => {
+                const speed = (index + 1) * 0.02;
+                const x = (mouseX - 0.5) * speed * 100;
+                const y = (mouseY - 0.5) * speed * 100;
+                el.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add random rotation to floating elements
+        document.querySelectorAll('.float-animation').forEach(el => {
+            const randomDelay = Math.random() * 2;
+            el.style.animationDelay = `${randomDelay}s`;
+        });
+
+        // Button click effect
+        document.querySelectorAll('.brutal-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.style.cssText = `
+                    position: absolute;
+                    background: rgba(255,255,255,0.5);
+                    border-radius: 50%;
+                    width: 100px;
+                    height: 100px;
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                `;
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Glitch text effect on scroll
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            const scrollSpeed = Math.abs(currentScrollY - lastScrollY);
+
+            if (scrollSpeed > 50) {
+                document.querySelectorAll('.glitch-hover').forEach(el => {
+                    el.style.animation = 'glitch 0.1s ease-in-out';
+                    setTimeout(() => {
+                        el.style.animation = '';
+                    }, 100);
+                });
+            }
+
+            lastScrollY = currentScrollY;
+        });
+    </script>
+</body>
+</html>

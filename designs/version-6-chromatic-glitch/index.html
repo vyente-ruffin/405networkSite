@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           CHROMATIC GLITCH - Digital Corruption Aesthetic
+           405Network Inc. | Technology Breaking Beautifully
+           ═══════════════════════════════════════════════════════════════ */
+
+        :root {
+            --purple: #9D00FF;
+            --red: #FF003C;
+            --yellow: #FFEF00;
+            --charcoal: #121218;
+            --charcoal-light: #1a1a22;
+            --charcoal-lighter: #252530;
+            --white: #f0f0f5;
+            --purple-glow: rgba(157, 0, 255, 0.5);
+            --red-glow: rgba(255, 0, 60, 0.5);
+            --yellow-glow: rgba(255, 239, 0, 0.3);
+        }
+
+        /* ─── Custom Scrollbar ─── */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--charcoal);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--purple), var(--red));
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--red), var(--purple));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--charcoal);
+            color: var(--white);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ─── Noise/Grain SVG Overlay ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10000;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* ─── Scanlines Effect ─── */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+
+        /* ─── CRT Vignette Effect ─── */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.3) 80%,
+                rgba(0, 0, 0, 0.6) 100%
+            );
+        }
+
+        /* ─── Matrix Rain Canvas ─── */
+        #matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* ─── Diagonal Stripe Pattern ─── */
+        .diagonal-stripes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(157, 0, 255, 0.02) 10px,
+                rgba(157, 0, 255, 0.02) 20px
+            );
+            z-index: 1;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           GLITCH TEXT EFFECT
+           ═══════════════════════════════════════════════════════════════ */
+
+        .glitch {
+            position: relative;
+            display: inline-block;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            color: var(--red);
+            animation: glitch-1 2s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+            transform: translateX(-2px);
+        }
+
+        .glitch::after {
+            color: var(--purple);
+            animation: glitch-2 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+            transform: translateX(2px);
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%); transform: translateX(-2px); }
+            20% { clip-path: polygon(0 15%, 100% 15%, 100% 40%, 0 40%); transform: translateX(3px); }
+            40% { clip-path: polygon(0 5%, 100% 5%, 100% 25%, 0 25%); transform: translateX(-1px); }
+            60% { clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%); transform: translateX(2px); }
+            80% { clip-path: polygon(0 10%, 100% 10%, 100% 45%, 0 45%); transform: translateX(-3px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%); transform: translateX(2px); }
+            25% { clip-path: polygon(0 55%, 100% 55%, 100% 85%, 0 85%); transform: translateX(-2px); }
+            50% { clip-path: polygon(0 70%, 100% 70%, 100% 95%, 0 95%); transform: translateX(1px); }
+            75% { clip-path: polygon(0 60%, 100% 60%, 100% 90%, 0 90%); transform: translateX(-1px); }
+        }
+
+        /* Intense glitch on hover */
+        .glitch:hover::before {
+            animation: glitch-intense-1 0.3s infinite;
+        }
+        .glitch:hover::after {
+            animation: glitch-intense-2 0.3s infinite;
+        }
+
+        @keyframes glitch-intense-1 {
+            0% { clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%); transform: translateX(-6px); }
+            10% { clip-path: polygon(0 15%, 100% 15%, 100% 20%, 0 20%); transform: translateX(4px); }
+            20% { clip-path: polygon(0 10%, 100% 10%, 100% 12%, 0 12%); transform: translateX(-3px); }
+            30% { clip-path: polygon(0 1%, 100% 1%, 100% 4%, 0 4%); transform: translateX(5px); }
+            40% { clip-path: polygon(0 25%, 100% 25%, 100% 30%, 0 30%); transform: translateX(-2px); }
+            50% { clip-path: polygon(0 20%, 100% 20%, 100% 24%, 0 24%); transform: translateX(3px); }
+            60% { clip-path: polygon(0 30%, 100% 30%, 100% 35%, 0 35%); transform: translateX(-4px); }
+            70% { clip-path: polygon(0 35%, 100% 35%, 100% 40%, 0 40%); transform: translateX(2px); }
+            80% { clip-path: polygon(0 40%, 100% 40%, 100% 45%, 0 45%); transform: translateX(-5px); }
+            90% { clip-path: polygon(0 45%, 100% 45%, 100% 50%, 0 50%); transform: translateX(3px); }
+            100% { clip-path: polygon(0 48%, 100% 48%, 100% 52%, 0 52%); transform: translateX(-2px); }
+        }
+
+        @keyframes glitch-intense-2 {
+            0% { clip-path: polygon(0 55%, 100% 55%, 100% 60%, 0 60%); transform: translateX(5px); }
+            10% { clip-path: polygon(0 60%, 100% 60%, 100% 65%, 0 65%); transform: translateX(-3px); }
+            20% { clip-path: polygon(0 65%, 100% 65%, 100% 70%, 0 70%); transform: translateX(4px); }
+            30% { clip-path: polygon(0 70%, 100% 70%, 100% 75%, 0 75%); transform: translateX(-2px); }
+            40% { clip-path: polygon(0 75%, 100% 75%, 100% 80%, 0 80%); transform: translateX(6px); }
+            50% { clip-path: polygon(0 80%, 100% 80%, 100% 85%, 0 85%); transform: translateX(-4px); }
+            60% { clip-path: polygon(0 85%, 100% 85%, 100% 90%, 0 90%); transform: translateX(3px); }
+            70% { clip-path: polygon(0 90%, 100% 90%, 100% 95%, 0 95%); transform: translateX(-5px); }
+            80% { clip-path: polygon(0 92%, 100% 92%, 100% 97%, 0 97%); transform: translateX(2px); }
+            90% { clip-path: polygon(0 95%, 100% 95%, 100% 98%, 0 98%); transform: translateX(-3px); }
+            100% { clip-path: polygon(0 97%, 100% 97%, 100% 100%, 0 100%); transform: translateX(4px); }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════════════════════════ */
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(18, 18, 24, 0.95), transparent);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--white);
+            text-decoration: none;
+            position: relative;
+        }
+
+        .logo span {
+            color: var(--purple);
+            text-shadow: 0 0 10px var(--purple-glow);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--white);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::before {
+            content: '//';
+            color: var(--purple);
+            margin-right: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--yellow);
+        }
+
+        .nav-links a:hover::before {
+            opacity: 1;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--purple), var(--red));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           HERO SECTION
+           ═══════════════════════════════════════════════════════════════ */
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 1000px;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+            text-shadow:
+                0 0 20px var(--purple-glow),
+                0 0 40px var(--purple-glow),
+                0 0 60px rgba(157, 0, 255, 0.3);
+        }
+
+        .hero-tagline {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            color: var(--yellow);
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-tagline::before,
+        .hero-tagline::after {
+            content: '───';
+            color: var(--purple);
+            margin: 0 1rem;
+        }
+
+        .cta-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            padding: 1.2rem 3rem;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, var(--purple), var(--red));
+            color: var(--white);
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 10px 30px var(--purple-glow),
+                0 0 60px var(--red-glow);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--purple);
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+        }
+
+        .cta-secondary:hover {
+            background: var(--purple);
+            box-shadow: 0 0 30px var(--purple-glow);
+        }
+
+        /* Floating glitch elements */
+        .glitch-block {
+            position: absolute;
+            background: linear-gradient(135deg, var(--purple), var(--red));
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .glitch-block:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .glitch-block:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+
+        .glitch-block:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Corruption lines */
+        .corruption-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--purple), var(--red), transparent);
+            animation: corrupt 4s linear infinite;
+        }
+
+        @keyframes corrupt {
+            0% { transform: translateX(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100vw); opacity: 0; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           SERVICES SECTION
+           ═══════════════════════════════════════════════════════════════ */
+
+        .services {
+            padding: 8rem 4rem;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-tag {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--purple);
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: var(--white);
+            position: relative;
+            display: inline-block;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, var(--charcoal-light), var(--charcoal));
+            border: 1px solid rgba(157, 0, 255, 0.2);
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 5px,
+                rgba(157, 0, 255, 0.03) 5px,
+                rgba(157, 0, 255, 0.03) 10px
+            );
+            pointer-events: none;
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--purple), var(--red), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--purple);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 30px var(--purple-glow);
+        }
+
+        .service-card:hover::after {
+            left: 100%;
+        }
+
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .service-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--purple);
+            fill: none;
+            stroke-width: 1.5;
+            filter: drop-shadow(0 0 10px var(--purple-glow));
+        }
+
+        .service-card:hover .service-icon svg {
+            stroke: var(--yellow);
+            filter: drop-shadow(0 0 15px var(--yellow-glow));
+        }
+
+        .service-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .service-desc {
+            font-size: 1rem;
+            color: rgba(240, 240, 245, 0.7);
+            line-height: 1.7;
+        }
+
+        .service-number {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: rgba(157, 0, 255, 0.1);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           PRICING SECTION
+           ═══════════════════════════════════════════════════════════════ */
+
+        .pricing {
+            padding: 8rem 4rem;
+            position: relative;
+            background: linear-gradient(180deg, var(--charcoal), var(--charcoal-light), var(--charcoal));
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--charcoal);
+            border: 1px solid rgba(157, 0, 255, 0.15);
+            padding: 3rem 2.5rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--yellow);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--yellow), var(--red));
+            color: var(--charcoal);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.5rem 1.5rem;
+            letter-spacing: 0.1em;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--purple);
+            box-shadow:
+                0 0 40px rgba(157, 0, 255, 0.2),
+                inset 0 0 60px rgba(157, 0, 255, 0.03);
+        }
+
+        .pricing-tier {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .pricing-card:nth-child(1) .pricing-tier { color: #c0c0c0; }
+        .pricing-card:nth-child(2) .pricing-tier { color: var(--yellow); }
+        .pricing-card:nth-child(3) .pricing-tier { color: var(--purple); }
+
+        .pricing-price {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price span {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+
+        .pricing-period {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: rgba(240, 240, 245, 0.5);
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2.5rem;
+        }
+
+        .pricing-features li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(157, 0, 255, 0.1);
+            font-size: 0.95rem;
+            color: rgba(240, 240, 245, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .pricing-features li::before {
+            content: '▹';
+            color: var(--purple);
+            font-size: 1.2rem;
+        }
+
+        .pricing-btn {
+            width: 100%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 1.2rem 2rem;
+            border: 2px solid var(--purple);
+            background: transparent;
+            color: var(--white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--purple), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .pricing-btn:hover {
+            background: var(--purple);
+            box-shadow: 0 0 30px var(--purple-glow);
+        }
+
+        .pricing-btn:hover::before {
+            left: 100%;
+        }
+
+        .pricing-card.featured .pricing-btn {
+            background: linear-gradient(135deg, var(--yellow), var(--red));
+            border-color: transparent;
+            color: var(--charcoal);
+        }
+
+        .pricing-card.featured .pricing-btn:hover {
+            box-shadow: 0 0 30px var(--yellow-glow);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           CONTACT SECTION
+           ═══════════════════════════════════════════════════════════════ */
+
+        .contact {
+            padding: 8rem 4rem;
+            position: relative;
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .contact-info h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .contact-info p {
+            font-size: 1.1rem;
+            color: rgba(240, 240, 245, 0.7);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .contact-details {
+            list-style: none;
+        }
+
+        .contact-details li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(157, 0, 255, 0.1);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.95rem;
+            color: rgba(240, 240, 245, 0.8);
+        }
+
+        .contact-details li span {
+            color: var(--purple);
+        }
+
+        .contact-form {
+            background: var(--charcoal-light);
+            border: 1px solid rgba(157, 0, 255, 0.2);
+            padding: 3rem;
+            position: relative;
+        }
+
+        .contact-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple), var(--red), var(--yellow));
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--purple);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--charcoal);
+            border: 1px solid rgba(157, 0, 255, 0.2);
+            color: var(--white);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--purple);
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            padding: 1.2rem 2rem;
+            border: none;
+            background: linear-gradient(135deg, var(--purple), var(--red));
+            color: var(--white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 10px 30px var(--purple-glow),
+                0 0 40px var(--red-glow);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════════════════════════ */
+
+        footer {
+            padding: 3rem 4rem;
+            border-top: 1px solid rgba(157, 0, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .footer-logo span {
+            color: var(--purple);
+        }
+
+        .footer-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            color: rgba(240, 240, 245, 0.5);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .footer-links a {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            color: rgba(240, 240, 245, 0.6);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--purple);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════════════════════════ */
+
+        @media (max-width: 1024px) {
+            nav {
+                padding: 1rem 2rem;
+            }
+
+            .nav-links {
+                gap: 1.5rem;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero-title {
+                font-size: clamp(2.5rem, 12vw, 5rem);
+            }
+
+            .services, .pricing, .contact {
+                padding: 4rem 2rem;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           ANIMATIONS
+           ═══════════════════════════════════════════════════════════════ */
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+            52% { opacity: 1; }
+            54% { opacity: 0.9; }
+            56% { opacity: 1; }
+        }
+
+        .flicker {
+            animation: flicker 4s infinite;
+        }
+
+        /* Data corruption effect for decorative elements */
+        .data-corrupt {
+            position: absolute;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(157, 0, 255, 0.3);
+            white-space: nowrap;
+            pointer-events: none;
+            animation: dataFlow 20s linear infinite;
+        }
+
+        @keyframes dataFlow {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Rain Canvas -->
+    <canvas id="matrix-rain"></canvas>
+
+    <!-- Scanlines Overlay -->
+    <div class="scanlines"></div>
+
+    <!-- CRT Vignette -->
+    <div class="vignette"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo">405<span>Network</span></a>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="diagonal-stripes"></div>
+        <div class="glitch-block"></div>
+        <div class="glitch-block"></div>
+        <div class="glitch-block"></div>
+
+        <div class="corruption-line" style="top: 30%; animation-delay: 0s; width: 60%;"></div>
+        <div class="corruption-line" style="top: 50%; animation-delay: 2s; width: 80%;"></div>
+        <div class="corruption-line" style="top: 70%; animation-delay: 4s; width: 40%;"></div>
+
+        <div class="hero-content">
+            <h1 class="hero-title glitch" data-text="405NETWORK">405NETWORK</h1>
+            <p class="hero-tagline flicker">Information Technology, Reimagined</p>
+            <div class="cta-container">
+                <a href="#pricing" class="cta-btn cta-primary">View Plans</a>
+                <a href="#contact" class="cta-btn cta-secondary">Get in Touch</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <span class="section-tag">[System.Services]</span>
+            <h2 class="section-title glitch" data-text="What We Do">What We Do</h2>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <span class="service-number">01</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Support & Communication</h3>
+                <p class="service-desc">24/7 helpdesk, remote troubleshooting, unified communications, and responsive IT support that keeps your business connected.</p>
+            </div>
+
+            <div class="service-card">
+                <span class="service-number">02</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <path d="M8 21h8M12 17v4"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Device Management</h3>
+                <p class="service-desc">Endpoint protection, mobile device management, hardware lifecycle management, and seamless device deployment.</p>
+            </div>
+
+            <div class="service-card">
+                <span class="service-number">03</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Cloud & Admin</h3>
+                <p class="service-desc">Cloud migration, Microsoft 365 administration, identity management, and enterprise application deployment.</p>
+            </div>
+
+            <div class="service-card">
+                <span class="service-number">04</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/>
+                        <rect x="9" y="9" width="6" height="6"/>
+                        <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Infrastructure</h3>
+                <p class="service-desc">Network design, server management, cybersecurity solutions, and robust infrastructure that scales with your growth.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <span class="section-tag">[Subscription.Tiers]</span>
+            <h2 class="section-title glitch" data-text="Pricing Plans">Pricing Plans</h2>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3 class="pricing-tier">Silver</h3>
+                <div class="pricing-price"><span>$</span>49</div>
+                <p class="pricing-period">per user / month</p>
+                <ul class="pricing-features">
+                    <li>Basic helpdesk support</li>
+                    <li>Remote troubleshooting</li>
+                    <li>Email security</li>
+                    <li>Basic device monitoring</li>
+                    <li>Business hours support</li>
+                </ul>
+                <button class="pricing-btn">Select Plan</button>
+            </div>
+
+            <div class="pricing-card featured">
+                <h3 class="pricing-tier">Gold</h3>
+                <div class="pricing-price"><span>$</span>79</div>
+                <p class="pricing-period">per user / month</p>
+                <ul class="pricing-features">
+                    <li>Everything in Silver</li>
+                    <li>Priority support queue</li>
+                    <li>Advanced threat protection</li>
+                    <li>Cloud backup solution</li>
+                    <li>Extended support hours</li>
+                </ul>
+                <button class="pricing-btn">Select Plan</button>
+            </div>
+
+            <div class="pricing-card">
+                <h3 class="pricing-tier">Platinum</h3>
+                <div class="pricing-price"><span>$</span>129</div>
+                <p class="pricing-period">per user / month</p>
+                <ul class="pricing-features">
+                    <li>Everything in Gold</li>
+                    <li>24/7 dedicated support</li>
+                    <li>Advanced security suite</li>
+                    <li>Compliance management</li>
+                    <li>Strategic IT consulting</li>
+                </ul>
+                <button class="pricing-btn">Select Plan</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="section-header">
+            <span class="section-tag">[Initialize.Contact]</span>
+            <h2 class="section-title glitch" data-text="Get Connected">Get Connected</h2>
+        </div>
+
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Let's Build the Future</h3>
+                <p>Ready to reimagine your IT infrastructure? We've been helping Orange County businesses thrive since 2011. Let's talk about what we can build together.</p>
+                <ul class="contact-details">
+                    <li><span>LOC://</span> Orange County, California</li>
+                    <li><span>EST://</span> 2011</li>
+                    <li><span>STATUS://</span> Active & Ready</li>
+                </ul>
+            </div>
+
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">Name_</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email_</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message_</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Transmit Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">405<span>Network</span> Inc.</div>
+        <p class="footer-text">&copy; 2024 405Network Inc. All systems operational.</p>
+        <ul class="footer-links">
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Status</a></li>
+        </ul>
+    </footer>
+
+    <!-- Matrix Rain Effect -->
+    <script>
+        const canvas = document.getElementById('matrix-rain');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'.split('');
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(18, 18, 24, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                // Alternate between purple and red
+                if (Math.random() > 0.5) {
+                    ctx.fillStyle = '#9D00FF';
+                } else {
+                    ctx.fillStyle = '#FF003C';
+                }
+
+                ctx.font = `${fontSize}px 'Share Tech Mono', monospace`;
+                ctx.fillText(char, x, y);
+
+                // Reset drop when it reaches bottom
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Form submission handling
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.submit-btn');
+            btn.textContent = 'Transmitting...';
+            setTimeout(() => {
+                btn.textContent = 'Message Sent ✓';
+                this.reset();
+                setTimeout(() => {
+                    btn.textContent = 'Transmit Message';
+                }, 2000);
+            }, 1500);
+        });
+
+        // Add glitch effect on scroll for service cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.service-card, .pricing-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

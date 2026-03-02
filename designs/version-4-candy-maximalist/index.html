@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <meta name="description" content="Let 405Network be your CTO, Cloud, Infrastructure and AI Officer. Orange County's trusted MSP since 2011.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&family=Unbounded:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           CANDY MAXIMALIST THEME - 405Network Inc.
+           Playful Chaos | Maximum Visual Energy
+           ============================================ */
+
+        :root {
+            /* Candy Palette */
+            --hot-pink: #ff006e;
+            --electric-yellow: #ffbe0b;
+            --cyan: #3a86ff;
+            --lime: #8ac926;
+            --purple: #9b5de5;
+            --white: #ffffff;
+            --black: #0d0d0d;
+
+            /* Plan Colors */
+            --silver-blue: #007bff;
+            --gold: #ffb700;
+            --platinum: #e5e4e2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--electric-yellow);
+            overflow-x: hidden;
+            cursor: crosshair;
+            line-height: 1.6;
+        }
+
+        /* Typography */
+        .font-display { font-family: 'Unbounded', sans-serif; }
+        .font-heading { font-family: 'Syne', sans-serif; }
+
+        /* Brutal Borders & Shadows */
+        .brutal-border { border: 4px solid var(--black); }
+        .brutal-shadow { box-shadow: 8px 8px 0px var(--black); }
+        .brutal-shadow-lg { box-shadow: 12px 12px 0px var(--black); }
+        .brutal-shadow-xl { box-shadow: 16px 16px 0px var(--black); }
+
+        /* Shadow Color Variants */
+        .shadow-pink { box-shadow: 16px 16px 0px var(--hot-pink); }
+        .shadow-cyan { box-shadow: 16px 16px 0px var(--cyan); }
+        .shadow-lime { box-shadow: 16px 16px 0px var(--lime); }
+        .shadow-purple { box-shadow: 16px 16px 0px var(--purple); }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(2deg); }
+            50% { transform: translateY(-10px) rotate(-1deg); }
+            75% { transform: translateY(-15px) rotate(1deg); }
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes marquee-reverse {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        @keyframes bounce-soft {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            92% { transform: translate(-5px, 2px); }
+            94% { transform: translate(5px, -2px); }
+            96% { transform: translate(-3px, -3px); }
+            98% { transform: translate(3px, 3px); }
+        }
+
+        @keyframes rainbow-shadow {
+            0% { box-shadow: 16px 16px 0px var(--hot-pink); }
+            25% { box-shadow: 16px 16px 0px var(--cyan); }
+            50% { box-shadow: 16px 16px 0px var(--lime); }
+            75% { box-shadow: 16px 16px 0px var(--purple); }
+            100% { box-shadow: 16px 16px 0px var(--hot-pink); }
+        }
+
+        .wobble { animation: wobble 2s ease-in-out infinite; }
+        .float { animation: float 6s ease-in-out infinite; }
+        .spin-slow { animation: spin-slow 20s linear infinite; }
+        .bounce-soft { animation: bounce-soft 2s ease-in-out infinite; }
+
+        /* ============================================
+           PATTERNS & TEXTURES
+           ============================================ */
+
+        .checkerboard {
+            background-image:
+                linear-gradient(45deg, rgba(0,0,0,0.08) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(0,0,0,0.08) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.08) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.08) 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        .stripes {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 0, 110, 0.1) 10px,
+                rgba(255, 0, 110, 0.1) 20px
+            );
+        }
+
+        .stripes-cyan {
+            background: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 10px,
+                rgba(58, 134, 255, 0.1) 10px,
+                rgba(58, 134, 255, 0.1) 20px
+            );
+        }
+
+        .dots-pattern {
+            background-image: radial-gradient(circle, var(--black) 2px, transparent 2px);
+            background-size: 24px 24px;
+        }
+
+        /* ============================================
+           INTERACTIVE ELEMENTS
+           ============================================ */
+
+        /* Sticker Effect */
+        .sticker {
+            border: 4px solid var(--black);
+            border-radius: 100%;
+            transform: rotate(-5deg);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .sticker:hover {
+            transform: rotate(5deg) scale(1.1);
+            z-index: 100;
+        }
+
+        /* Brutal Button */
+        .brutal-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.125rem;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 4px solid var(--black);
+            background: var(--hot-pink);
+            color: var(--white);
+            box-shadow: 8px 8px 0px var(--black);
+            transition: all 0.15s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .brutal-btn:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px var(--black);
+        }
+
+        .brutal-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px var(--black);
+        }
+
+        /* Pulse Ring CTA */
+        .pulse-ring {
+            position: relative;
+        }
+
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border: 4px solid var(--hot-pink);
+            animation: pulse-ring 2s ease-out infinite;
+            pointer-events: none;
+        }
+
+        /* Card Hover */
+        .brutal-card {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .brutal-card:hover {
+            transform: translate(-8px, -8px) rotate(-1deg);
+            box-shadow: 24px 24px 0px var(--black);
+        }
+
+        /* Glitch on Hover */
+        .glitch:hover {
+            animation: glitch 0.3s ease-in-out infinite;
+        }
+
+        /* Rainbow Shadow Hover */
+        .rainbow-hover:hover {
+            animation: rainbow-shadow 2s linear infinite;
+        }
+
+        /* ============================================
+           SCROLL ANIMATIONS
+           ============================================ */
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px) rotate(-3deg);
+            transition: all 0.8s cubic-bezier(0.17, 0.55, 0.55, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) rotate(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.5) rotate(10deg);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1) rotate(0);
+        }
+
+        /* ============================================
+           CUSTOM SCROLLBAR
+           ============================================ */
+
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--hot-pink);
+            border: 3px solid var(--black);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyan);
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--electric-yellow);
+            border-bottom: 4px solid var(--black);
+        }
+
+        .nav-logo {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--black);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo span {
+            background: var(--hot-pink);
+            color: var(--white);
+            padding: 0.25rem 0.5rem;
+            border: 3px solid var(--black);
+            transform: rotate(-3deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            padding: 0.75rem 1.25rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--black);
+            border: 3px solid var(--black);
+            background: var(--white);
+            box-shadow: 4px 4px 0px var(--black);
+            transition: all 0.15s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--cyan);
+            color: var(--white);
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--black);
+        }
+
+        .nav-link.active {
+            background: var(--hot-pink);
+            color: var(--white);
+        }
+
+        @media (max-width: 768px) {
+            .nav { padding: 0.75rem 1rem; }
+            .nav-logo { font-size: 1.25rem; }
+            .nav-links { gap: 0.5rem; }
+            .nav-link { padding: 0.5rem 0.75rem; font-size: 0.75rem; }
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+
+        .hero {
+            min-height: 100vh;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Floating Decorative Shapes */
+        .deco-shape {
+            position: absolute;
+            border: 4px solid var(--black);
+            z-index: 1;
+        }
+
+        .deco-circle-1 {
+            width: 120px;
+            height: 120px;
+            background: var(--hot-pink);
+            border-radius: 50%;
+            top: 15%;
+            left: 5%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .deco-square-1 {
+            width: 80px;
+            height: 80px;
+            background: var(--cyan);
+            top: 20%;
+            right: 10%;
+            animation: spin-slow 25s linear infinite;
+        }
+
+        .deco-triangle-1 {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 86px solid var(--lime);
+            border-top: none;
+            top: 60%;
+            left: 8%;
+            animation: wobble 3s ease-in-out infinite;
+        }
+
+        .deco-circle-2 {
+            width: 60px;
+            height: 60px;
+            background: var(--purple);
+            border-radius: 50%;
+            bottom: 25%;
+            right: 8%;
+            animation: bounce-soft 2s ease-in-out infinite;
+        }
+
+        .deco-star {
+            width: 100px;
+            height: 100px;
+            background: var(--electric-yellow);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            top: 40%;
+            right: 15%;
+            animation: spin-slow 30s linear infinite reverse;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 1000px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--cyan);
+            color: var(--black);
+            padding: 0.5rem 1.5rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            border: 4px solid var(--black);
+            box-shadow: 6px 6px 0px var(--black);
+            transform: rotate(-3deg);
+            margin-bottom: 2rem;
+            animation: wobble 4s ease-in-out infinite;
+        }
+
+        .hero-title {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 0.95;
+            color: var(--black);
+            margin-bottom: 1rem;
+        }
+
+        .hero-title span {
+            color: var(--hot-pink);
+            position: relative;
+        }
+
+        .hero-title span::after {
+            content: '';
+            position: absolute;
+            bottom: 0.1em;
+            left: 0;
+            right: 0;
+            height: 0.15em;
+            background: var(--hot-pink);
+            transform: skewX(-5deg);
+        }
+
+        .hero-tagline {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--black);
+            background: var(--white);
+            padding: 1rem 2rem;
+            border: 4px solid var(--black);
+            box-shadow: 8px 8px 0px var(--hot-pink);
+            display: inline-block;
+            margin-bottom: 2rem;
+            transform: rotate(1deg);
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--black);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            background: rgba(255,255,255,0.8);
+            padding: 1rem;
+            border: 3px solid var(--black);
+        }
+
+        .hero-cta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .hero-cta .brutal-btn {
+            font-size: 1.25rem;
+            padding: 1.25rem 2.5rem;
+        }
+
+        .hero-cta .brutal-btn.secondary {
+            background: var(--electric-yellow);
+            color: var(--black);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .scroll-box {
+            width: 30px;
+            height: 50px;
+            border: 4px solid var(--black);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            padding-top: 8px;
+            background: var(--white);
+        }
+
+        .scroll-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--black);
+            border-radius: 50%;
+            animation: bounce-soft 1.5s ease-in-out infinite;
+        }
+
+        /* ============================================
+           MARQUEE SECTION
+           ============================================ */
+
+        .marquee-section {
+            background: var(--black);
+            border-top: 4px solid var(--black);
+            border-bottom: 4px solid var(--black);
+            padding: 1rem 0;
+            overflow: hidden;
+        }
+
+        .marquee-track {
+            display: flex;
+            white-space: nowrap;
+            animation: marquee 30s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        .marquee-reverse .marquee-track {
+            animation: marquee-reverse 25s linear infinite;
+        }
+
+        .marquee-item {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 0 2rem;
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .marquee-item span {
+            color: var(--electric-yellow);
+        }
+
+        .marquee-item .icon {
+            font-size: 2rem;
+        }
+
+        .marquee-pink span { color: var(--hot-pink); }
+        .marquee-cyan span { color: var(--cyan); }
+        .marquee-lime span { color: var(--lime); }
+        .marquee-purple span { color: var(--purple); }
+
+        /* ============================================
+           SERVICES SECTION
+           ============================================ */
+
+        .services {
+            background: var(--hot-pink);
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: var(--electric-yellow);
+            color: var(--black);
+            padding: 0.5rem 1.5rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            border: 4px solid var(--black);
+            box-shadow: 4px 4px 0px var(--black);
+            transform: rotate(-2deg);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            color: var(--white);
+            -webkit-text-stroke: 3px var(--black);
+            paint-order: stroke fill;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: var(--white);
+            border: 4px solid var(--black);
+            box-shadow: 12px 12px 0px var(--black);
+            padding: 2rem;
+            position: relative;
+        }
+
+        .service-card:nth-child(1) { transform: rotate(-1deg); }
+        .service-card:nth-child(2) { transform: rotate(1deg); }
+        .service-card:nth-child(3) { transform: rotate(-0.5deg); }
+        .service-card:nth-child(4) { transform: rotate(0.5deg); }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--electric-yellow);
+            border: 4px solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            transform: rotate(-5deg);
+        }
+
+        .service-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--black);
+            margin-bottom: 1rem;
+        }
+
+        .service-description {
+            color: var(--black);
+            margin-bottom: 1rem;
+        }
+
+        .service-tag {
+            display: inline-block;
+            background: var(--cyan);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 2px solid var(--black);
+        }
+
+        /* ============================================
+           STATS SECTION
+           ============================================ */
+
+        .stats {
+            background: var(--cyan);
+            padding: 4rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats::before {
+            content: '405';
+            position: absolute;
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: 30vw;
+            color: rgba(0,0,0,0.05);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card {
+            background: var(--black);
+            border: 4px solid var(--black);
+            box-shadow: 8px 8px 0px var(--hot-pink);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .stat-card:nth-child(2) { box-shadow: 8px 8px 0px var(--lime); }
+        .stat-card:nth-child(3) { box-shadow: 8px 8px 0px var(--purple); }
+        .stat-card:nth-child(4) { box-shadow: 8px 8px 0px var(--electric-yellow); }
+
+        .stat-number {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: 3.5rem;
+            color: var(--electric-yellow);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--white);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* ============================================
+           PRICING SECTION
+           ============================================ */
+
+        .pricing {
+            background: var(--electric-yellow);
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border: 4px solid var(--black);
+            box-shadow: 16px 16px 0px var(--black);
+            padding: 2.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -1rem;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            background: var(--hot-pink);
+            color: var(--white);
+            padding: 0.5rem 1.5rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            border: 3px solid var(--black);
+            box-shadow: 4px 4px 0px var(--black);
+        }
+
+        .pricing-tier {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            border: 3px solid var(--black);
+            margin-bottom: 1.5rem;
+            transform: rotate(-2deg);
+        }
+
+        .pricing-card:nth-child(1) .pricing-tier {
+            background: var(--silver-blue);
+            color: var(--white);
+        }
+
+        .pricing-card:nth-child(2) .pricing-tier {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .pricing-card:nth-child(3) .pricing-tier {
+            background: var(--platinum);
+            color: var(--black);
+        }
+
+        .pricing-name {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: var(--black);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-description {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            flex: 1;
+        }
+
+        .pricing-features li {
+            padding: 0.75rem 0;
+            border-bottom: 2px dashed #ddd;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .pricing-features li::before {
+            content: '';
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            background: var(--lime);
+            border: 2px solid var(--black);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            text-align: center;
+        }
+
+        .pricing-cta .brutal-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .pricing-card:nth-child(1) .brutal-btn {
+            background: var(--silver-blue);
+        }
+
+        .pricing-card:nth-child(2) .brutal-btn {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .pricing-card:nth-child(3) .brutal-btn {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+
+        /* ============================================
+           WHY US SECTION
+           ============================================ */
+
+        .why-us {
+            background: var(--purple);
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .why-us .section-title {
+            color: var(--electric-yellow);
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .why-card {
+            background: var(--white);
+            border: 4px solid var(--black);
+            box-shadow: 8px 8px 0px var(--black);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .why-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            background: var(--electric-yellow);
+            border: 4px solid var(--black);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .why-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--black);
+            margin-bottom: 0.75rem;
+        }
+
+        .why-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* ============================================
+           CTA SECTION
+           ============================================ */
+
+        .cta-section {
+            background: var(--black);
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-shapes {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .cta-shape {
+            position: absolute;
+            border: 4px solid var(--black);
+            opacity: 0.6;
+        }
+
+        .cta-shape-1 {
+            width: 150px;
+            height: 150px;
+            background: var(--hot-pink);
+            border-radius: 50%;
+            top: 10%;
+            left: 5%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .cta-shape-2 {
+            width: 100px;
+            height: 100px;
+            background: var(--cyan);
+            top: 60%;
+            right: 10%;
+            animation: spin-slow 20s linear infinite;
+        }
+
+        .cta-shape-3 {
+            width: 80px;
+            height: 80px;
+            background: var(--lime);
+            bottom: 15%;
+            left: 15%;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation: wobble 3s ease-in-out infinite;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            color: var(--electric-yellow);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-text {
+            font-size: 1.25rem;
+            color: var(--white);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cta-buttons .brutal-btn {
+            font-size: 1.25rem;
+            padding: 1.25rem 2.5rem;
+        }
+
+        .cta-or {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--electric-yellow);
+        }
+
+        .cta-secondary {
+            background: var(--electric-yellow);
+            color: var(--black);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+
+        .footer {
+            background: var(--electric-yellow);
+            padding: 4rem 2rem 2rem;
+            border-top: 4px solid var(--black);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        .footer-logo {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: var(--black);
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo span {
+            color: var(--hot-pink);
+        }
+
+        .footer-tagline {
+            font-size: 1rem;
+            color: var(--black);
+            max-width: 300px;
+        }
+
+        .footer-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: var(--black);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 4px solid var(--hot-pink);
+            display: inline-block;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--black);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a::before {
+            content: '';
+        }
+
+        .footer-links a:hover {
+            color: var(--hot-pink);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 48px;
+            height: 48px;
+            background: var(--black);
+            border: 3px solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--white);
+            text-decoration: none;
+            box-shadow: 4px 4px 0px var(--hot-pink);
+            transition: all 0.2s;
+        }
+
+        .social-link:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--cyan);
+        }
+
+        .footer-bottom {
+            border-top: 4px solid var(--black);
+            padding-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-copyright {
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-legal a {
+            color: var(--black);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .footer-legal a:hover {
+            color: var(--hot-pink);
+        }
+
+        /* ============================================
+           RESPONSIVE ADJUSTMENTS
+           ============================================ */
+
+        @media (max-width: 768px) {
+            .hero { padding: 6rem 1rem 3rem; }
+            .deco-shape { transform: scale(0.6); }
+            .brutal-shadow-xl { box-shadow: 8px 8px 0px var(--black); }
+            .services, .pricing, .why-us, .cta-section { padding: 4rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="#" class="nav-logo">
+            405<span>Network</span>
+        </a>
+        <div class="nav-links">
+            <a href="#services" class="nav-link">Services</a>
+            <a href="#pricing" class="nav-link active">Pricing</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero checkerboard">
+        <!-- Floating Decorative Shapes -->
+        <div class="deco-shape deco-circle-1"></div>
+        <div class="deco-shape deco-square-1"></div>
+        <div class="deco-shape deco-triangle-1"></div>
+        <div class="deco-shape deco-circle-2"></div>
+        <div class="deco-shape deco-star"></div>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                Orange County, CA | Est. 2011
+            </div>
+
+            <h1 class="hero-title glitch">
+                405<span>Network</span>
+            </h1>
+
+            <div class="hero-tagline">
+                Information Technology, Reimagined
+            </div>
+
+            <p class="hero-description">
+                Let 405Network be your Chief Technology (CTO), Cloud, Infrastructure and AI Officer. 25+ years of combined IT expertise serving SMBs.
+            </p>
+
+            <div class="hero-cta">
+                <a href="#pricing" class="brutal-btn pulse-ring rainbow-hover">
+                    View Plans
+                </a>
+                <a href="#services" class="brutal-btn secondary">
+                    Our Services
+                </a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-box">
+                <div class="scroll-dot"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee Section -->
+    <section class="marquee-section">
+        <div class="marquee-track">
+            <div class="marquee-item marquee-pink">
+                <span class="icon">&#9733;</span>
+                <span>MANAGED IT</span>
+            </div>
+            <div class="marquee-item marquee-cyan">
+                <span class="icon">&#9733;</span>
+                <span>CLOUD SOLUTIONS</span>
+            </div>
+            <div class="marquee-item marquee-lime">
+                <span class="icon">&#9733;</span>
+                <span>CYBERSECURITY</span>
+            </div>
+            <div class="marquee-item marquee-purple">
+                <span class="icon">&#9733;</span>
+                <span>24/7 SUPPORT</span>
+            </div>
+            <div class="marquee-item marquee-pink">
+                <span class="icon">&#9733;</span>
+                <span>AZURE & DEVOPS</span>
+            </div>
+            <div class="marquee-item marquee-cyan">
+                <span class="icon">&#9733;</span>
+                <span>G-SUITE ADMIN</span>
+            </div>
+            <!-- Duplicate for seamless loop -->
+            <div class="marquee-item marquee-pink">
+                <span class="icon">&#9733;</span>
+                <span>MANAGED IT</span>
+            </div>
+            <div class="marquee-item marquee-cyan">
+                <span class="icon">&#9733;</span>
+                <span>CLOUD SOLUTIONS</span>
+            </div>
+            <div class="marquee-item marquee-lime">
+                <span class="icon">&#9733;</span>
+                <span>CYBERSECURITY</span>
+            </div>
+            <div class="marquee-item marquee-purple">
+                <span class="icon">&#9733;</span>
+                <span>24/7 SUPPORT</span>
+            </div>
+            <div class="marquee-item marquee-pink">
+                <span class="icon">&#9733;</span>
+                <span>AZURE & DEVOPS</span>
+            </div>
+            <div class="marquee-item marquee-cyan">
+                <span class="icon">&#9733;</span>
+                <span>G-SUITE ADMIN</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services stripes">
+        <div class="section-header reveal">
+            <div class="section-badge wobble">What We Do</div>
+            <h2 class="section-title">Our Services</h2>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card brutal-card reveal">
+                <div class="service-icon sticker">&#128172;</div>
+                <h3 class="service-title">Support & Communication</h3>
+                <p class="service-description">
+                    Text-based support from technical experts with Slack and Microsoft Teams integration for real-time collaboration.
+                </p>
+                <span class="service-tag">Always Connected</span>
+            </div>
+
+            <div class="service-card brutal-card reveal">
+                <div class="service-icon sticker">&#128187;</div>
+                <h3 class="service-title">Device Management</h3>
+                <p class="service-description">
+                    Complete Windows and macOS device management, optimization, and ongoing maintenance for your entire fleet.
+                </p>
+                <span class="service-tag">All Platforms</span>
+            </div>
+
+            <div class="service-card brutal-card reveal">
+                <div class="service-icon sticker">&#9729;</div>
+                <h3 class="service-title">Cloud & Administration</h3>
+                <p class="service-description">
+                    Expert G-Suite administration and Microsoft Azure cloud services with DevOps integration and support.
+                </p>
+                <span class="service-tag">Cloud First</span>
+            </div>
+
+            <div class="service-card brutal-card reveal">
+                <div class="service-icon sticker">&#128293;</div>
+                <h3 class="service-title">Infrastructure</h3>
+                <p class="service-description">
+                    Server performance optimization, maintenance, and comprehensive network monitoring and management.
+                </p>
+                <span class="service-tag">Enterprise Grade</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-card reveal-scale">
+                <div class="stat-number">2011</div>
+                <div class="stat-label">Established</div>
+            </div>
+            <div class="stat-card reveal-scale">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat-card reveal-scale">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Support Available</div>
+            </div>
+            <div class="stat-card reveal-scale">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">SMB Focused</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reverse Marquee -->
+    <section class="marquee-section marquee-reverse" style="background: var(--lime);">
+        <div class="marquee-track">
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>REMOTE MONITORING</span>
+            </div>
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>PATCH MANAGEMENT</span>
+            </div>
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>THREAT DETECTION</span>
+            </div>
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>DISASTER RECOVERY</span>
+            </div>
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>IT CONSULTING</span>
+            </div>
+            <!-- Duplicate -->
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>REMOTE MONITORING</span>
+            </div>
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>PATCH MANAGEMENT</span>
+            </div>
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>THREAT DETECTION</span>
+            </div>
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>DISASTER RECOVERY</span>
+            </div>
+            <div class="marquee-item" style="color: var(--black);">
+                <span class="icon">&#10004;</span>
+                <span>IT CONSULTING</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing dots-pattern">
+        <div class="section-header reveal">
+            <div class="section-badge wobble">Simple & Transparent</div>
+            <h2 class="section-title" style="color: var(--black); -webkit-text-stroke: 3px var(--hot-pink);">Pricing Plans</h2>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Silver Plan -->
+            <div class="pricing-card brutal-card reveal">
+                <div class="pricing-tier">Silver</div>
+                <h3 class="pricing-name">Essential</h3>
+                <p class="pricing-description">For small businesses with essential IT support needs</p>
+
+                <ul class="pricing-features">
+                    <li>Remote Monitoring & Management (RMM)</li>
+                    <li>Help Desk Support</li>
+                    <li>Patch Management</li>
+                    <li>Antivirus & Anti-malware Protection</li>
+                    <li>Basic Backup & Disaster Recovery</li>
+                </ul>
+
+                <div class="pricing-cta">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeBRCLx9K78KhcanobwXIDd9fmf3AgdXb6NbJpk-oio46CU_g/viewform" target="_blank" class="brutal-btn">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+
+            <!-- Gold Plan -->
+            <div class="pricing-card brutal-card featured reveal">
+                <div class="pricing-tier">Gold</div>
+                <h3 class="pricing-name">Advanced</h3>
+                <p class="pricing-description">For medium-sized businesses needing advanced IT support</p>
+
+                <ul class="pricing-features">
+                    <li>All Silver Plan Services</li>
+                    <li>Extended Help Desk Support (12x5)</li>
+                    <li>Bi-weekly Patch Management</li>
+                    <li>Advanced Threat Detection</li>
+                    <li>Comprehensive Backup & Disaster Recovery</li>
+                </ul>
+
+                <div class="pricing-cta">
+                    <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill" target="_blank" class="brutal-btn">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+
+            <!-- Platinum Plan -->
+            <div class="pricing-card brutal-card reveal">
+                <div class="pricing-tier">Platinum</div>
+                <h3 class="pricing-name">Enterprise</h3>
+                <p class="pricing-description">For large businesses with complex IT needs</p>
+
+                <ul class="pricing-features">
+                    <li>All Gold Plan Services</li>
+                    <li>24x7 Help Desk Support</li>
+                    <li>Weekly Patch Management</li>
+                    <li>Full Suite Security Solutions</li>
+                    <li>Advanced Business Continuity</li>
+                    <li>Strategic IT Consulting</li>
+                </ul>
+
+                <div class="pricing-cta">
+                    <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill" target="_blank" class="brutal-btn">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Us Section -->
+    <section class="why-us stripes-cyan">
+        <div class="section-header reveal">
+            <div class="section-badge wobble" style="background: var(--hot-pink); color: var(--white);">Why Choose Us</div>
+            <h2 class="section-title">The 405 Advantage</h2>
+        </div>
+
+        <div class="why-grid">
+            <div class="why-card brutal-card reveal">
+                <div class="why-icon sticker">&#128640;</div>
+                <h3 class="why-title">Fast Response</h3>
+                <p class="why-text">Real-time support via Slack and Teams. We're there when you need us.</p>
+            </div>
+
+            <div class="why-card brutal-card reveal">
+                <div class="why-icon sticker">&#128274;</div>
+                <h3 class="why-title">Security First</h3>
+                <p class="why-text">Advanced threat detection and comprehensive security solutions.</p>
+            </div>
+
+            <div class="why-card brutal-card reveal">
+                <div class="why-icon sticker">&#127919;</div>
+                <h3 class="why-title">SMB Experts</h3>
+                <p class="why-text">We specialize in small to medium businesses. Your size is our sweet spot.</p>
+            </div>
+
+            <div class="why-card brutal-card reveal">
+                <div class="why-icon sticker">&#128161;</div>
+                <h3 class="why-title">Strategic Partner</h3>
+                <p class="why-text">More than IT support - we're your virtual CTO, guiding your tech strategy.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="cta-section">
+        <div class="cta-shapes">
+            <div class="cta-shape cta-shape-1"></div>
+            <div class="cta-shape cta-shape-2"></div>
+            <div class="cta-shape cta-shape-3"></div>
+        </div>
+
+        <div class="cta-content reveal">
+            <h2 class="cta-title glitch">
+                Ready to Transform Your IT?
+            </h2>
+            <p class="cta-text">
+                Join the businesses that trust 405Network with their technology. Let's build something great together.
+            </p>
+            <div class="cta-buttons">
+                <a href="#pricing" class="brutal-btn pulse-ring rainbow-hover">
+                    View Plans
+                </a>
+                <span class="cta-or">or</span>
+                <a href="mailto:contact@405network.com" class="brutal-btn cta-secondary">
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">405<span>Network</span></div>
+                <p class="footer-tagline">Information Technology, Reimagined. Orange County's trusted MSP since 2011.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-link sticker">in</a>
+                    <a href="#" class="social-link sticker">X</a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="footer-title">Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#services">Device Management</a></li>
+                    <li><a href="#services">Cloud Solutions</a></li>
+                    <li><a href="#services">Cybersecurity</a></li>
+                    <li><a href="#services">IT Support</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-title">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">About Us</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-copyright">2024 405Network Inc. All rights reserved. Stay connected.</p>
+            <div class="footer-legal">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll Animation Script -->
+    <script>
+        // Reveal on scroll
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal, .reveal-scale');
+
+            reveals.forEach((element, index) => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    // Add staggered delay based on index within parent
+                    setTimeout(() => {
+                        element.classList.add('active');
+                    }, index * 50);
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        window.addEventListener('load', reveal);
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Parallax effect on decorative shapes
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const shapes = document.querySelectorAll('.deco-shape');
+
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.03;
+                const yPos = scrolled * speed;
+                shape.style.transform = `translateY(${yPos}px) ${shape.classList.contains('deco-square-1') ? `rotate(${scrolled * 0.05}deg)` : ''}`;
+            });
+        });
+
+        // Add random slight rotation to cards on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.brutal-card');
+            cards.forEach(card => {
+                const randomRotation = (Math.random() - 0.5) * 4; // -2 to 2 degrees
+                card.style.setProperty('--random-rotation', `${randomRotation}deg`);
+            });
+        });
+
+        // Interactive hover sound effect placeholder (for future enhancement)
+        document.querySelectorAll('.brutal-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                // Could add subtle hover sound here
+            });
+        });
+
+        // Navigation active state on scroll
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

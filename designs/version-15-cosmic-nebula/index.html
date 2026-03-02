@@ -1,0 +1,2966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        /* ============================================
+           CSS RESET & BASE STYLES
+           ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --space-black: #0c0c0c;
+            --nebula-purple: #9d4edd;
+            --nebula-purple-light: #c77dff;
+            --nebula-purple-dark: #7b2cbf;
+            --cosmic-orange: #ff6b35;
+            --cosmic-orange-light: #ff8c5a;
+            --cosmic-orange-dark: #e85a24;
+            --white: #ffffff;
+            --white-dim: rgba(255, 255, 255, 0.8);
+            --white-muted: rgba(255, 255, 255, 0.6);
+            --white-subtle: rgba(255, 255, 255, 0.3);
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--space-black);
+            color: var(--white);
+            overflow-x: hidden;
+            cursor: none;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            cursor: none;
+        }
+
+        button {
+            cursor: none;
+            font-family: inherit;
+        }
+
+        /* ============================================
+           CUSTOM CURSOR - GLOWING STAR
+           ============================================ */
+        .cursor-star {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            z-index: 10001;
+            mix-blend-mode: screen;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-star::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: var(--white);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow:
+                0 0 10px var(--white),
+                0 0 20px var(--nebula-purple),
+                0 0 40px var(--cosmic-orange);
+            animation: starPulse 2s ease-in-out infinite;
+        }
+
+        .cursor-star::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--white), transparent);
+            transform: translate(-50%, -50%);
+            animation: starRays 3s linear infinite;
+        }
+
+        @keyframes starPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow:
+                    0 0 10px var(--white),
+                    0 0 20px var(--nebula-purple),
+                    0 0 40px var(--cosmic-orange);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                box-shadow:
+                    0 0 15px var(--white),
+                    0 0 30px var(--nebula-purple),
+                    0 0 60px var(--cosmic-orange);
+            }
+        }
+
+        @keyframes starRays {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .cursor-glow {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            pointer-events: none;
+            z-index: 10000;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                rgba(157, 78, 221, 0.2) 0%,
+                rgba(255, 107, 53, 0.1) 40%,
+                transparent 70%);
+            transform: translate(-50%, -50%);
+            filter: blur(10px);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .cursor-particles {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .cursor-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--white);
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        /* ============================================
+           WEBGL CANVAS CONTAINER
+           ============================================ */
+        #nebula-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* ============================================
+           STAR FIELD OVERLAY
+           ============================================ */
+        .star-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: var(--white);
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--min-opacity); transform: scale(1); }
+            50% { opacity: var(--max-opacity); transform: scale(1.2); }
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(12, 12, 12, 0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+
+        .nav.scrolled {
+            padding: 1rem 4rem;
+            background: rgba(12, 12, 12, 0.95);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-logo-icon {
+            width: 50px;
+            height: 50px;
+            position: relative;
+        }
+
+        .nav-logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-logo-text {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--nebula-purple-light), var(--cosmic-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--white-dim);
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--nebula-purple), var(--cosmic-orange));
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-orange));
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--white);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-cta:hover::before {
+            left: 100%;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(157, 78, 221, 0.4);
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            z-index: 10;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(157, 78, 221, 0.2);
+            border: 1px solid rgba(157, 78, 221, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--nebula-purple-light);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--cosmic-orange);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--white) 0%, var(--nebula-purple-light) 50%, var(--cosmic-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 20px rgba(157, 78, 221, 0.3)); }
+            100% { filter: drop-shadow(0 0 40px rgba(255, 107, 53, 0.3)); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            color: var(--white-dim);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--white-muted);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-orange));
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--white);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(157, 78, 221, 0.4);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-secondary {
+            padding: 1rem 3rem;
+            background: transparent;
+            border: 2px solid var(--nebula-purple);
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--white);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-orange));
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-secondary:hover {
+            border-color: transparent;
+        }
+
+        .btn-secondary:hover::before {
+            width: 100%;
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--white-muted);
+            font-size: 0.85rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .hero-scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(180deg, var(--nebula-purple), transparent);
+        }
+
+        /* ============================================
+           SECTION STYLES
+           ============================================ */
+        section {
+            position: relative;
+            z-index: 10;
+            padding: 8rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(157, 78, 221, 0.15);
+            border: 1px solid rgba(157, 78, 221, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--nebula-purple-light);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--white) 30%, var(--nebula-purple-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--white-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ============================================
+           SERVICES SECTION
+           ============================================ */
+        .services {
+            background: linear-gradient(180deg, transparent 0%, rgba(157, 78, 221, 0.05) 50%, transparent 100%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: rgba(12, 12, 12, 0.6);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.1), rgba(255, 107, 53, 0.05));
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--nebula-purple);
+            box-shadow:
+                0 20px 60px rgba(157, 78, 221, 0.2),
+                0 0 40px rgba(157, 78, 221, 0.1);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-orange));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-icon svg {
+            width: 35px;
+            height: 35px;
+            stroke: var(--white);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .service-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-description {
+            font-size: 0.95rem;
+            color: var(--white-muted);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-features {
+            list-style: none;
+            margin-top: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--white-dim);
+            margin-bottom: 0.75rem;
+        }
+
+        .service-features li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--cosmic-orange);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ============================================
+           FEATURES SECTION
+           ============================================ */
+        .features {
+            padding: 10rem 2rem;
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+            margin-bottom: 8rem;
+        }
+
+        .feature-row:nth-child(even) .feature-content {
+            order: 2;
+        }
+
+        .feature-row:nth-child(even) .feature-visual {
+            order: 1;
+        }
+
+        .feature-content h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--white), var(--nebula-purple-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-content p {
+            font-size: 1.1rem;
+            color: var(--white-muted);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .feature-stats {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .feature-stat {
+            text-align: center;
+        }
+
+        .feature-stat-value {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--cosmic-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-stat-label {
+            font-size: 0.9rem;
+            color: var(--white-muted);
+        }
+
+        .feature-visual {
+            position: relative;
+            height: 400px;
+            background: rgba(157, 78, 221, 0.1);
+            border-radius: 30px;
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-visual-content {
+            position: relative;
+            width: 80%;
+            height: 80%;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(157, 78, 221, 0.3);
+            border-radius: 50%;
+            animation: orbitRotate 20s linear infinite;
+        }
+
+        .orbit-ring:nth-child(1) {
+            width: 100px;
+            height: 100px;
+        }
+
+        .orbit-ring:nth-child(2) {
+            width: 180px;
+            height: 180px;
+            animation-duration: 25s;
+            animation-direction: reverse;
+        }
+
+        .orbit-ring:nth-child(3) {
+            width: 260px;
+            height: 260px;
+            animation-duration: 30s;
+        }
+
+        @keyframes orbitRotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .orbit-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-orange));
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(157, 78, 221, 0.5);
+        }
+
+        .orbit-planet {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--cosmic-orange);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--cosmic-orange);
+        }
+
+        /* ============================================
+           PRICING SECTION
+           ============================================ */
+        .pricing {
+            background: linear-gradient(180deg, transparent 0%, rgba(255, 107, 53, 0.03) 50%, transparent 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(12, 12, 12, 0.7);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            position: relative;
+            transition: all 0.5s ease;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--nebula-purple), var(--cosmic-orange));
+            transform: scaleX(0);
+            transition: transform 0.5s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--nebula-purple);
+            box-shadow: 0 30px 60px rgba(157, 78, 221, 0.2);
+        }
+
+        .pricing-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--cosmic-orange);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            transform: scaleX(1);
+            background: linear-gradient(90deg, var(--cosmic-orange), var(--nebula-purple));
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.08) translateY(-10px);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            padding: 0.4rem 1rem;
+            background: linear-gradient(135deg, var(--cosmic-orange), var(--nebula-purple));
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pricing-tier {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-currency {
+            font-size: 1.5rem;
+            color: var(--nebula-purple-light);
+        }
+
+        .pricing-amount {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--white), var(--nebula-purple-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pricing-period {
+            font-size: 1rem;
+            color: var(--white-muted);
+        }
+
+        .pricing-description {
+            font-size: 0.95rem;
+            color: var(--white-muted);
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(157, 78, 221, 0.2);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            font-size: 0.95rem;
+            color: var(--white-dim);
+        }
+
+        .pricing-features li svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--cosmic-orange);
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 2px solid var(--nebula-purple);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .pricing-cta:hover {
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-orange));
+            border-color: transparent;
+        }
+
+        .pricing-card.featured .pricing-cta {
+            background: linear-gradient(135deg, var(--cosmic-orange), var(--nebula-purple));
+            border: none;
+        }
+
+        .pricing-card.featured .pricing-cta:hover {
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        /* ============================================
+           TESTIMONIALS SECTION
+           ============================================ */
+        .testimonials {
+            padding: 10rem 2rem;
+        }
+
+        .testimonials-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: rgba(12, 12, 12, 0.6);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .testimonial-card:hover {
+            border-color: var(--nebula-purple);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(157, 78, 221, 0.15);
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-stars svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--cosmic-orange);
+        }
+
+        .testimonial-text {
+            font-size: 1.05rem;
+            color: var(--white-dim);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-orange));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .testimonial-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-info p {
+            font-size: 0.85rem;
+            color: var(--white-muted);
+        }
+
+        /* ============================================
+           CONTACT SECTION
+           ============================================ */
+        .contact {
+            background: linear-gradient(180deg, transparent 0%, rgba(157, 78, 221, 0.05) 50%, transparent 100%);
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--white), var(--nebula-purple-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-info p {
+            font-size: 1.05rem;
+            color: var(--white-muted);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(157, 78, 221, 0.2);
+            border: 1px solid rgba(157, 78, 221, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--nebula-purple-light);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .contact-item-text h4 {
+            font-size: 0.9rem;
+            color: var(--white-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-item-text p {
+            font-size: 1rem;
+            color: var(--white);
+            margin: 0;
+        }
+
+        .contact-form {
+            background: rgba(12, 12, 12, 0.6);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--white-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(157, 78, 221, 0.1);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--white);
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--nebula-purple);
+            box-shadow: 0 0 20px rgba(157, 78, 221, 0.2);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--white-subtle);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-orange));
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(157, 78, 221, 0.4);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            position: relative;
+            z-index: 10;
+            padding: 5rem 2rem 2rem;
+            background: linear-gradient(180deg, transparent, rgba(12, 12, 12, 0.95));
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            padding-bottom: 4rem;
+            border-bottom: 1px solid rgba(157, 78, 221, 0.2);
+        }
+
+        .footer-brand p {
+            font-size: 0.95rem;
+            color: var(--white-muted);
+            line-height: 1.8;
+            margin-top: 1rem;
+            max-width: 300px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .footer-social a {
+            width: 45px;
+            height: 45px;
+            background: rgba(157, 78, 221, 0.2);
+            border: 1px solid rgba(157, 78, 221, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-orange));
+            border-color: transparent;
+            transform: translateY(-3px);
+        }
+
+        .footer-social svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--white);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .footer-column h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            font-size: 0.95rem;
+            color: var(--white-muted);
+            transition: all 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--nebula-purple-light);
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+        }
+
+        .footer-copyright {
+            font-size: 0.9rem;
+            color: var(--white-muted);
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-legal a {
+            font-size: 0.9rem;
+            color: var(--white-muted);
+            transition: color 0.3s ease;
+        }
+
+        .footer-legal a:hover {
+            color: var(--nebula-purple-light);
+        }
+
+        /* ============================================
+           COSMIC DUST PARTICLES
+           ============================================ */
+        .cosmic-dust {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .dust-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: floatDust linear infinite;
+        }
+
+        @keyframes floatDust {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* ============================================
+           NEBULA CLOUD LAYERS
+           ============================================ */
+        .nebula-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .nebula-layer-1 {
+            background: radial-gradient(ellipse at 20% 30%, rgba(157, 78, 221, 0.15) 0%, transparent 50%);
+            animation: nebulaFloat1 30s ease-in-out infinite;
+        }
+
+        .nebula-layer-2 {
+            background: radial-gradient(ellipse at 80% 70%, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
+            animation: nebulaFloat2 25s ease-in-out infinite;
+        }
+
+        .nebula-layer-3 {
+            background: radial-gradient(ellipse at 50% 50%, rgba(157, 78, 221, 0.08) 0%, transparent 60%);
+            animation: nebulaFloat3 35s ease-in-out infinite;
+        }
+
+        @keyframes nebulaFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, -30px) scale(1.1); }
+        }
+
+        @keyframes nebulaFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-40px, 40px) scale(1.15); }
+        }
+
+        @keyframes nebulaFloat3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 20px) scale(1.05); }
+        }
+
+        /* ============================================
+           RESPONSIVE STYLES
+           ============================================ */
+        @media (max-width: 1200px) {
+            .feature-row {
+                gap: 3rem;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav {
+                padding: 1rem 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .feature-row {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .feature-row:nth-child(even) .feature-content,
+            .feature-row:nth-child(even) .feature-visual {
+                order: unset;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 6rem 1.5rem 4rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            section {
+                padding: 5rem 1.5rem;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .pricing-card.featured:hover {
+                transform: translateY(-10px);
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .pricing-amount {
+                font-size: 3rem;
+            }
+        }
+
+        /* Hide custom cursor on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            body {
+                cursor: auto;
+            }
+
+            .cursor-star,
+            .cursor-glow,
+            .cursor-particles {
+                display: none;
+            }
+
+            a, button {
+                cursor: pointer;
+            }
+        }
+
+        /* ============================================
+           LOADING SCREEN
+           ============================================ */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--space-black);
+            z-index: 20000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 2rem;
+            animation: loadingPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 20px rgba(157, 78, 221, 0.5));
+            }
+            50% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 40px rgba(255, 107, 53, 0.5));
+            }
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 3px;
+            background: rgba(157, 78, 221, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--nebula-purple), var(--cosmic-orange));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--white-muted);
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <svg class="loading-logo" viewBox="0 0 100 100">
+            <defs>
+                <linearGradient id="loadingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#9d4edd"/>
+                    <stop offset="100%" stop-color="#ff6b35"/>
+                </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="45" fill="none" stroke="url(#loadingGradient)" stroke-width="2"/>
+            <circle cx="50" cy="50" r="30" fill="none" stroke="url(#loadingGradient)" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="15" fill="url(#loadingGradient)"/>
+            <circle cx="50" cy="15" r="5" fill="#ff6b35"/>
+            <circle cx="85" cy="50" r="4" fill="#9d4edd"/>
+            <circle cx="50" cy="85" r="3" fill="#ff6b35"/>
+        </svg>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loading-progress"></div>
+        </div>
+        <p class="loading-text">INITIALIZING COSMOS</p>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-star" id="cursor-star"></div>
+    <div class="cursor-glow" id="cursor-glow"></div>
+    <div class="cursor-particles" id="cursor-particles"></div>
+
+    <!-- WebGL Canvas -->
+    <canvas id="nebula-canvas"></canvas>
+
+    <!-- Star Field Overlay -->
+    <div class="star-field" id="star-field"></div>
+
+    <!-- Cosmic Dust Particles -->
+    <div class="cosmic-dust" id="cosmic-dust"></div>
+
+    <!-- Nebula Cloud Layers -->
+    <div class="nebula-layer nebula-layer-1"></div>
+    <div class="nebula-layer nebula-layer-2"></div>
+    <div class="nebula-layer nebula-layer-3"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-logo">
+            <div class="nav-logo-icon">
+                <svg viewBox="0 0 50 50">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#9d4edd"/>
+                            <stop offset="100%" stop-color="#ff6b35"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="25" cy="25" r="22" fill="none" stroke="url(#logoGradient)" stroke-width="2"/>
+                    <circle cx="25" cy="25" r="12" fill="none" stroke="url(#logoGradient)" stroke-width="1.5"/>
+                    <circle cx="25" cy="25" r="5" fill="url(#logoGradient)"/>
+                    <circle cx="25" cy="8" r="3" fill="#ff6b35"/>
+                    <circle cx="42" cy="25" r="2.5" fill="#9d4edd"/>
+                    <circle cx="25" cy="42" r="2" fill="#ff6b35"/>
+                </svg>
+            </div>
+            <span class="nav-logo-text">405Network</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#services" class="nav-link">Services</a></li>
+            <li><a href="#features" class="nav-link">Features</a></li>
+            <li><a href="#pricing" class="nav-link">Pricing</a></li>
+            <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <button class="nav-cta">Get Started</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Orange County, CA | Est. 2011
+            </div>
+            <h1 class="hero-title">405Network Inc.</h1>
+            <p class="hero-subtitle">Information Technology, Reimagined</p>
+            <p class="hero-description">
+                Navigate the cosmos of modern technology with confidence. We provide enterprise-grade
+                IT solutions that propel your business into the future while keeping you grounded
+                with reliable, secure infrastructure.
+            </p>
+            <div class="hero-buttons">
+                <button class="btn-primary">Explore Services</button>
+                <button class="btn-secondary">Schedule Consultation</button>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <span>Scroll to Discover</span>
+            <div class="hero-scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <span class="section-badge">Our Services</span>
+            <h2 class="section-title">Comprehensive IT Solutions</h2>
+            <p class="section-description">
+                From stellar support to cosmic cloud solutions, we provide everything
+                your business needs to thrive in the digital universe.
+            </p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Support & Communication</h3>
+                <p class="service-description">
+                    24/7 stellar support that keeps your systems running at light speed.
+                    Our team is always ready to assist with any technical challenges.
+                </p>
+                <ul class="service-features">
+                    <li>24/7 Help Desk Support</li>
+                    <li>Remote Troubleshooting</li>
+                    <li>Unified Communications</li>
+                    <li>VoIP Solutions</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Device Management</h3>
+                <p class="service-description">
+                    Complete device lifecycle management from procurement to secure disposal.
+                    Keep your fleet optimized across the galaxy.
+                </p>
+                <ul class="service-features">
+                    <li>MDM Solutions</li>
+                    <li>Asset Tracking</li>
+                    <li>Patch Management</li>
+                    <li>Endpoint Security</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Cloud & Admin</h3>
+                <p class="service-description">
+                    Navigate the cloud with expert guidance. Microsoft 365, Google Workspace,
+                    and hybrid solutions tailored to your orbital path.
+                </p>
+                <ul class="service-features">
+                    <li>Microsoft 365 Admin</li>
+                    <li>Google Workspace</li>
+                    <li>Cloud Migration</li>
+                    <li>Hybrid Deployments</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="16" rx="2" ry="2"/>
+                        <rect x="9" y="9" width="6" height="6"/>
+                        <line x1="9" y1="1" x2="9" y2="4"/>
+                        <line x1="15" y1="1" x2="15" y2="4"/>
+                        <line x1="9" y1="20" x2="9" y2="23"/>
+                        <line x1="15" y1="20" x2="15" y2="23"/>
+                        <line x1="20" y1="9" x2="23" y2="9"/>
+                        <line x1="20" y1="14" x2="23" y2="14"/>
+                        <line x1="1" y1="9" x2="4" y2="9"/>
+                        <line x1="1" y1="14" x2="4" y2="14"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Infrastructure</h3>
+                <p class="service-description">
+                    Build the foundation for your digital universe. Network design,
+                    server management, and security that stands the test of time.
+                </p>
+                <ul class="service-features">
+                    <li>Network Architecture</li>
+                    <li>Server Management</li>
+                    <li>Cybersecurity</li>
+                    <li>Disaster Recovery</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header">
+                <span class="section-badge">Why Choose Us</span>
+                <h2 class="section-title">Beyond the Ordinary</h2>
+                <p class="section-description">
+                    Experience IT support that transcends expectations and delivers results
+                    that matter to your business.
+                </p>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-content">
+                    <h3>Proactive Monitoring</h3>
+                    <p>
+                        Our advanced monitoring systems detect and resolve issues before they
+                        impact your operations. Like celestial navigation, we chart your
+                        course through potential obstacles, ensuring smooth sailing through
+                        the digital cosmos.
+                    </p>
+                    <div class="feature-stats">
+                        <div class="feature-stat">
+                            <div class="feature-stat-value">99.9%</div>
+                            <div class="feature-stat-label">Uptime Guarantee</div>
+                        </div>
+                        <div class="feature-stat">
+                            <div class="feature-stat-value">&lt;15min</div>
+                            <div class="feature-stat-label">Response Time</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-visual">
+                    <div class="feature-visual-content">
+                        <div class="orbit-ring"></div>
+                        <div class="orbit-ring"></div>
+                        <div class="orbit-ring"></div>
+                        <div class="orbit-center"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-content">
+                    <h3>Enterprise Security</h3>
+                    <p>
+                        Shield your business with military-grade security protocols.
+                        From threat detection to compliance management, we create an
+                        impenetrable force field around your digital assets, protecting
+                        them from the dark matter of cyber threats.
+                    </p>
+                    <div class="feature-stats">
+                        <div class="feature-stat">
+                            <div class="feature-stat-value">24/7</div>
+                            <div class="feature-stat-label">Threat Monitoring</div>
+                        </div>
+                        <div class="feature-stat">
+                            <div class="feature-stat-value">100%</div>
+                            <div class="feature-stat-label">Compliance Rate</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-visual">
+                    <div class="feature-visual-content">
+                        <div class="orbit-ring"></div>
+                        <div class="orbit-ring"></div>
+                        <div class="orbit-ring"></div>
+                        <div class="orbit-center"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-content">
+                    <h3>Scalable Solutions</h3>
+                    <p>
+                        Grow without limits. Our infrastructure adapts to your expanding
+                        universe, scaling seamlessly as your business ventures into new
+                        territories. Whether you're a startup or an enterprise, we have
+                        the orbital capacity to support your mission.
+                    </p>
+                    <div class="feature-stats">
+                        <div class="feature-stat">
+                            <div class="feature-stat-value">∞</div>
+                            <div class="feature-stat-label">Scalability</div>
+                        </div>
+                        <div class="feature-stat">
+                            <div class="feature-stat-value">13+</div>
+                            <div class="feature-stat-label">Years Experience</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-visual">
+                    <div class="feature-visual-content">
+                        <div class="orbit-ring"></div>
+                        <div class="orbit-ring"></div>
+                        <div class="orbit-ring"></div>
+                        <div class="orbit-center"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <span class="section-badge">Pricing Plans</span>
+            <h2 class="section-title">Choose Your Orbit</h2>
+            <p class="section-description">
+                Transparent pricing designed to fit businesses of all sizes.
+                No hidden costs, no surprises.
+            </p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-tier">Silver</div>
+                <div class="pricing-price">
+                    <span class="pricing-currency">$</span>
+                    <span class="pricing-amount">49</span>
+                    <span class="pricing-period">/user/month</span>
+                </div>
+                <p class="pricing-description">
+                    Essential IT support for small teams taking their first steps into managed services.
+                </p>
+                <ul class="pricing-features">
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Business Hours Support
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Basic Monitoring
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Email Support
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Patch Management
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Monthly Reports
+                    </li>
+                </ul>
+                <button class="pricing-cta">Get Started</button>
+            </div>
+            <div class="pricing-card featured">
+                <span class="pricing-badge">Most Popular</span>
+                <div class="pricing-tier">Gold</div>
+                <div class="pricing-price">
+                    <span class="pricing-currency">$</span>
+                    <span class="pricing-amount">79</span>
+                    <span class="pricing-period">/user/month</span>
+                </div>
+                <p class="pricing-description">
+                    Comprehensive coverage for growing businesses that need reliable,
+                    around-the-clock support.
+                </p>
+                <ul class="pricing-features">
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        24/7 Priority Support
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Advanced Monitoring
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Phone & Chat Support
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Security Suite
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Cloud Backup
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Weekly Reports
+                    </li>
+                </ul>
+                <button class="pricing-cta">Get Started</button>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-tier">Platinum</div>
+                <div class="pricing-price">
+                    <span class="pricing-currency">$</span>
+                    <span class="pricing-amount">129</span>
+                    <span class="pricing-period">/user/month</span>
+                </div>
+                <p class="pricing-description">
+                    Enterprise-grade solutions with dedicated resources and
+                    white-glove service for mission-critical operations.
+                </p>
+                <ul class="pricing-features">
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Dedicated Account Manager
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Real-Time Monitoring
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        On-Site Support Available
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Advanced Security + Compliance
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Disaster Recovery
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Custom SLA
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Strategic IT Planning
+                    </li>
+                </ul>
+                <button class="pricing-cta">Contact Sales</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="testimonials-container">
+            <div class="section-header">
+                <span class="section-badge">Testimonials</span>
+                <h2 class="section-title">Stellar Reviews</h2>
+                <p class="section-description">
+                    Hear from businesses who have transformed their IT operations with 405Network.
+                </p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <p class="testimonial-text">
+                        "405Network transformed our IT infrastructure. Their proactive approach
+                        caught issues before they became problems. Truly world-class service."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">JM</div>
+                        <div class="testimonial-info">
+                            <h4>James Mitchell</h4>
+                            <p>CEO, TechVentures Inc.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <p class="testimonial-text">
+                        "The migration to cloud was seamless. 405Network handled everything
+                        with precision and our downtime was minimal. Highly recommend!"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SR</div>
+                        <div class="testimonial-info">
+                            <h4>Sarah Rodriguez</h4>
+                            <p>CTO, Innovate Labs</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <p class="testimonial-text">
+                        "Their security audit revealed vulnerabilities we never knew existed.
+                        Now we sleep better knowing our data is protected by the best."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">MK</div>
+                        <div class="testimonial-info">
+                            <h4>Michael Kim</h4>
+                            <p>Director of IT, Global Finance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="section-header">
+            <span class="section-badge">Get In Touch</span>
+            <h2 class="section-title">Launch Your IT Transformation</h2>
+            <p class="section-description">
+                Ready to explore new frontiers? Contact us today and discover how
+                we can elevate your technology infrastructure.
+            </p>
+        </div>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Let's Connect</h3>
+                <p>
+                    Our mission control team is standing by to answer your questions
+                    and help you navigate your IT journey. Reach out through any of
+                    our channels below.
+                </p>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="contact-item-text">
+                            <h4>Location</h4>
+                            <p>Orange County, California</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                        </div>
+                        <div class="contact-item-text">
+                            <h4>Phone</h4>
+                            <p>(949) 555-0405</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </div>
+                        <div class="contact-item-text">
+                            <h4>Email</h4>
+                            <p>hello@405network.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form class="contact-form" id="contact-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="john@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="company">Company Name</label>
+                    <input type="text" id="company" name="company" placeholder="Your Company">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Tell us about your IT needs..." required></textarea>
+                </div>
+                <button type="submit" class="form-submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="nav-logo">
+                        <div class="nav-logo-icon">
+                            <svg viewBox="0 0 50 50">
+                                <defs>
+                                    <linearGradient id="footerLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#9d4edd"/>
+                                        <stop offset="100%" stop-color="#ff6b35"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="25" cy="25" r="22" fill="none" stroke="url(#footerLogoGradient)" stroke-width="2"/>
+                                <circle cx="25" cy="25" r="12" fill="none" stroke="url(#footerLogoGradient)" stroke-width="1.5"/>
+                                <circle cx="25" cy="25" r="5" fill="url(#footerLogoGradient)"/>
+                                <circle cx="25" cy="8" r="3" fill="#ff6b35"/>
+                                <circle cx="42" cy="25" r="2.5" fill="#9d4edd"/>
+                                <circle cx="25" cy="42" r="2" fill="#ff6b35"/>
+                            </svg>
+                        </div>
+                        <span class="nav-logo-text">405Network</span>
+                    </div>
+                    <p>
+                        Providing stellar IT solutions to businesses across Orange County
+                        since 2011. Your trusted partner in digital transformation.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="LinkedIn">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                                <rect x="2" y="9" width="4" height="12"/>
+                                <circle cx="4" cy="4" r="2"/>
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Twitter">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Facebook">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">IT Support</a></li>
+                        <li><a href="#">Cloud Solutions</a></li>
+                        <li><a href="#">Cybersecurity</a></li>
+                        <li><a href="#">Device Management</a></li>
+                        <li><a href="#">Infrastructure</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Support Portal</a></li>
+                        <li><a href="#">Status Page</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2024 405Network Inc. All rights reserved.
+                </p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // INITIALIZATION & LOADING
+        // ============================================
+
+        let loadingProgress = 0;
+        const loadingProgressEl = document.getElementById('loading-progress');
+
+        function updateLoading(progress) {
+            loadingProgress = Math.min(progress, 100);
+            loadingProgressEl.style.width = loadingProgress + '%';
+        }
+
+        // Simulate loading progress
+        const loadingInterval = setInterval(() => {
+            if (loadingProgress < 90) {
+                updateLoading(loadingProgress + Math.random() * 10);
+            }
+        }, 200);
+
+        // ============================================
+        // THREE.JS NEBULA SHADER SCENE
+        // ============================================
+
+        const canvas = document.getElementById('nebula-canvas');
+        const renderer = new THREE.WebGLRenderer({
+            canvas,
+            antialias: true,
+            alpha: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+        // FBM Nebula Shader
+        const nebulaShader = {
+            uniforms: {
+                uTime: { value: 0 },
+                uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+                uScrollProgress: { value: 0 }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                precision highp float;
+
+                uniform float uTime;
+                uniform vec2 uResolution;
+                uniform vec2 uMouse;
+                uniform float uScrollProgress;
+
+                varying vec2 vUv;
+
+                // Hash function for noise
+                float hash(vec2 p) {
+                    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+                }
+
+                // 2D Noise
+                float noise(vec2 p) {
+                    vec2 i = floor(p);
+                    vec2 f = fract(p);
+
+                    float a = hash(i);
+                    float b = hash(i + vec2(1.0, 0.0));
+                    float c = hash(i + vec2(0.0, 1.0));
+                    float d = hash(i + vec2(1.0, 1.0));
+
+                    vec2 u = f * f * (3.0 - 2.0 * f);
+
+                    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+                }
+
+                // Fractal Brownian Motion
+                float fbm(vec2 p) {
+                    float value = 0.0;
+                    float amplitude = 0.5;
+                    float frequency = 1.0;
+
+                    for(int i = 0; i < 6; i++) {
+                        value += amplitude * noise(p * frequency);
+                        p *= 2.0;
+                        amplitude *= 0.5;
+                    }
+
+                    return value;
+                }
+
+                // Domain warping for more organic nebula shapes
+                float warpedFbm(vec2 p, float time) {
+                    vec2 q = vec2(
+                        fbm(p + vec2(0.0, 0.0)),
+                        fbm(p + vec2(5.2, 1.3))
+                    );
+
+                    vec2 r = vec2(
+                        fbm(p + 4.0 * q + vec2(1.7, 9.2) + 0.15 * time),
+                        fbm(p + 4.0 * q + vec2(8.3, 2.8) + 0.126 * time)
+                    );
+
+                    return fbm(p + 4.0 * r);
+                }
+
+                // Star field
+                float stars(vec2 uv, float density) {
+                    vec2 cell = floor(uv * density);
+                    vec2 cellUv = fract(uv * density);
+
+                    float starValue = hash(cell);
+
+                    if(starValue > 0.995) {
+                        vec2 starPos = vec2(hash(cell + 0.1), hash(cell + 0.2));
+                        float dist = length(cellUv - starPos);
+                        float brightness = hash(cell + 0.3);
+                        float twinkle = sin(uTime * (2.0 + brightness * 3.0) + brightness * 10.0) * 0.5 + 0.5;
+                        return smoothstep(0.05, 0.0, dist) * (0.5 + brightness * 0.5) * (0.7 + twinkle * 0.3);
+                    }
+
+                    return 0.0;
+                }
+
+                void main() {
+                    vec2 uv = vUv;
+                    vec2 centeredUv = uv - 0.5;
+
+                    // Mouse influence
+                    vec2 mouseOffset = (uMouse - 0.5) * 0.1;
+
+                    // Base space black
+                    vec3 spaceBlack = vec3(0.047, 0.047, 0.047);
+
+                    // Nebula colors
+                    vec3 nebulaPurple = vec3(0.616, 0.306, 0.867);
+                    vec3 nebulaPurpleLight = vec3(0.78, 0.49, 1.0);
+                    vec3 cosmicOrange = vec3(1.0, 0.42, 0.21);
+                    vec3 cosmicOrangeLight = vec3(1.0, 0.55, 0.35);
+
+                    // Time factor with scroll influence
+                    float time = uTime * 0.1 + uScrollProgress * 2.0;
+
+                    // Multiple nebula layers with different scales and speeds
+                    float nebula1 = warpedFbm(uv * 2.0 + mouseOffset * 0.5 + time * 0.1, time);
+                    float nebula2 = warpedFbm(uv * 3.0 - mouseOffset * 0.3 + time * 0.05 + vec2(10.0), time * 0.8);
+                    float nebula3 = warpedFbm(uv * 4.0 + mouseOffset * 0.2 + time * 0.08 + vec2(20.0), time * 0.6);
+                    float nebula4 = warpedFbm(uv * 1.5 + mouseOffset * 0.7 + time * 0.03, time * 1.2);
+
+                    // Combine nebula layers
+                    float mainNebula = nebula1 * 0.4 + nebula2 * 0.3 + nebula3 * 0.2 + nebula4 * 0.1;
+
+                    // Create depth layers
+                    float layer1 = smoothstep(0.3, 0.7, nebula1);
+                    float layer2 = smoothstep(0.4, 0.8, nebula2);
+                    float layer3 = smoothstep(0.35, 0.65, nebula3);
+
+                    // Color mixing based on position and layers
+                    vec3 color1 = mix(nebulaPurple, nebulaPurpleLight, layer1);
+                    vec3 color2 = mix(cosmicOrange, cosmicOrangeLight, layer2);
+
+                    // Blend colors based on position
+                    float colorMix = fbm(uv * 2.0 + time * 0.05);
+                    vec3 nebulaColor = mix(color1, color2, colorMix);
+
+                    // Apply nebula intensity
+                    float intensity = mainNebula * mainNebula * 0.8;
+
+                    // Add volumetric fog effect
+                    float fog = fbm(uv * 5.0 + time * 0.02) * 0.15;
+
+                    // Dithering for volumetric cloud effect
+                    vec2 ditherCoord = gl_FragCoord.xy;
+                    float dither = (hash(ditherCoord) - 0.5) * 0.03;
+
+                    // Compose final color
+                    vec3 finalColor = spaceBlack;
+                    finalColor = mix(finalColor, nebulaColor * 0.5, intensity + dither);
+                    finalColor += nebulaColor * layer1 * 0.15;
+                    finalColor += nebulaColor * layer2 * 0.1;
+                    finalColor += fog * vec3(0.5, 0.3, 0.6);
+
+                    // Add stars with multiple layers
+                    float starField1 = stars(uv + mouseOffset * 0.1, 500.0);
+                    float starField2 = stars(uv * 1.5 + mouseOffset * 0.05 + vec2(100.0), 800.0);
+                    float starField3 = stars(uv * 0.8 + mouseOffset * 0.15 + vec2(200.0), 300.0);
+
+                    finalColor += vec3(starField1 + starField2 * 0.7 + starField3 * 0.5);
+
+                    // Vignette effect
+                    float vignette = 1.0 - length(centeredUv) * 0.5;
+                    finalColor *= vignette;
+
+                    // Subtle color grading
+                    finalColor = pow(finalColor, vec3(0.95));
+
+                    gl_FragColor = vec4(finalColor, 1.0);
+                }
+            `
+        };
+
+        const geometry = new THREE.PlaneGeometry(2, 2);
+        const material = new THREE.ShaderMaterial(nebulaShader);
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+
+        // Update progress
+        updateLoading(30);
+
+        // ============================================
+        // STAR FIELD GENERATION
+        // ============================================
+
+        const starField = document.getElementById('star-field');
+        const starCount = 200;
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+
+            const size = Math.random() * 2 + 1;
+            const duration = Math.random() * 3 + 2;
+            const delay = Math.random() * 5;
+            const minOpacity = Math.random() * 0.3 + 0.1;
+            const maxOpacity = Math.random() * 0.5 + 0.5;
+
+            star.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                --duration: ${duration}s;
+                --delay: ${delay}s;
+                --min-opacity: ${minOpacity};
+                --max-opacity: ${maxOpacity};
+            `;
+
+            starField.appendChild(star);
+        }
+
+        updateLoading(50);
+
+        // ============================================
+        // COSMIC DUST PARTICLES
+        // ============================================
+
+        const cosmicDust = document.getElementById('cosmic-dust');
+        const dustCount = 50;
+
+        for (let i = 0; i < dustCount; i++) {
+            const dust = document.createElement('div');
+            dust.className = 'dust-particle';
+
+            const size = Math.random() * 3 + 1;
+            const duration = Math.random() * 30 + 20;
+            const delay = Math.random() * 20;
+            const startX = Math.random() * 100;
+
+            dust.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${startX}%;
+                animation-duration: ${duration}s;
+                animation-delay: -${delay}s;
+                background: rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2});
+            `;
+
+            cosmicDust.appendChild(dust);
+        }
+
+        updateLoading(70);
+
+        // ============================================
+        // CUSTOM CURSOR WITH GRAVITATIONAL PARTICLES
+        // ============================================
+
+        const cursorStar = document.getElementById('cursor-star');
+        const cursorGlow = document.getElementById('cursor-glow');
+        const cursorParticles = document.getElementById('cursor-particles');
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = mouseX;
+        let cursorY = mouseY;
+
+        // Particle system for gravitational effect
+        const particles = [];
+        const particleCount = 30;
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.vx = 0;
+                this.vy = 0;
+                this.size = Math.random() * 3 + 1;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.element = document.createElement('div');
+                this.element.className = 'cursor-particle';
+                this.element.style.width = this.size + 'px';
+                this.element.style.height = this.size + 'px';
+                cursorParticles.appendChild(this.element);
+            }
+
+            update() {
+                // Calculate gravitational attraction to cursor
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 200) {
+                    const force = (200 - distance) / 200;
+                    const angle = Math.atan2(dy, dx);
+                    this.vx += Math.cos(angle) * force * 0.5;
+                    this.vy += Math.sin(angle) * force * 0.5;
+                }
+
+                // Apply velocity
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Friction
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+
+                // Boundary check
+                if (this.x < 0 || this.x > window.innerWidth ||
+                    this.y < 0 || this.y > window.innerHeight) {
+                    this.x = Math.random() * window.innerWidth;
+                    this.y = Math.random() * window.innerHeight;
+                    this.vx = 0;
+                    this.vy = 0;
+                }
+
+                // Update element
+                const dist = Math.sqrt((mouseX - this.x) ** 2 + (mouseY - this.y) ** 2);
+                const particleOpacity = dist < 150 ? this.opacity * (1 - dist / 150) + 0.1 : 0.1;
+
+                this.element.style.transform = `translate(${this.x}px, ${this.y}px)`;
+                this.element.style.opacity = particleOpacity;
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            // Update shader mouse uniform
+            material.uniforms.uMouse.value.x = mouseX / window.innerWidth;
+            material.uniforms.uMouse.value.y = 1.0 - mouseY / window.innerHeight;
+        });
+
+        function updateCursor() {
+            // Smooth cursor following
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+
+            cursorStar.style.left = cursorX + 'px';
+            cursorStar.style.top = cursorY + 'px';
+
+            cursorGlow.style.left = mouseX + 'px';
+            cursorGlow.style.top = mouseY + 'px';
+
+            // Update particles
+            particles.forEach(p => p.update());
+
+            requestAnimationFrame(updateCursor);
+        }
+
+        updateCursor();
+
+        updateLoading(85);
+
+        // ============================================
+        // GSAP ANIMATIONS
+        // ============================================
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Navigation scroll effect
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Hero animations
+        gsap.from('.hero-badge', {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 0.5,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero-title', {
+            opacity: 0,
+            y: 50,
+            duration: 1.2,
+            delay: 0.7,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero-subtitle', {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 0.9,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero-description', {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 1.1,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero-buttons', {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 1.3,
+            ease: 'power3.out'
+        });
+
+        // Parallax depth scrolling for nebula
+        ScrollTrigger.create({
+            trigger: 'body',
+            start: 'top top',
+            end: 'bottom bottom',
+            onUpdate: (self) => {
+                material.uniforms.uScrollProgress.value = self.progress;
+            }
+        });
+
+        // Service cards animation
+        gsap.utils.toArray('.service-card').forEach((card, i) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 60,
+                duration: 0.8,
+                delay: i * 0.1,
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                }
+            });
+        });
+
+        // Feature rows animation
+        gsap.utils.toArray('.feature-row').forEach((row, i) => {
+            const content = row.querySelector('.feature-content');
+            const visual = row.querySelector('.feature-visual');
+
+            gsap.from(content, {
+                opacity: 0,
+                x: i % 2 === 0 ? -50 : 50,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: row,
+                    start: 'top 70%',
+                    toggleActions: 'play none none none'
+                }
+            });
+
+            gsap.from(visual, {
+                opacity: 0,
+                x: i % 2 === 0 ? 50 : -50,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: row,
+                    start: 'top 70%',
+                    toggleActions: 'play none none none'
+                }
+            });
+        });
+
+        // Pricing cards animation
+        gsap.utils.toArray('.pricing-card').forEach((card, i) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 80,
+                scale: 0.9,
+                duration: 0.8,
+                delay: i * 0.15,
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                }
+            });
+        });
+
+        // Testimonial cards animation
+        gsap.utils.toArray('.testimonial-card').forEach((card, i) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                delay: i * 0.1,
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                }
+            });
+        });
+
+        // Contact section animation
+        gsap.from('.contact-info', {
+            opacity: 0,
+            x: -50,
+            duration: 1,
+            scrollTrigger: {
+                trigger: '.contact-container',
+                start: 'top 70%',
+                toggleActions: 'play none none none'
+            }
+        });
+
+        gsap.from('.contact-form', {
+            opacity: 0,
+            x: 50,
+            duration: 1,
+            scrollTrigger: {
+                trigger: '.contact-container',
+                start: 'top 70%',
+                toggleActions: 'play none none none'
+            }
+        });
+
+        // Nebula layer parallax
+        gsap.to('.nebula-layer-1', {
+            y: -100,
+            scrollTrigger: {
+                trigger: 'body',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1
+            }
+        });
+
+        gsap.to('.nebula-layer-2', {
+            y: -150,
+            scrollTrigger: {
+                trigger: 'body',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1.5
+            }
+        });
+
+        gsap.to('.nebula-layer-3', {
+            y: -80,
+            scrollTrigger: {
+                trigger: 'body',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.5
+            }
+        });
+
+        // Section headers animation
+        gsap.utils.toArray('.section-header').forEach(header => {
+            gsap.from(header.children, {
+                opacity: 0,
+                y: 40,
+                duration: 0.8,
+                stagger: 0.15,
+                scrollTrigger: {
+                    trigger: header,
+                    start: 'top 75%',
+                    toggleActions: 'play none none none'
+                }
+            });
+        });
+
+        updateLoading(95);
+
+        // ============================================
+        // ANIMATION LOOP
+        // ============================================
+
+        function animate(time) {
+            material.uniforms.uTime.value = time * 0.001;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate(0);
+
+        // ============================================
+        // WINDOW RESIZE HANDLER
+        // ============================================
+
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            renderer.setSize(width, height);
+            material.uniforms.uResolution.value.set(width, height);
+        });
+
+        // ============================================
+        // SMOOTH SCROLL FOR NAV LINKS
+        // ============================================
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ============================================
+        // FORM SUBMISSION
+        // ============================================
+
+        const contactForm = document.getElementById('contact-form');
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Add success animation
+            const submitBtn = this.querySelector('.form-submit');
+            submitBtn.textContent = 'Message Sent!';
+            submitBtn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+
+            setTimeout(() => {
+                submitBtn.textContent = 'Send Message';
+                submitBtn.style.background = '';
+                this.reset();
+            }, 3000);
+        });
+
+        // ============================================
+        // LOADING COMPLETE
+        // ============================================
+
+        window.addEventListener('load', () => {
+            updateLoading(100);
+            clearInterval(loadingInterval);
+
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+            }, 500);
+        });
+
+        // Fallback in case load event doesn't fire
+        setTimeout(() => {
+            updateLoading(100);
+            clearInterval(loadingInterval);
+            document.getElementById('loading-screen').classList.add('hidden');
+        }, 4000);
+
+        // ============================================
+        // BUTTON HOVER EFFECTS
+        // ============================================
+
+        document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta, .pricing-cta, .form-submit').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                cursorGlow.style.width = '200px';
+                cursorGlow.style.height = '200px';
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                cursorGlow.style.width = '150px';
+                cursorGlow.style.height = '150px';
+            });
+        });
+
+        // ============================================
+        // ORBIT ANIMATION FOR FEATURE VISUALS
+        // ============================================
+
+        document.querySelectorAll('.feature-visual-content').forEach(visual => {
+            const planets = [];
+            const planetColors = ['#ff6b35', '#9d4edd', '#c77dff'];
+
+            for (let i = 0; i < 3; i++) {
+                const planet = document.createElement('div');
+                planet.className = 'orbit-planet';
+                planet.style.background = planetColors[i];
+                planet.style.boxShadow = `0 0 20px ${planetColors[i]}`;
+                visual.appendChild(planet);
+                planets.push({
+                    element: planet,
+                    radius: 50 + i * 40,
+                    speed: 0.001 + i * 0.0005,
+                    angle: (Math.PI * 2 / 3) * i
+                });
+            }
+
+            function animatePlanets() {
+                planets.forEach(planet => {
+                    planet.angle += planet.speed;
+                    const x = Math.cos(planet.angle) * planet.radius;
+                    const y = Math.sin(planet.angle) * planet.radius;
+                    planet.element.style.left = `calc(50% + ${x}px - 8px)`;
+                    planet.element.style.top = `calc(50% + ${y}px - 8px)`;
+                });
+                requestAnimationFrame(animatePlanets);
+            }
+
+            animatePlanets();
+        });
+    </script>
+</body>
+</html>

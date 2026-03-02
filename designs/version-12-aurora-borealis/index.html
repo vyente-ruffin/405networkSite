@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        /* ============================================
+           V12: AURORA BOREALIS - 405Network Inc.
+           Northern Lights Theme with FBM Shader
+           ============================================ */
+
+        /* CSS Custom Properties */
+        :root {
+            --deep-space: #0a0a1a;
+            --aurora-green: #00ff87;
+            --aurora-purple: #bf5af2;
+            --aurora-cyan: #64d2ff;
+            --aurora-pink: #ff6b9d;
+            --aurora-blue: #5e5ce6;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --glass-bg: rgba(10, 10, 26, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* Reset & Base Styles */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--deep-space);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+            line-height: 1.6;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: screen;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-main {
+            background: radial-gradient(circle, var(--aurora-green) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.6;
+        }
+
+        .cursor.hover {
+            transform: translate(-50%, -50%) scale(2);
+        }
+
+        /* WebGL Canvas */
+        #aurora-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Star Field Overlay */
+        .star-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--min-opacity); transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(10, 10, 26, 0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--deep-space);
+            box-shadow: 0 0 30px rgba(0, 255, 135, 0.3);
+        }
+
+        .nav-logo-text {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--aurora-green), var(--aurora-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--aurora-green), var(--aurora-cyan));
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 0.75rem 1.75rem;
+            background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+            border: none;
+            border-radius: 50px;
+            color: var(--deep-space);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(0, 255, 135, 0.3);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 50px rgba(0, 255, 135, 0.5);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            z-index: 10;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--aurora-cyan);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--aurora-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg,
+                var(--text-primary) 0%,
+                var(--aurora-green) 25%,
+                var(--aurora-cyan) 50%,
+                var(--aurora-purple) 75%,
+                var(--text-primary) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 8s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        .hero-subtitle span {
+            color: var(--aurora-green);
+            font-weight: 500;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+            border: none;
+            border-radius: 50px;
+            color: var(--deep-space);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 255, 135, 0.3);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 0 60px rgba(0, 255, 135, 0.5);
+        }
+
+        .btn-secondary {
+            padding: 1rem 2.5rem;
+            background: transparent;
+            border: 2px solid var(--aurora-cyan);
+            border-radius: 50px;
+            color: var(--aurora-cyan);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: none;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: var(--aurora-cyan);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-secondary:hover::before {
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            color: var(--deep-space);
+            transform: translateY(-4px);
+            box-shadow: 0 0 40px rgba(100, 210, 255, 0.4);
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .scroll-indicator-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(180deg, var(--aurora-green), transparent);
+            position: relative;
+        }
+
+        .scroll-indicator-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -2px;
+            width: 5px;
+            height: 10px;
+            background: var(--aurora-green);
+            border-radius: 3px;
+            animation: scrollDown 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollDown {
+            0%, 100% { top: 0; opacity: 1; }
+            50% { top: 50px; opacity: 0; }
+        }
+
+        /* Aurora Glow Effects */
+        .aurora-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .aurora-glow-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--aurora-green);
+            top: -200px;
+            right: -200px;
+            animation: float1 15s ease-in-out infinite;
+        }
+
+        .aurora-glow-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--aurora-purple);
+            bottom: -100px;
+            left: -150px;
+            animation: float2 18s ease-in-out infinite;
+        }
+
+        .aurora-glow-3 {
+            width: 400px;
+            height: 400px;
+            background: var(--aurora-cyan);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: float3 12s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-50px, 30px) scale(1.1); }
+            66% { transform: translate(30px, -20px) scale(0.95); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -30px) scale(1.05); }
+            66% { transform: translate(-30px, 40px) scale(0.9); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        /* Section Base Styles */
+        section {
+            padding: 8rem 4rem;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 5rem;
+        }
+
+        .section-label {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            background: linear-gradient(135deg, rgba(0, 255, 135, 0.1), rgba(100, 210, 255, 0.1));
+            border: 1px solid rgba(0, 255, 135, 0.3);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--aurora-green);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--aurora-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Services Section */
+        .services {
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 255, 135, 0.02) 50%, transparent 100%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                rgba(0, 255, 135, 0.1) 0%,
+                transparent 50%,
+                rgba(100, 210, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 255, 135, 0.3);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(0, 255, 135, 0.1);
+        }
+
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-icon-support {
+            background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+            box-shadow: 0 0 30px rgba(0, 255, 135, 0.3);
+        }
+
+        .service-icon-device {
+            background: linear-gradient(135deg, var(--aurora-cyan), var(--aurora-blue));
+            box-shadow: 0 0 30px rgba(100, 210, 255, 0.3);
+        }
+
+        .service-icon-cloud {
+            background: linear-gradient(135deg, var(--aurora-purple), var(--aurora-pink));
+            box-shadow: 0 0 30px rgba(191, 90, 242, 0.3);
+        }
+
+        .service-icon-infra {
+            background: linear-gradient(135deg, var(--aurora-pink), var(--aurora-green));
+            box-shadow: 0 0 30px rgba(255, 107, 157, 0.3);
+        }
+
+        .service-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-features {
+            list-style: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .service-features li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--aurora-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--aurora-green);
+        }
+
+        /* Pricing Section */
+        .pricing {
+            background: linear-gradient(180deg, transparent 0%, rgba(191, 90, 242, 0.03) 50%, transparent 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--aurora-green);
+            background: linear-gradient(180deg,
+                rgba(0, 255, 135, 0.05) 0%,
+                var(--glass-bg) 50%);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            padding: 0.5rem 3rem;
+            background: linear-gradient(90deg, var(--aurora-green), var(--aurora-cyan));
+            color: var(--deep-space);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            transform: rotate(45deg);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.4),
+                0 0 80px rgba(0, 255, 135, 0.1);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        .pricing-tier {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--aurora-cyan);
+            margin-bottom: 1rem;
+        }
+
+        .pricing-name {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-currency {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--aurora-green);
+        }
+
+        .pricing-amount {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pricing-period {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2.5rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            color: var(--text-secondary);
+        }
+
+        .pricing-features li svg {
+            width: 20px;
+            height: 20px;
+            color: var(--aurora-green);
+            flex-shrink: 0;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: none;
+            transition: all 0.4s ease;
+        }
+
+        .pricing-cta-primary {
+            background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+            border: none;
+            color: var(--deep-space);
+            box-shadow: 0 0 30px rgba(0, 255, 135, 0.3);
+        }
+
+        .pricing-cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(0, 255, 135, 0.5);
+        }
+
+        .pricing-cta-secondary {
+            background: transparent;
+            border: 2px solid var(--aurora-cyan);
+            color: var(--aurora-cyan);
+        }
+
+        .pricing-cta-secondary:hover {
+            background: var(--aurora-cyan);
+            color: var(--deep-space);
+            transform: translateY(-3px);
+        }
+
+        /* Features Highlight */
+        .features-highlight {
+            padding: 6rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .features-highlight::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent,
+                var(--aurora-green),
+                var(--aurora-cyan),
+                var(--aurora-purple),
+                transparent);
+            transform: translate(-50%, -50%);
+            opacity: 0.3;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            text-align: center;
+        }
+
+        .feature-number {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-label {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+
+        /* Contact Section */
+        .contact {
+            background: linear-gradient(180deg, transparent 0%, rgba(100, 210, 255, 0.03) 50%, transparent 100%);
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .contact-info-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info-text {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-detail-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(0, 255, 135, 0.1), rgba(100, 210, 255, 0.1));
+            border: 1px solid rgba(0, 255, 135, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .contact-detail-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-detail-content p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .contact-form {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--aurora-green);
+            box-shadow: 0 0 20px rgba(0, 255, 135, 0.2);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+            border: none;
+            border-radius: 50px;
+            color: var(--deep-space);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: none;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 30px rgba(0, 255, 135, 0.3);
+        }
+
+        .form-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(0, 255, 135, 0.5);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 4rem 2rem;
+            border-top: 1px solid var(--glass-border);
+            background: linear-gradient(180deg, transparent, rgba(10, 10, 26, 0.8));
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 4rem;
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--deep-space);
+        }
+
+        .footer-logo-text {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--aurora-green), var(--aurora-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .footer-column h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--aurora-green);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-copyright {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-social {
+            width: 40px;
+            height: 40px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social:hover {
+            border-color: var(--aurora-green);
+            color: var(--aurora-green);
+            box-shadow: 0 0 20px rgba(0, 255, 135, 0.3);
+        }
+
+        /* Mobile Navigation */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: none;
+            padding: 0.5rem;
+            z-index: 1001;
+        }
+
+        .nav-toggle span {
+            width: 28px;
+            height: 2px;
+            background: var(--aurora-green);
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            section {
+                padding: 6rem 2rem;
+            }
+
+            .nav {
+                padding: 1rem 2rem;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .pricing-card.featured:hover {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: var(--deep-space);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .nav-cta {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: clamp(2.5rem, 10vw, 4rem);
+            }
+
+            .hero-subtitle {
+                font-size: 1.125rem;
+            }
+
+            .hero-cta-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-brand {
+                max-width: none;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .cursor,
+            .cursor-trail {
+                display: none;
+            }
+
+            body {
+                cursor: auto;
+            }
+        }
+
+        /* Loading Screen */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--deep-space);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-aurora {
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+
+        .loader-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            animation: loader-pulse 2s ease-in-out infinite;
+        }
+
+        .loader-wave:nth-child(1) {
+            background: var(--aurora-green);
+            animation-delay: 0s;
+        }
+
+        .loader-wave:nth-child(2) {
+            background: var(--aurora-cyan);
+            animation-delay: 0.3s;
+        }
+
+        .loader-wave:nth-child(3) {
+            background: var(--aurora-purple);
+            animation-delay: 0.6s;
+        }
+
+        @keyframes loader-pulse {
+            0%, 100% { transform: scale(0.5); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 0; }
+        }
+
+        .loader-text {
+            margin-top: 2rem;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--aurora-green);
+            animation: loader-fade 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loader-fade {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Aurora Wave Dividers */
+        .aurora-divider {
+            width: 100%;
+            height: 150px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .aurora-divider svg {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            animation: wave-flow 10s linear infinite;
+        }
+
+        @keyframes wave-flow {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Glowing Text Effect */
+        .glow-text {
+            text-shadow:
+                0 0 10px var(--aurora-green),
+                0 0 20px var(--aurora-green),
+                0 0 40px var(--aurora-cyan);
+        }
+
+        /* Particle Effects */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--aurora-green);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 8s ease-in-out infinite;
+        }
+
+        @keyframes particle-float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-aurora">
+            <div class="loader-wave"></div>
+            <div class="loader-wave"></div>
+            <div class="loader-wave"></div>
+        </div>
+        <p class="loader-text">Initializing Aurora...</p>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor cursor-main" id="cursor"></div>
+    <div id="cursor-trails"></div>
+
+    <!-- WebGL Aurora Canvas -->
+    <canvas id="aurora-canvas"></canvas>
+
+    <!-- Star Field -->
+    <div class="star-field" id="star-field"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="#" class="nav-logo">
+            <div class="nav-logo-icon">405</div>
+            <span class="nav-logo-text">Network</span>
+        </a>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#services" class="nav-link">Services</a></li>
+            <li><a href="#pricing" class="nav-link">Pricing</a></li>
+            <li><a href="#about" class="nav-link">About</a></li>
+            <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <button class="nav-cta">Get Started</button>
+        <div class="nav-toggle" id="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="aurora-glow aurora-glow-1"></div>
+        <div class="aurora-glow aurora-glow-2"></div>
+        <div class="aurora-glow aurora-glow-3"></div>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Orange County, CA - Est. 2011
+            </div>
+            <h1 class="hero-title">Information Technology, Reimagined</h1>
+            <p class="hero-subtitle">
+                Enterprise-grade IT solutions powered by <span>cutting-edge innovation</span>.
+                Transform your business with 405Network.
+            </p>
+            <div class="hero-cta-group">
+                <button class="btn-primary">Explore Solutions</button>
+                <button class="btn-secondary">Watch Demo</button>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span>Scroll to explore</span>
+            <div class="scroll-indicator-line"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <span class="section-label">Our Services</span>
+            <h2 class="section-title">Comprehensive IT Solutions</h2>
+            <p class="section-description">
+                From daily support to enterprise infrastructure, we deliver technology
+                solutions that drive your business forward.
+            </p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon service-icon-support">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="service-title">Support & Communication</h3>
+                <p class="service-description">
+                    24/7 responsive support with multi-channel communication.
+                    Your technology backbone, always available.
+                </p>
+                <ul class="service-features">
+                    <li>Real-time ticket resolution</li>
+                    <li>Video & chat support</li>
+                    <li>Knowledge base access</li>
+                    <li>Priority escalation</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon service-icon-device">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                </div>
+                <h3 class="service-title">Device Management</h3>
+                <p class="service-description">
+                    Unified endpoint management for all your devices.
+                    Secure, monitored, and optimized.
+                </p>
+                <ul class="service-features">
+                    <li>MDM deployment</li>
+                    <li>Remote monitoring</li>
+                    <li>Automated updates</li>
+                    <li>Asset tracking</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon service-icon-cloud">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                    </svg>
+                </div>
+                <h3 class="service-title">Cloud & Admin</h3>
+                <p class="service-description">
+                    Microsoft 365, Google Workspace, and hybrid cloud solutions.
+                    Seamless administration.
+                </p>
+                <ul class="service-features">
+                    <li>Cloud migration</li>
+                    <li>Identity management</li>
+                    <li>Data backup & recovery</li>
+                    <li>Compliance monitoring</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon service-icon-infra">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    </svg>
+                </div>
+                <h3 class="service-title">Infrastructure</h3>
+                <p class="service-description">
+                    Network design, server management, and security architecture.
+                    Built for scale.
+                </p>
+                <ul class="service-features">
+                    <li>Network design & optimization</li>
+                    <li>Server virtualization</li>
+                    <li>Firewall & security</li>
+                    <li>Disaster recovery</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Highlight -->
+    <section class="features-highlight" id="about">
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-number" data-count="14">0</div>
+                <p class="feature-label">Years of Excellence</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-number" data-count="500">0</div>
+                <p class="feature-label">Clients Served</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-number" data-count="99.9">0</div>
+                <p class="feature-label">% Uptime SLA</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-number" data-count="24">0</div>
+                <p class="feature-label">/7 Support</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <span class="section-label">Pricing Plans</span>
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <p class="section-description">
+                Choose the plan that fits your business. Scale up or down anytime
+                with no hidden fees.
+            </p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <span class="pricing-tier">Starter</span>
+                <h3 class="pricing-name">Silver</h3>
+                <p class="pricing-description">Perfect for small teams getting started with managed IT.</p>
+                <div class="pricing-price">
+                    <span class="pricing-currency">$</span>
+                    <span class="pricing-amount">49</span>
+                    <span class="pricing-period">/user/mo</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Business hours support
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Email & chat assistance
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Basic device management
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Cloud backup (50GB)
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Monthly reports
+                    </li>
+                </ul>
+                <button class="pricing-cta pricing-cta-secondary">Get Started</button>
+            </div>
+
+            <div class="pricing-card featured">
+                <span class="pricing-tier">Professional</span>
+                <h3 class="pricing-name">Gold</h3>
+                <p class="pricing-description">Comprehensive coverage for growing businesses.</p>
+                <div class="pricing-price">
+                    <span class="pricing-currency">$</span>
+                    <span class="pricing-amount">79</span>
+                    <span class="pricing-period">/user/mo</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Extended hours support
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Phone, email & video
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Full endpoint management
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Cloud backup (500GB)
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Security monitoring
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Weekly reports & QBR
+                    </li>
+                </ul>
+                <button class="pricing-cta pricing-cta-primary">Get Started</button>
+            </div>
+
+            <div class="pricing-card">
+                <span class="pricing-tier">Enterprise</span>
+                <h3 class="pricing-name">Platinum</h3>
+                <p class="pricing-description">Ultimate protection for mission-critical operations.</p>
+                <div class="pricing-price">
+                    <span class="pricing-currency">$</span>
+                    <span class="pricing-amount">129</span>
+                    <span class="pricing-period">/user/mo</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        24/7/365 support
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Dedicated account manager
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Advanced security suite
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Unlimited cloud backup
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Compliance management
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Custom integrations
+                    </li>
+                </ul>
+                <button class="pricing-cta pricing-cta-secondary">Contact Sales</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <div class="contact-info">
+                <div>
+                    <h2 class="contact-info-title">Let's Build Something Amazing</h2>
+                    <p class="contact-info-text">
+                        Ready to transform your IT infrastructure? Our team of experts
+                        is standing by to help you design the perfect solution for your business.
+                    </p>
+                </div>
+
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div class="contact-detail-content">
+                        <h4>Location</h4>
+                        <p>Orange County, California</p>
+                    </div>
+                </div>
+
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <div class="contact-detail-content">
+                        <h4>Phone</h4>
+                        <p>(949) 555-0405</p>
+                    </div>
+                </div>
+
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div class="contact-detail-content">
+                        <h4>Email</h4>
+                        <p>hello@405network.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <form class="contact-form">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" placeholder="john@company.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Company</label>
+                    <input type="text" class="form-input" placeholder="Acme Corporation">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-textarea" placeholder="Tell us about your IT needs..."></textarea>
+                </div>
+                <button type="submit" class="form-submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">405</div>
+                    <span class="footer-logo-text">Network</span>
+                </div>
+                <p class="footer-description">
+                    Information Technology, Reimagined. Serving Orange County businesses
+                    with enterprise-grade IT solutions since 2011.
+                </p>
+            </div>
+
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Support & Communication</a></li>
+                    <li><a href="#">Device Management</a></li>
+                    <li><a href="#">Cloud & Admin</a></li>
+                    <li><a href="#">Infrastructure</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Case Studies</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Legal</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">SLA</a></li>
+                    <li><a href="#">Security</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-copyright">&copy; 2024 405Network Inc. All rights reserved.</p>
+            <div class="footer-socials">
+                <a href="#" class="footer-social">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                    </svg>
+                </a>
+                <a href="#" class="footer-social">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                </a>
+                <a href="#" class="footer-social">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // V12: AURORA BOREALIS - Interactive Experience
+        // ============================================
+
+        // Configuration
+        const CONFIG = {
+            colors: {
+                deepSpace: '#0a0a1a',
+                auroraGreen: '#00ff87',
+                aurroraPurple: '#bf5af2',
+                auroraCyan: '#64d2ff',
+                auroraPink: '#ff6b9d',
+                auroraBlue: '#5e5ce6'
+            },
+            stars: {
+                count: 200,
+                minSize: 1,
+                maxSize: 3
+            },
+            cursor: {
+                trailCount: 12,
+                trailColors: ['#00ff87', '#64d2ff', '#bf5af2', '#ff6b9d']
+            }
+        };
+
+        // ============================================
+        // Loading Screen
+        // ============================================
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 2000);
+        });
+
+        // ============================================
+        // Custom Cursor with Aurora Trail
+        // ============================================
+        class AuroraCursor {
+            constructor() {
+                this.cursor = document.getElementById('cursor');
+                this.trailsContainer = document.getElementById('cursor-trails');
+                this.trails = [];
+                this.mouseX = 0;
+                this.mouseY = 0;
+                this.cursorX = 0;
+                this.cursorY = 0;
+
+                this.init();
+            }
+
+            init() {
+                // Create trail elements
+                for (let i = 0; i < CONFIG.cursor.trailCount; i++) {
+                    const trail = document.createElement('div');
+                    trail.className = 'cursor-trail';
+                    trail.style.background = CONFIG.cursor.trailColors[i % CONFIG.cursor.trailColors.length];
+                    trail.style.transform = 'translate(-50%, -50%)';
+                    this.trailsContainer.appendChild(trail);
+                    this.trails.push({
+                        element: trail,
+                        x: 0,
+                        y: 0
+                    });
+                }
+
+                // Mouse move handler
+                document.addEventListener('mousemove', (e) => {
+                    this.mouseX = e.clientX;
+                    this.mouseY = e.clientY;
+                });
+
+                // Hover effect on interactive elements
+                const interactiveElements = document.querySelectorAll('a, button, .nav-link, .service-card, .pricing-card');
+                interactiveElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => this.cursor.classList.add('hover'));
+                    el.addEventListener('mouseleave', () => this.cursor.classList.remove('hover'));
+                });
+
+                this.animate();
+            }
+
+            animate() {
+                // Smooth cursor follow
+                this.cursorX += (this.mouseX - this.cursorX) * 0.15;
+                this.cursorY += (this.mouseY - this.cursorY) * 0.15;
+
+                this.cursor.style.left = this.cursorX + 'px';
+                this.cursor.style.top = this.cursorY + 'px';
+
+                // Trail animation
+                let prevX = this.cursorX;
+                let prevY = this.cursorY;
+
+                this.trails.forEach((trail, index) => {
+                    const speed = 0.3 - (index * 0.02);
+                    trail.x += (prevX - trail.x) * speed;
+                    trail.y += (prevY - trail.y) * speed;
+
+                    trail.element.style.left = trail.x + 'px';
+                    trail.element.style.top = trail.y + 'px';
+                    trail.element.style.opacity = 1 - (index / CONFIG.cursor.trailCount);
+                    trail.element.style.transform = `translate(-50%, -50%) scale(${1 - (index * 0.05)})`;
+
+                    prevX = trail.x;
+                    prevY = trail.y;
+                });
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // ============================================
+        // Star Field Generator
+        // ============================================
+        class StarField {
+            constructor() {
+                this.container = document.getElementById('star-field');
+                this.init();
+            }
+
+            init() {
+                for (let i = 0; i < CONFIG.stars.count; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+
+                    const size = Math.random() * (CONFIG.stars.maxSize - CONFIG.stars.minSize) + CONFIG.stars.minSize;
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    const duration = Math.random() * 3 + 2;
+                    const delay = Math.random() * 3;
+                    const minOpacity = Math.random() * 0.3 + 0.1;
+
+                    star.style.cssText = `
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}%;
+                        top: ${y}%;
+                        --duration: ${duration}s;
+                        --min-opacity: ${minOpacity};
+                        animation-delay: ${delay}s;
+                    `;
+
+                    this.container.appendChild(star);
+                }
+            }
+        }
+
+        // ============================================
+        // Three.js Aurora Shader
+        // ============================================
+        class AuroraShader {
+            constructor() {
+                this.canvas = document.getElementById('aurora-canvas');
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.material = null;
+                this.startTime = Date.now();
+
+                this.init();
+            }
+
+            init() {
+                // Setup Scene
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    alpha: true,
+                    antialias: true
+                });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+                // Aurora Shader Material
+                const vertexShader = `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = vec4(position, 1.0);
+                    }
+                `;
+
+                const fragmentShader = `
+                    precision highp float;
+
+                    uniform float uTime;
+                    uniform vec2 uResolution;
+                    uniform float uScrollY;
+
+                    varying vec2 vUv;
+
+                    // Hash function for noise
+                    float hash(vec2 p) {
+                        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+                    }
+
+                    // Value noise
+                    float noise(vec2 p) {
+                        vec2 i = floor(p);
+                        vec2 f = fract(p);
+
+                        float a = hash(i);
+                        float b = hash(i + vec2(1.0, 0.0));
+                        float c = hash(i + vec2(0.0, 1.0));
+                        float d = hash(i + vec2(1.0, 1.0));
+
+                        vec2 u = f * f * (3.0 - 2.0 * f);
+
+                        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+                    }
+
+                    // Fractal Brownian Motion
+                    float fbm(vec2 p) {
+                        float value = 0.0;
+                        float amplitude = 0.5;
+                        float frequency = 1.0;
+
+                        for(int i = 0; i < 6; i++) {
+                            value += amplitude * noise(p * frequency);
+                            frequency *= 2.0;
+                            amplitude *= 0.5;
+                        }
+
+                        return value;
+                    }
+
+                    // Aurora color palette
+                    vec3 auroraColor(float t, float wave) {
+                        vec3 green = vec3(0.0, 1.0, 0.53);
+                        vec3 cyan = vec3(0.39, 0.82, 1.0);
+                        vec3 purple = vec3(0.75, 0.35, 0.95);
+                        vec3 pink = vec3(1.0, 0.42, 0.62);
+
+                        float phase = t + wave * 0.5;
+
+                        vec3 col = green;
+                        col = mix(col, cyan, smoothstep(0.0, 0.33, sin(phase * 6.28) * 0.5 + 0.5));
+                        col = mix(col, purple, smoothstep(0.33, 0.66, sin(phase * 6.28 + 2.0) * 0.5 + 0.5));
+                        col = mix(col, pink, smoothstep(0.66, 1.0, sin(phase * 6.28 + 4.0) * 0.5 + 0.5));
+
+                        return col;
+                    }
+
+                    void main() {
+                        vec2 uv = vUv;
+                        vec2 aspect = vec2(uResolution.x / uResolution.y, 1.0);
+                        uv = uv * aspect;
+
+                        float time = uTime * 0.15;
+                        float scroll = uScrollY * 0.0003;
+
+                        // Multiple aurora layers
+                        float aurora1 = 0.0;
+                        float aurora2 = 0.0;
+                        float aurora3 = 0.0;
+
+                        // Layer 1 - Main aurora wave
+                        vec2 pos1 = vec2(uv.x * 3.0 + time, uv.y * 2.0 - scroll);
+                        float wave1 = fbm(pos1);
+                        float height1 = smoothstep(0.3, 0.7, uv.y + wave1 * 0.3);
+                        aurora1 = wave1 * height1 * (1.0 - uv.y);
+
+                        // Layer 2 - Secondary wave
+                        vec2 pos2 = vec2(uv.x * 4.0 - time * 0.7, uv.y * 1.5 + scroll * 0.5);
+                        float wave2 = fbm(pos2 + 10.0);
+                        float height2 = smoothstep(0.4, 0.8, uv.y + wave2 * 0.25);
+                        aurora2 = wave2 * height2 * (1.0 - uv.y) * 0.7;
+
+                        // Layer 3 - Subtle background
+                        vec2 pos3 = vec2(uv.x * 2.0 + time * 0.3, uv.y * 3.0);
+                        float wave3 = fbm(pos3 + 20.0);
+                        float height3 = smoothstep(0.5, 0.9, uv.y + wave3 * 0.2);
+                        aurora3 = wave3 * height3 * (1.0 - uv.y) * 0.4;
+
+                        // Combine auroras with different colors
+                        vec3 color1 = auroraColor(time * 0.2, wave1) * aurora1;
+                        vec3 color2 = auroraColor(time * 0.3 + 0.33, wave2) * aurora2;
+                        vec3 color3 = auroraColor(time * 0.1 + 0.66, wave3) * aurora3;
+
+                        vec3 finalColor = color1 + color2 + color3;
+
+                        // Add vertical curtain effect
+                        float curtain = sin(uv.x * 20.0 + time * 2.0) * 0.5 + 0.5;
+                        curtain = curtain * 0.1 + 0.9;
+                        finalColor *= curtain;
+
+                        // Apply gradient dither for banding reduction
+                        float dither = (hash(uv * 1000.0 + time) - 0.5) * 0.02;
+                        finalColor += dither;
+
+                        // Fade at edges
+                        float vignette = smoothstep(0.0, 0.3, uv.y) * smoothstep(1.0, 0.7, uv.y);
+                        vignette *= smoothstep(0.0, 0.2, uv.x / aspect.x) * smoothstep(1.0, 0.8, uv.x / aspect.x);
+
+                        finalColor *= vignette * 0.6;
+
+                        // Deep space background
+                        vec3 bgColor = vec3(0.04, 0.04, 0.1);
+                        finalColor = mix(bgColor, finalColor + bgColor, smoothstep(0.0, 0.5, length(finalColor)));
+
+                        gl_FragColor = vec4(finalColor, 1.0);
+                    }
+                `;
+
+                this.material = new THREE.ShaderMaterial({
+                    vertexShader,
+                    fragmentShader,
+                    uniforms: {
+                        uTime: { value: 0 },
+                        uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                        uScrollY: { value: 0 }
+                    }
+                });
+
+                const geometry = new THREE.PlaneGeometry(2, 2);
+                const mesh = new THREE.Mesh(geometry, this.material);
+                this.scene.add(mesh);
+
+                // Handle resize
+                window.addEventListener('resize', () => this.onResize());
+
+                // Handle scroll
+                window.addEventListener('scroll', () => {
+                    this.material.uniforms.uScrollY.value = window.scrollY;
+                });
+
+                this.animate();
+            }
+
+            onResize() {
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.material.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                const elapsed = (Date.now() - this.startTime) / 1000;
+                this.material.uniforms.uTime.value = elapsed;
+
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // ============================================
+        // GSAP Animations
+        // ============================================
+        class GSAPAnimations {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // Hero animations
+                this.animateHero();
+
+                // Section animations
+                this.animateSections();
+
+                // Service cards
+                this.animateServiceCards();
+
+                // Pricing cards
+                this.animatePricingCards();
+
+                // Counter animation
+                this.animateCounters();
+
+                // Parallax aurora glows
+                this.animateAuroraGlows();
+            }
+
+            animateHero() {
+                const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+                heroTl.from('.hero-badge', {
+                    y: 30,
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: 2.2
+                })
+                .from('.hero-title', {
+                    y: 50,
+                    opacity: 0,
+                    duration: 1
+                }, '-=0.4')
+                .from('.hero-subtitle', {
+                    y: 30,
+                    opacity: 0,
+                    duration: 0.8
+                }, '-=0.6')
+                .from('.hero-cta-group button', {
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.6,
+                    stagger: 0.15
+                }, '-=0.4')
+                .from('.scroll-indicator', {
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.6
+                }, '-=0.2');
+            }
+
+            animateSections() {
+                const sections = document.querySelectorAll('.section-header');
+
+                sections.forEach(section => {
+                    gsap.from(section.children, {
+                        scrollTrigger: {
+                            trigger: section,
+                            start: 'top 80%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        y: 50,
+                        opacity: 0,
+                        duration: 0.8,
+                        stagger: 0.2,
+                        ease: 'power3.out'
+                    });
+                });
+            }
+
+            animateServiceCards() {
+                const cards = document.querySelectorAll('.service-card');
+
+                cards.forEach((card, index) => {
+                    gsap.from(card, {
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        y: 60,
+                        opacity: 0,
+                        duration: 0.8,
+                        delay: index * 0.1,
+                        ease: 'power3.out'
+                    });
+                });
+            }
+
+            animatePricingCards() {
+                const cards = document.querySelectorAll('.pricing-card');
+
+                cards.forEach((card, index) => {
+                    gsap.from(card, {
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        y: 80,
+                        opacity: 0,
+                        scale: 0.95,
+                        duration: 0.8,
+                        delay: index * 0.15,
+                        ease: 'power3.out'
+                    });
+                });
+            }
+
+            animateCounters() {
+                const counters = document.querySelectorAll('.feature-number');
+
+                counters.forEach(counter => {
+                    const target = parseFloat(counter.dataset.count);
+                    const isDecimal = target % 1 !== 0;
+
+                    ScrollTrigger.create({
+                        trigger: counter,
+                        start: 'top 85%',
+                        onEnter: () => {
+                            gsap.to(counter, {
+                                innerHTML: target,
+                                duration: 2,
+                                ease: 'power2.out',
+                                snap: { innerHTML: isDecimal ? 0.1 : 1 },
+                                onUpdate: function() {
+                                    const val = parseFloat(counter.innerHTML);
+                                    counter.innerHTML = isDecimal ? val.toFixed(1) : Math.round(val);
+                                    if (counter.innerHTML === '24') counter.innerHTML = '24';
+                                }
+                            });
+                        },
+                        once: true
+                    });
+                });
+            }
+
+            animateAuroraGlows() {
+                const glows = document.querySelectorAll('.aurora-glow');
+
+                glows.forEach((glow, index) => {
+                    gsap.to(glow, {
+                        scrollTrigger: {
+                            trigger: '.hero',
+                            start: 'top top',
+                            end: 'bottom top',
+                            scrub: 1
+                        },
+                        y: 200 + (index * 50),
+                        x: (index % 2 === 0 ? 100 : -100),
+                        scale: 0.8,
+                        opacity: 0.2,
+                        ease: 'none'
+                    });
+                });
+            }
+        }
+
+        // ============================================
+        // Mobile Navigation
+        // ============================================
+        class MobileNav {
+            constructor() {
+                this.toggle = document.getElementById('nav-toggle');
+                this.links = document.getElementById('nav-links');
+                this.isOpen = false;
+
+                this.init();
+            }
+
+            init() {
+                this.toggle.addEventListener('click', () => this.toggleMenu());
+
+                const navLinks = this.links.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => this.closeMenu());
+                });
+            }
+
+            toggleMenu() {
+                this.isOpen = !this.isOpen;
+                this.links.classList.toggle('active', this.isOpen);
+            }
+
+            closeMenu() {
+                this.isOpen = false;
+                this.links.classList.remove('active');
+            }
+        }
+
+        // ============================================
+        // Smooth Scroll
+        // ============================================
+        class SmoothScroll {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = document.querySelector(anchor.getAttribute('href'));
+                        if (target) {
+                            const offset = 100;
+                            const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
+
+                            gsap.to(window, {
+                                scrollTo: { y: targetPosition, autoKill: false },
+                                duration: 1,
+                                ease: 'power3.inOut'
+                            });
+                        }
+                    });
+                });
+            }
+        }
+
+        // ============================================
+        // Form Handler
+        // ============================================
+        class FormHandler {
+            constructor() {
+                this.form = document.querySelector('.contact-form');
+                this.init();
+            }
+
+            init() {
+                if (!this.form) return;
+
+                this.form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+
+                    const btn = this.form.querySelector('.form-submit');
+                    const originalText = btn.textContent;
+
+                    btn.textContent = 'Sending...';
+                    btn.disabled = true;
+
+                    setTimeout(() => {
+                        btn.textContent = 'Message Sent!';
+                        btn.style.background = 'linear-gradient(135deg, #00ff87, #00cc6a)';
+
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.disabled = false;
+                            btn.style.background = '';
+                            this.form.reset();
+                        }, 2000);
+                    }, 1500);
+                });
+            }
+        }
+
+        // ============================================
+        // Floating Particles
+        // ============================================
+        class FloatingParticles {
+            constructor() {
+                this.container = document.querySelector('.hero');
+                this.particleCount = 20;
+                this.init();
+            }
+
+            init() {
+                for (let i = 0; i < this.particleCount; i++) {
+                    this.createParticle();
+                }
+            }
+
+            createParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                const colors = ['#00ff87', '#64d2ff', '#bf5af2', '#ff6b9d'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+
+                particle.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    bottom: ${Math.random() * 20}%;
+                    background: ${color};
+                    box-shadow: 0 0 10px ${color};
+                    animation-delay: ${Math.random() * 8}s;
+                    animation-duration: ${8 + Math.random() * 4}s;
+                `;
+
+                this.container.appendChild(particle);
+            }
+        }
+
+        // ============================================
+        // Initialize Everything
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for mobile
+            const isMobile = window.innerWidth < 768;
+
+            // Initialize components
+            if (!isMobile) {
+                new AuroraCursor();
+            }
+
+            new StarField();
+            new AuroraShader();
+            new GSAPAnimations();
+            new MobileNav();
+            new SmoothScroll();
+            new FormHandler();
+            new FloatingParticles();
+
+            console.log('%c405Network - Aurora Borealis Theme',
+                'color: #00ff87; font-size: 20px; font-weight: bold;');
+            console.log('%cInformation Technology, Reimagined',
+                'color: #64d2ff; font-size: 14px;');
+        });
+
+        // ============================================
+        // GSAP ScrollTo Plugin (inline)
+        // ============================================
+        gsap.registerPlugin({
+            name: 'scrollTo',
+            init(target, value) {
+                this.target = target;
+                this.value = value.y;
+            },
+            render(progress) {
+                window.scrollTo(0, this.value * progress);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,3020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | THERMAL VISION</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <style>
+        /* ========================================
+           THERMAL VISION 2.0 - ENHANCED CSS
+           ======================================== */
+
+        :root {
+            /* Enhanced Thermal Palette */
+            --cold-deep: #001a4d;
+            --cold-blue: #0066ff;
+            --cold-cyan: #00d4ff;
+            --neutral-teal: #00ffa3;
+            --neutral-green: #39ff14;
+            --warm-lime: #b8ff00;
+            --warm-yellow: #ffea00;
+            --warm-orange: #ff8c00;
+            --hot-red: #ff2d00;
+            --hot-magenta: #ff0066;
+            --white-hot: #ffffff;
+
+            /* Backgrounds */
+            --bg-void: #000000;
+            --bg-dark: #050508;
+            --bg-darker: #020203;
+
+            /* Text */
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-ghost: rgba(255, 255, 255, 0.25);
+
+            /* Effects */
+            --glow-cold: rgba(0, 212, 255, 0.4);
+            --glow-warm: rgba(255, 234, 0, 0.4);
+            --glow-hot: rgba(255, 45, 0, 0.5);
+
+            /* Typography */
+            --font-display: 'Orbitron', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-void);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           NOISE TEXTURE OVERLAY
+           ======================================== */
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9990;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ========================================
+           CUSTOM THERMAL CURSOR - ENHANCED
+           ======================================== */
+
+        .thermal-cursor {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: screen;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle,
+                var(--white-hot) 0%,
+                var(--hot-red) 15%,
+                var(--warm-orange) 30%,
+                var(--warm-yellow) 45%,
+                var(--neutral-green) 60%,
+                var(--cold-cyan) 80%,
+                transparent 100%);
+            opacity: 0.9;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                        height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.3s;
+            filter: blur(1px);
+        }
+
+        .thermal-cursor::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: var(--white-hot);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--white-hot),
+                        0 0 30px var(--hot-red),
+                        0 0 60px var(--warm-yellow);
+        }
+
+        .thermal-cursor.hovering {
+            width: 100px;
+            height: 100px;
+            opacity: 1;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            background: radial-gradient(circle,
+                var(--warm-orange) 0%,
+                var(--warm-yellow) 40%,
+                transparent 100%);
+            opacity: 0.4;
+            transform: translate(-50%, -50%);
+            filter: blur(2px);
+        }
+
+        /* ========================================
+           SCANLINE & GRID OVERLAYS - ENHANCED
+           ======================================== */
+
+        .scanline-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9991;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.15) 2px,
+                rgba(0, 0, 0, 0.15) 4px
+            );
+            opacity: 0.4;
+        }
+
+        .ir-grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background-image:
+                linear-gradient(rgba(0, 255, 163, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 163, 0.05) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.6;
+        }
+
+        /* ========================================
+           THERMAL CANVAS BACKGROUND
+           ======================================== */
+
+        #thermal-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* ========================================
+           NAVIGATION - ASYMMETRIC DESIGN
+           ======================================== */
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: transparent;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav.scrolled {
+            background: rgba(5, 5, 8, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 255, 163, 0.1);
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo-text {
+            background: linear-gradient(135deg, var(--cold-cyan), var(--neutral-green), var(--warm-yellow), var(--hot-red));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-logo-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--hot-red);
+            border-radius: 50%;
+            animation: pulseDot 2s ease-in-out infinite;
+            box-shadow: 0 0 20px var(--hot-red);
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 50px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            padding: 8px 0;
+            transition: color 0.4s;
+        }
+
+        .nav-links a::before {
+            content: '[';
+            position: absolute;
+            left: -12px;
+            opacity: 0;
+            color: var(--neutral-green);
+            transition: all 0.3s;
+            transform: translateX(5px);
+        }
+
+        .nav-links a::after {
+            content: ']';
+            position: absolute;
+            right: -12px;
+            opacity: 0;
+            color: var(--neutral-green);
+            transition: all 0.3s;
+            transform: translateX(-5px);
+        }
+
+        .nav-links a:hover {
+            color: var(--neutral-green);
+        }
+
+        .nav-links a:hover::before,
+        .nav-links a:hover::after {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Mobile Menu Toggle */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .nav-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--neutral-green);
+            transition: all 0.3s;
+        }
+
+        /* ========================================
+           THERMAL TEMPERATURE INDICATOR - ENHANCED
+           ======================================== */
+
+        .temp-indicator {
+            position: fixed;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .temp-bar {
+            width: 8px;
+            height: 250px;
+            background: linear-gradient(180deg,
+                var(--white-hot) 0%,
+                var(--hot-red) 15%,
+                var(--warm-orange) 30%,
+                var(--warm-yellow) 45%,
+                var(--warm-lime) 55%,
+                var(--neutral-green) 65%,
+                var(--neutral-teal) 75%,
+                var(--cold-cyan) 85%,
+                var(--cold-blue) 100%);
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3),
+                        inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .temp-marker {
+            position: absolute;
+            right: 15px;
+            width: 40px;
+            height: 2px;
+            background: var(--white-hot);
+            transition: top 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 0 10px var(--white-hot);
+        }
+
+        .temp-marker::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -3px;
+            width: 8px;
+            height: 8px;
+            background: var(--white-hot);
+            border-radius: 50%;
+        }
+
+        .temp-labels {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 250px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-ghost);
+            letter-spacing: 1px;
+        }
+
+        .temp-labels span {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+
+        /* ========================================
+           HERO SECTION - DRAMATIC ASYMMETRIC
+           ======================================== */
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            padding: 120px 80px;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            position: relative;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--cold-cyan);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hero-eyebrow::before {
+            content: '';
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cold-cyan));
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(4rem, 12vw, 9rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 0.95;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .hero-title .line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero-title .thermal-text {
+            display: inline-block;
+            background: linear-gradient(180deg,
+                var(--white-hot) 0%,
+                var(--hot-red) 20%,
+                var(--warm-orange) 40%,
+                var(--warm-yellow) 60%,
+                var(--neutral-green) 80%,
+                var(--cold-cyan) 100%);
+            background-size: 100% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: thermalShift 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(255, 45, 0, 0.4));
+        }
+
+        @keyframes thermalShift {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 0% 100%; }
+        }
+
+        .hero-title .outline-text {
+            display: inline-block;
+            -webkit-text-stroke: 2px var(--neutral-green);
+            -webkit-text-fill-color: transparent;
+            opacity: 0.6;
+        }
+
+        .hero-tagline {
+            font-family: var(--font-body);
+            font-size: 1.4rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            max-width: 500px;
+            line-height: 1.7;
+        }
+
+        .hero-tagline strong {
+            color: var(--neutral-green);
+            font-weight: 600;
+        }
+
+        .hero-location {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-ghost);
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .hero-location .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--neutral-green);
+        }
+
+        .hero-location .status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neutral-green);
+            animation: statusPulse 2s ease-in-out infinite;
+            box-shadow: 0 0 15px var(--neutral-green);
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 15px var(--neutral-green); }
+            50% { opacity: 0.4; box-shadow: 0 0 25px var(--neutral-green); }
+        }
+
+        .hero-location .divider {
+            width: 30px;
+            height: 1px;
+            background: var(--text-ghost);
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        /* ========================================
+           THERMAL BUTTONS - REDESIGNED
+           ======================================== */
+
+        .thermal-btn {
+            font-family: var(--font-display);
+            padding: 18px 45px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border: none;
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .thermal-btn-primary {
+            background: linear-gradient(135deg, var(--hot-red) 0%, var(--warm-orange) 50%, var(--warm-yellow) 100%);
+            color: var(--bg-void);
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+            box-shadow: 0 0 40px rgba(255, 45, 0, 0.3),
+                        inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .thermal-btn-primary:hover {
+            box-shadow: 0 0 60px rgba(255, 45, 0, 0.5),
+                        0 0 100px rgba(255, 140, 0, 0.3),
+                        inset 0 0 40px rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .thermal-btn-secondary {
+            background: transparent;
+            color: var(--cold-cyan);
+            border: 1px solid var(--cold-cyan);
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.15),
+                        inset 0 0 20px rgba(0, 212, 255, 0.05);
+        }
+
+        .thermal-btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--white-hot);
+            border-color: var(--neutral-green);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.3),
+                        inset 0 0 30px rgba(0, 255, 163, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .thermal-btn .btn-arrow {
+            transition: transform 0.4s;
+        }
+
+        .thermal-btn:hover .btn-arrow {
+            transform: translateX(5px);
+        }
+
+        /* ========================================
+           SECTION STYLES - ENHANCED
+           ======================================== */
+
+        section {
+            position: relative;
+            z-index: 2;
+            padding: 150px 80px;
+        }
+
+        .section-header {
+            margin-bottom: 100px;
+            position: relative;
+        }
+
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--cold-cyan);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section-label::before {
+            content: '';
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cold-cyan));
+        }
+
+        .section-label .label-number {
+            color: var(--text-ghost);
+            font-size: 0.6rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title .gradient-text {
+            background: linear-gradient(135deg, var(--neutral-green), var(--warm-yellow), var(--hot-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--hot-red), var(--warm-yellow), transparent);
+        }
+
+        /* ========================================
+           HEAT SIGNATURE CARDS - ENHANCED
+           ======================================== */
+
+        .heat-card {
+            background: linear-gradient(135deg,
+                rgba(5, 5, 8, 0.9) 0%,
+                rgba(10, 10, 15, 0.8) 100%);
+            border: 1px solid rgba(0, 255, 163, 0.15);
+            padding: 50px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+        }
+
+        .heat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(255, 45, 0, 0.2) 0%,
+                rgba(255, 140, 0, 0.1) 25%,
+                rgba(255, 234, 0, 0.05) 50%,
+                transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .heat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                rgba(0, 255, 163, 0.05) 0%,
+                transparent 50%);
+            pointer-events: none;
+        }
+
+        .heat-card:hover::before {
+            opacity: 1;
+        }
+
+        .heat-card:hover {
+            border-color: var(--warm-yellow);
+            box-shadow: 0 0 50px rgba(255, 234, 0, 0.15),
+                        0 0 100px rgba(255, 45, 0, 0.1),
+                        inset 0 0 80px rgba(255, 140, 0, 0.05);
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        .heat-card-temp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--neutral-green);
+            padding: 6px 12px;
+            border: 1px solid rgba(0, 255, 163, 0.3);
+            background: rgba(0, 255, 163, 0.05);
+            letter-spacing: 1px;
+            transition: all 0.4s;
+        }
+
+        .heat-card:hover .heat-card-temp {
+            color: var(--hot-red);
+            border-color: var(--hot-red);
+            background: rgba(255, 45, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 45, 0, 0.3);
+        }
+
+        /* ========================================
+           SERVICES SECTION - STAGGERED GRID
+           ======================================== */
+
+        .services {
+            background: linear-gradient(180deg,
+                transparent 0%,
+                rgba(0, 102, 255, 0.02) 30%,
+                rgba(0, 255, 163, 0.02) 70%,
+                transparent 100%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .services-grid .service-card:nth-child(2) {
+            transform: translateY(60px);
+        }
+
+        .services-grid .service-card:nth-child(4) {
+            transform: translateY(60px);
+        }
+
+        .service-card {
+            text-align: left;
+        }
+
+        .service-icon {
+            width: 90px;
+            height: 90px;
+            margin-bottom: 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .service-icon svg {
+            width: 45px;
+            height: 45px;
+            stroke: var(--neutral-green);
+            stroke-width: 1.5;
+            fill: none;
+            transition: all 0.5s;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 163, 0.3));
+        }
+
+        .heat-card:hover .service-icon svg {
+            stroke: var(--hot-red);
+            filter: drop-shadow(0 0 20px rgba(255, 45, 0, 0.5));
+            transform: scale(1.1);
+        }
+
+        .service-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--cold-cyan);
+            opacity: 0.3;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            animation: hexRotate 20s linear infinite;
+        }
+
+        @keyframes hexRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .service-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: var(--warm-yellow);
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .service-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            max-width: 350px;
+        }
+
+        /* ========================================
+           STATS SECTION - BOLD DISPLAY
+           ======================================== */
+
+        .stats-section {
+            padding: 120px 80px;
+            background: linear-gradient(180deg,
+                rgba(255, 45, 0, 0.03) 0%,
+                rgba(255, 140, 0, 0.02) 50%,
+                rgba(255, 234, 0, 0.03) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent,
+                var(--hot-red) 20%,
+                var(--warm-yellow) 50%,
+                var(--hot-red) 80%,
+                transparent);
+        }
+
+        .stats-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent,
+                var(--neutral-green) 20%,
+                var(--cold-cyan) 50%,
+                var(--neutral-green) 80%,
+                transparent);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--warm-yellow), var(--hot-red));
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(180deg, var(--white-hot), var(--warm-yellow), var(--hot-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 30px rgba(255, 140, 0, 0.4));
+        }
+
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-ghost);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .stat-temp {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--neutral-green);
+        }
+
+        /* ========================================
+           PRICING SECTION - LAYERED CARDS
+           ======================================== */
+
+        .pricing {
+            background: linear-gradient(180deg,
+                transparent,
+                rgba(0, 255, 163, 0.02) 50%,
+                transparent);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1300px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .pricing-card {
+            text-align: center;
+            position: relative;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.08);
+            z-index: 10;
+        }
+
+        .pricing-card.featured .heat-card {
+            border-color: var(--warm-yellow);
+            box-shadow: 0 0 60px rgba(255, 234, 0, 0.15);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MAXIMUM HEAT';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-display);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, var(--hot-red), var(--warm-orange), var(--warm-yellow));
+            color: var(--bg-void);
+            padding: 8px 25px;
+            clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
+        }
+
+        .pricing-tier {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .pricing-card:nth-child(1) .pricing-tier { color: var(--cold-cyan); }
+        .pricing-card:nth-child(2) .pricing-tier { color: var(--warm-yellow); }
+        .pricing-card:nth-child(3) .pricing-tier { color: var(--hot-red); }
+
+        .pricing-temp {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-ghost);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .pricing-price {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 5vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 8px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .pricing-card:nth-child(1) .pricing-price {
+            color: var(--cold-cyan);
+            text-shadow: 0 0 40px rgba(0, 212, 255, 0.5);
+        }
+
+        .pricing-card:nth-child(2) .pricing-price {
+            color: var(--warm-yellow);
+            text-shadow: 0 0 40px rgba(255, 234, 0, 0.5);
+        }
+
+        .pricing-card:nth-child(3) .pricing-price {
+            color: var(--hot-red);
+            text-shadow: 0 0 40px rgba(255, 45, 0, 0.5);
+        }
+
+        .pricing-price sup {
+            font-size: 1.5rem;
+            font-weight: 400;
+            position: relative;
+            top: -25px;
+            opacity: 0.7;
+        }
+
+        .pricing-period {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 35px;
+            letter-spacing: 1px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 40px;
+            text-align: left;
+            padding: 0 20px;
+        }
+
+        .pricing-features li {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pricing-features li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            flex-shrink: 0;
+        }
+
+        .pricing-card:nth-child(1) .pricing-features li::before {
+            background: var(--cold-cyan);
+            box-shadow: 0 0 10px var(--cold-cyan);
+        }
+
+        .pricing-card:nth-child(2) .pricing-features li::before {
+            background: var(--warm-yellow);
+            box-shadow: 0 0 10px var(--warm-yellow);
+        }
+
+        .pricing-card:nth-child(3) .pricing-features li::before {
+            background: var(--hot-red);
+            box-shadow: 0 0 10px var(--hot-red);
+        }
+
+        /* ========================================
+           CONTACT SECTION - SPLIT LAYOUT
+           ======================================== */
+
+        .contact {
+            background: linear-gradient(180deg,
+                transparent,
+                rgba(255, 45, 0, 0.02) 50%,
+                transparent);
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 30px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--neutral-green);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 20px 25px;
+            background: rgba(5, 5, 8, 0.8);
+            border: 1px solid rgba(0, 255, 163, 0.2);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            outline: none;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-ghost);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--warm-yellow);
+            box-shadow: 0 0 30px rgba(255, 234, 0, 0.15),
+                        inset 0 0 40px rgba(255, 140, 0, 0.03);
+        }
+
+        .form-textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .heat-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            width: 0;
+            background: linear-gradient(90deg,
+                var(--cold-blue),
+                var(--cold-cyan),
+                var(--neutral-green),
+                var(--warm-yellow),
+                var(--hot-red));
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .form-input:focus ~ .heat-indicator,
+        .form-textarea:focus ~ .heat-indicator {
+            width: 100%;
+        }
+
+        /* ========================================
+           FOOTER - MINIMAL MODERN
+           ======================================== */
+
+        .footer {
+            background: var(--bg-void);
+            padding: 100px 80px 50px;
+            position: relative;
+            z-index: 2;
+            border-top: 1px solid rgba(0, 255, 163, 0.1);
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(180deg,
+                rgba(0, 255, 163, 0.02),
+                transparent);
+            pointer-events: none;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 60px;
+            margin-bottom: 80px;
+        }
+
+        .footer-brand {
+            max-width: 400px;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--cold-cyan), var(--neutral-green), var(--warm-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        .footer-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--neutral-green);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-links a::before {
+            content: '';
+            width: 0;
+            height: 1px;
+            background: var(--warm-yellow);
+            transition: width 0.4s;
+        }
+
+        .footer-links a:hover {
+            color: var(--warm-yellow);
+        }
+
+        .footer-links a:hover::before {
+            width: 20px;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-contact-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--neutral-green);
+            stroke-width: 1.5;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        .footer-copyright {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-ghost);
+            letter-spacing: 1px;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            border: 1px solid rgba(0, 255, 163, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .social-link svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--neutral-green);
+            stroke-width: 1.5;
+            fill: none;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            border-color: var(--hot-red);
+            background: rgba(255, 45, 0, 0.1);
+        }
+
+        .social-link:hover svg {
+            stroke: var(--hot-red);
+        }
+
+        /* ========================================
+           THERMAL SCANNER OVERLAY
+           ======================================== */
+
+        .scanner-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg,
+                transparent,
+                var(--cold-cyan) 20%,
+                var(--neutral-green) 50%,
+                var(--cold-cyan) 80%,
+                transparent);
+            z-index: 9998;
+            opacity: 0.6;
+            pointer-events: none;
+            animation: scanDown 10s linear infinite;
+            box-shadow: 0 0 20px var(--neutral-green);
+        }
+
+        @keyframes scanDown {
+            0% { top: -3px; opacity: 0; }
+            5% { opacity: 0.6; }
+            95% { opacity: 0.6; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* ========================================
+           THERMAL DATA READOUT - ENHANCED
+           ======================================== */
+
+        .thermal-readout {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            z-index: 100;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--neutral-green);
+            background: rgba(0, 0, 0, 0.85);
+            padding: 20px;
+            border: 1px solid rgba(0, 255, 163, 0.3);
+            backdrop-filter: blur(10px);
+            letter-spacing: 1px;
+        }
+
+        .thermal-readout::before {
+            content: 'THERMAL DATA';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: var(--bg-void);
+            padding: 0 10px;
+            font-size: 0.55rem;
+            color: var(--cold-cyan);
+            letter-spacing: 2px;
+        }
+
+        .readout-line {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .readout-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .readout-value {
+            color: var(--warm-yellow);
+        }
+
+        /* ========================================
+           SCROLL INDICATOR - REDESIGNED
+           ======================================== */
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 50px;
+            left: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .scroll-indicator span {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-ghost);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 80px;
+            background: linear-gradient(180deg, var(--neutral-green), transparent);
+            position: relative;
+        }
+
+        .scroll-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -3px;
+            width: 7px;
+            height: 7px;
+            background: var(--neutral-green);
+            border-radius: 50%;
+            animation: scrollBounce 2s ease-in-out infinite;
+            box-shadow: 0 0 15px var(--neutral-green);
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { top: 0; }
+            50% { top: 60px; }
+        }
+
+        /* ========================================
+           CROSSHAIR EFFECT
+           ======================================== */
+
+        .crosshair {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9997;
+            opacity: 0.2;
+        }
+
+        .crosshair-h {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent,
+                var(--neutral-green) 40%,
+                transparent 40%,
+                transparent 60%,
+                var(--neutral-green) 60%,
+                transparent);
+        }
+
+        .crosshair-v {
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(180deg,
+                transparent,
+                var(--neutral-green) 40%,
+                transparent 40%,
+                transparent 60%,
+                var(--neutral-green) 60%,
+                transparent);
+        }
+
+        /* ========================================
+           LOADING SCREEN - ENHANCED
+           ======================================== */
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-void);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .loading-thermal {
+            width: 180px;
+            height: 180px;
+            position: relative;
+        }
+
+        .loading-thermal::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px;
+            height: 120px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                var(--cold-blue),
+                var(--cold-cyan),
+                var(--neutral-green),
+                var(--warm-yellow),
+                var(--warm-orange),
+                var(--hot-red),
+                var(--cold-blue)
+            );
+            animation: thermalSpin 2s linear infinite;
+            filter: blur(2px);
+        }
+
+        .loading-thermal::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 80px;
+            transform: translate(-50%, -50%);
+            background: var(--bg-void);
+            border-radius: 50%;
+        }
+
+        @keyframes thermalSpin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .loading-text {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--neutral-green);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+        }
+
+        .loading-bar {
+            width: 250px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg,
+                var(--cold-blue),
+                var(--cold-cyan),
+                var(--neutral-green),
+                var(--warm-yellow),
+                var(--hot-red));
+            animation: loadingProgress 2.5s ease-in-out infinite;
+        }
+
+        @keyframes loadingProgress {
+            0% { width: 0%; transform: translateX(0); }
+            50% { width: 100%; transform: translateX(0); }
+            100% { width: 100%; transform: translateX(100%); }
+        }
+
+        /* ========================================
+           THERMAL FLARE EFFECT
+           ======================================== */
+
+        .thermal-flare {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                rgba(255, 45, 0, 0.12) 0%,
+                rgba(255, 140, 0, 0.08) 25%,
+                rgba(255, 234, 0, 0.04) 50%,
+                transparent 70%);
+            pointer-events: none;
+            animation: flareFloat 15s ease-in-out infinite;
+            filter: blur(40px);
+        }
+
+        @keyframes flareFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(80px, -50px) scale(1.15); }
+            50% { transform: translate(-50px, 80px) scale(0.9); }
+            75% { transform: translate(50px, 50px) scale(1.1); }
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN - DESKTOP FIRST
+           ======================================== */
+
+        @media (max-width: 1200px) {
+            .services-grid {
+                gap: 30px;
+            }
+
+            .services-grid .service-card:nth-child(2),
+            .services-grid .service-card:nth-child(4) {
+                transform: translateY(40px);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 50px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .nav {
+                padding: 20px 40px;
+            }
+
+            .nav-links {
+                gap: 30px;
+            }
+
+            section {
+                padding: 100px 40px;
+            }
+
+            .hero {
+                padding: 100px 40px;
+            }
+
+            .temp-indicator {
+                display: none;
+            }
+
+            .thermal-readout {
+                display: none;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 50px;
+                max-width: 500px;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .hero-title {
+                font-size: clamp(3rem, 15vw, 5rem);
+            }
+
+            .hero-tagline {
+                font-size: 1.1rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .thermal-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid .service-card:nth-child(2),
+            .services-grid .service-card:nth-child(4) {
+                transform: none;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .scroll-indicator {
+                left: 40px;
+            }
+        }
+
+        /* ========================================
+           MOBILE RESPONSIVE - CRITICAL FIXES
+           ======================================== */
+
+        @media (max-width: 767px) {
+            html, body {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+
+            /* Reset GSAP animation initial states on mobile */
+            .hero-content,
+            .hero-title,
+            .hero-tagline,
+            .hero-location,
+            .hero-cta,
+            .hero-eyebrow,
+            .service-card,
+            .pricing-card,
+            .stat-item,
+            .stat-value,
+            .section-header,
+            .form-group,
+            .contact-form,
+            .contact-info,
+            .footer-content,
+            .footer-column {
+                opacity: 1 !important;
+                transform: none !important;
+                visibility: visible !important;
+            }
+
+            /* Hide custom cursor on touch devices */
+            .thermal-cursor,
+            .cursor-trail,
+            .crosshair {
+                display: none !important;
+            }
+
+            body {
+                cursor: auto;
+            }
+
+            .nav {
+                padding: 15px 25px;
+            }
+
+            .nav-logo {
+                font-size: 1.2rem;
+                letter-spacing: 2px;
+            }
+
+            section {
+                padding: 80px 25px;
+            }
+
+            .hero {
+                padding: 100px 25px;
+            }
+
+            .hero-eyebrow {
+                font-size: 0.65rem;
+                letter-spacing: 3px;
+            }
+
+            .hero-eyebrow::before {
+                width: 30px;
+            }
+
+            .hero-title {
+                letter-spacing: 0;
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+
+            .hero-tagline {
+                font-size: 1rem;
+            }
+
+            .hero-location {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .hero-location .divider {
+                display: none;
+            }
+
+            .section-header {
+                margin-bottom: 60px;
+            }
+
+            .section-label {
+                font-size: 0.6rem;
+                letter-spacing: 3px;
+            }
+
+            .section-label::before {
+                width: 40px;
+            }
+
+            .section-title {
+                font-size: clamp(2rem, 8vw, 3rem);
+            }
+
+            .heat-card {
+                padding: 35px 25px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .stat-value {
+                font-size: 3rem;
+            }
+
+            .pricing-card.featured::before {
+                font-size: 0.55rem;
+                padding: 6px 15px;
+            }
+
+            .pricing-price {
+                font-size: 3rem;
+            }
+
+            .footer {
+                padding: 60px 25px 40px;
+            }
+
+            .thermal-flare {
+                display: none;
+            }
+
+            .scroll-indicator {
+                left: 25px;
+                bottom: 30px;
+            }
+
+            .scroll-line {
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-logo {
+                font-size: 1rem;
+            }
+
+            .hero-title {
+                font-size: clamp(2rem, 14vw, 3rem);
+            }
+
+            .thermal-btn {
+                padding: 15px 30px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-thermal"></div>
+        <div class="loading-text">Initializing Thermal Systems</div>
+        <div class="loading-bar">
+            <div class="loading-bar-fill"></div>
+        </div>
+    </div>
+
+    <!-- Noise Texture Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Scanline Overlay -->
+    <div class="scanline-overlay"></div>
+
+    <!-- Custom Cursor -->
+    <div class="thermal-cursor" id="cursor"></div>
+    <div class="cursor-trail" id="cursorTrail1"></div>
+    <div class="cursor-trail" id="cursorTrail2"></div>
+    <div class="cursor-trail" id="cursorTrail3"></div>
+
+    <!-- Crosshair Effect -->
+    <div class="crosshair crosshair-h" id="crosshairH"></div>
+    <div class="crosshair crosshair-v" id="crosshairV"></div>
+
+    <!-- Scanner Line -->
+    <div class="scanner-line"></div>
+
+    <!-- IR Grid Overlay -->
+    <div class="ir-grid-overlay"></div>
+
+    <!-- Thermal Background Canvas -->
+    <canvas id="thermal-bg"></canvas>
+
+    <!-- Temperature Indicator -->
+    <div class="temp-indicator">
+        <div class="temp-labels">
+            <span>MAX</span>
+            <span>MIN</span>
+        </div>
+        <div class="temp-bar">
+            <div class="temp-marker" id="tempMarker"></div>
+        </div>
+    </div>
+
+    <!-- Thermal Readout -->
+    <div class="thermal-readout">
+        <div class="readout-line">
+            <span>TEMP:</span>
+            <span class="readout-value" id="readoutTemp">21.5C</span>
+        </div>
+        <div class="readout-line">
+            <span>MODE:</span>
+            <span class="readout-value">INFRARED</span>
+        </div>
+        <div class="readout-line">
+            <span>SCALE:</span>
+            <span class="readout-value">LINEAR</span>
+        </div>
+        <div class="readout-line">
+            <span>CURSOR:</span>
+            <span class="readout-value" id="readoutCursor">0,0</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="mainNav">
+        <div class="nav-logo">
+            <span class="nav-logo-dot"></span>
+            <span class="nav-logo-text">405NETWORK</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="nav-toggle" id="navToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="thermal-flare" style="top: 5%; left: 60%;"></div>
+        <div class="thermal-flare" style="top: 70%; left: 10%; animation-delay: -5s;"></div>
+
+        <div class="hero-content">
+            <div class="hero-eyebrow">Enterprise IT Solutions</div>
+            <h1 class="hero-title">
+                <span class="line"><span class="thermal-text">405</span></span>
+                <span class="line"><span class="outline-text">NETWORK</span></span>
+            </h1>
+            <p class="hero-tagline">
+                Next-generation <strong>managed IT services</strong> engineered for performance, security, and scalability.
+            </p>
+            <div class="hero-location">
+                <span class="status">
+                    <span class="dot"></span>
+                    Systems Online
+                </span>
+                <span class="divider"></span>
+                <span>Orange County, CA</span>
+                <span class="divider"></span>
+                <span>Est. 2011</span>
+            </div>
+            <div class="hero-cta">
+                <a href="#pricing" class="thermal-btn thermal-btn-primary">
+                    View Plans
+                    <span class="btn-arrow">&#8594;</span>
+                </a>
+                <a href="#contact" class="thermal-btn thermal-btn-secondary">
+                    Get Started
+                </a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <div class="section-label">
+                <span class="label-number">01</span>
+                What We Offer
+            </div>
+            <h2 class="section-title"><span class="gradient-text">Our Services</span></h2>
+        </div>
+
+        <div class="services-grid">
+            <div class="heat-card service-card">
+                <div class="heat-card-temp" data-temp="28.5">28.5C</div>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+                <h3 class="service-title">Support & Communication</h3>
+                <p class="service-desc">24/7 helpdesk support, email management, and unified communications solutions to keep your team connected and productive.</p>
+            </div>
+
+            <div class="heat-card service-card">
+                <div class="heat-card-temp" data-temp="32.1">32.1C</div>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                </div>
+                <h3 class="service-title">Device Management</h3>
+                <p class="service-desc">Complete lifecycle management for all your devices - procurement, deployment, monitoring, and secure decommissioning.</p>
+            </div>
+
+            <div class="heat-card service-card">
+                <div class="heat-card-temp" data-temp="35.8">35.8C</div>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                    </svg>
+                </div>
+                <h3 class="service-title">Cloud & Admin</h3>
+                <p class="service-desc">Azure, Google Workspace, and Microsoft 365 administration with advanced security configurations and compliance management.</p>
+            </div>
+
+            <div class="heat-card service-card">
+                <div class="heat-card-temp" data-temp="41.2">41.2C</div>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                        <rect x="9" y="9" width="6" height="6"></rect>
+                        <line x1="9" y1="1" x2="9" y2="4"></line>
+                        <line x1="15" y1="1" x2="15" y2="4"></line>
+                        <line x1="9" y1="20" x2="9" y2="23"></line>
+                        <line x1="15" y1="20" x2="15" y2="23"></line>
+                        <line x1="20" y1="9" x2="23" y2="9"></line>
+                        <line x1="20" y1="14" x2="23" y2="14"></line>
+                        <line x1="1" y1="9" x2="4" y2="9"></line>
+                        <line x1="1" y1="14" x2="4" y2="14"></line>
+                    </svg>
+                </div>
+                <h3 class="service-title">Infrastructure</h3>
+                <p class="service-desc">Network design, server management, security architecture, and comprehensive IT infrastructure solutions for businesses of all sizes.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-temp">+45.2C</div>
+                <div class="stat-value" data-value="14" data-suffix="+">0</div>
+                <div class="stat-label">Years Active</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-temp">+52.8C</div>
+                <div class="stat-value" data-value="500" data-suffix="+">0</div>
+                <div class="stat-label">Clients Served</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-temp">+61.3C</div>
+                <div class="stat-value" data-value="99.9" data-suffix="%">0</div>
+                <div class="stat-label">Uptime %</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-temp">+38.7C</div>
+                <div class="stat-value" data-value="24" data-suffix="/7">0</div>
+                <div class="stat-label">Hour Support</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <div class="section-label">
+                <span class="label-number">02</span>
+                Choose Your Plan
+            </div>
+            <h2 class="section-title"><span class="gradient-text">Pricing</span></h2>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="heat-card">
+                    <div class="heat-card-temp">COOL</div>
+                    <div class="pricing-tier">Silver</div>
+                    <div class="pricing-temp">Temperature: 18-25C</div>
+                    <div class="pricing-price"><sup>$</sup>49</div>
+                    <div class="pricing-period">per user / month</div>
+                    <ul class="pricing-features">
+                        <li>Basic Helpdesk Support</li>
+                        <li>Email Management</li>
+                        <li>Device Monitoring</li>
+                        <li>Cloud Basics</li>
+                        <li>8x5 Support Hours</li>
+                    </ul>
+                    <a href="#contact" class="thermal-btn thermal-btn-secondary">Select Plan</a>
+                </div>
+            </div>
+
+            <div class="pricing-card featured">
+                <div class="heat-card">
+                    <div class="heat-card-temp">WARM</div>
+                    <div class="pricing-tier">Gold</div>
+                    <div class="pricing-temp">Temperature: 25-35C</div>
+                    <div class="pricing-price"><sup>$</sup>79</div>
+                    <div class="pricing-period">per user / month</div>
+                    <ul class="pricing-features">
+                        <li>Priority Support Queue</li>
+                        <li>Advanced Email Security</li>
+                        <li>Full Device Management</li>
+                        <li>Cloud Administration</li>
+                        <li>12x6 Support Hours</li>
+                    </ul>
+                    <a href="#contact" class="thermal-btn thermal-btn-primary">Select Plan</a>
+                </div>
+            </div>
+
+            <div class="pricing-card">
+                <div class="heat-card">
+                    <div class="heat-card-temp">HOT</div>
+                    <div class="pricing-tier">Platinum</div>
+                    <div class="pricing-temp">Temperature: 35-50C</div>
+                    <div class="pricing-price"><sup>$</sup>129</div>
+                    <div class="pricing-period">per user / month</div>
+                    <ul class="pricing-features">
+                        <li>Dedicated Support Team</li>
+                        <li>Complete Security Suite</li>
+                        <li>Full Infrastructure</li>
+                        <li>Compliance Management</li>
+                        <li>24x7 Support Hours</li>
+                    </ul>
+                    <a href="#contact" class="thermal-btn thermal-btn-secondary">Select Plan</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="section-header">
+            <div class="section-label">
+                <span class="label-number">03</span>
+                Get In Touch
+            </div>
+            <h2 class="section-title"><span class="gradient-text">Contact Us</span></h2>
+        </div>
+
+        <div class="contact-container">
+            <form class="contact-form" id="contactForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-input" placeholder="Your Name" required>
+                        <div class="heat-indicator"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="your@email.com" required>
+                        <div class="heat-indicator"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Company</label>
+                    <input type="text" class="form-input" placeholder="Company Name">
+                    <div class="heat-indicator"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-textarea" placeholder="Tell us about your IT needs..."></textarea>
+                    <div class="heat-indicator"></div>
+                </div>
+                <button type="submit" class="thermal-btn thermal-btn-primary" style="width: 100%; justify-content: center;">
+                    <span class="btn-text">Send Message</span>
+                    <span class="btn-arrow">&#8594;</span>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">405NETWORK</div>
+                <p class="footer-desc">Providing cutting-edge IT solutions and managed services to businesses across Orange County since 2011. Your technology partner for the future.</p>
+            </div>
+
+            <div class="footer-column">
+                <h4 class="footer-title">Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#services">Support & Communication</a></li>
+                    <li><a href="#services">Device Management</a></li>
+                    <li><a href="#services">Cloud & Admin</a></li>
+                    <li><a href="#services">Infrastructure</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4 class="footer-title">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Partners</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4 class="footer-title">Contact</h4>
+                <div class="footer-contact-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span>Orange County, CA</span>
+                </div>
+                <div class="footer-contact-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <span>info@405network.com</span>
+                </div>
+                <div class="footer-contact-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    <span>(949) 555-0405</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-copyright">
+                &copy; 2024 405Network Inc. All rights reserved.
+            </div>
+            <div class="footer-socials">
+                <a href="#" class="social-link">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                        <rect x="2" y="9" width="4" height="12"></rect>
+                        <circle cx="4" cy="4" r="2"></circle>
+                    </svg>
+                </a>
+                <a href="#" class="social-link">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                    </svg>
+                </a>
+                <a href="#" class="social-link">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ========================================
+        // THERMAL VISION 2.0 - JAVASCRIPT ENGINE
+        // ========================================
+
+        // Check if we're on mobile
+        const isMobile = () => window.innerWidth <= 767;
+
+        // Global variables
+        let scene, camera, renderer, thermalMaterial;
+        let mouseX = 0, mouseY = 0;
+        let isLoaded = false;
+
+        // ========================================
+        // THREE.JS THERMAL SHADER SETUP
+        // ========================================
+
+        const vertexShader = `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `;
+
+        const fragmentShader = `
+            uniform float uTime;
+            uniform vec2 uResolution;
+            uniform vec2 uMouse;
+            uniform vec2 uHeatSource1;
+            uniform vec2 uHeatSource2;
+            uniform vec2 uHeatSource3;
+            uniform vec2 uHeatSource4;
+            uniform float uScrollProgress;
+
+            varying vec2 vUv;
+
+            float hash(vec2 p) {
+                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+            }
+
+            float bayer4(vec2 a) {
+                return fract(a.x / 2.0 + a.y * a.y * 0.75) * 0.25 + fract(a.x / 4.0 + a.y / 2.0 * 0.75);
+            }
+
+            vec3 thermalGradient(float temp) {
+                vec3 coldDeep = vec3(0.0, 0.1, 0.3);
+                vec3 cold = vec3(0.0, 0.4, 1.0);
+                vec3 cool = vec3(0.0, 0.83, 1.0);
+                vec3 teal = vec3(0.0, 1.0, 0.64);
+                vec3 green = vec3(0.22, 1.0, 0.08);
+                vec3 lime = vec3(0.72, 1.0, 0.0);
+                vec3 yellow = vec3(1.0, 0.92, 0.0);
+                vec3 orange = vec3(1.0, 0.55, 0.0);
+                vec3 red = vec3(1.0, 0.18, 0.0);
+                vec3 magenta = vec3(1.0, 0.0, 0.4);
+                vec3 white = vec3(1.0, 1.0, 1.0);
+
+                if(temp < 0.1) return mix(coldDeep, cold, temp * 10.0);
+                else if(temp < 0.2) return mix(cold, cool, (temp - 0.1) * 10.0);
+                else if(temp < 0.3) return mix(cool, teal, (temp - 0.2) * 10.0);
+                else if(temp < 0.4) return mix(teal, green, (temp - 0.3) * 10.0);
+                else if(temp < 0.5) return mix(green, lime, (temp - 0.4) * 10.0);
+                else if(temp < 0.6) return mix(lime, yellow, (temp - 0.5) * 10.0);
+                else if(temp < 0.7) return mix(yellow, orange, (temp - 0.6) * 10.0);
+                else if(temp < 0.85) return mix(orange, red, (temp - 0.7) * 6.67);
+                else if(temp < 0.95) return mix(red, magenta, (temp - 0.85) * 10.0);
+                else return mix(magenta, white, (temp - 0.95) * 20.0);
+            }
+
+            float heatSignature(vec2 uv, vec2 center, float radius, float time, float intensity) {
+                float dist = distance(uv, center);
+                float pulse = sin(time * 2.0 + dist * 10.0) * 0.02;
+                float heat = smoothstep(radius + pulse, 0.0, dist) * intensity;
+                return heat;
+            }
+
+            float noise(vec2 p) {
+                vec2 i = floor(p);
+                vec2 f = fract(p);
+                f = f * f * (3.0 - 2.0 * f);
+
+                float a = hash(i);
+                float b = hash(i + vec2(1.0, 0.0));
+                float c = hash(i + vec2(0.0, 1.0));
+                float d = hash(i + vec2(1.0, 1.0));
+
+                return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+            }
+
+            void main() {
+                vec2 uv = vUv;
+                vec2 fragCoord = uv * uResolution;
+
+                float dither = bayer4(fragCoord) * 0.06;
+
+                // Base ambient temperature with flowing noise
+                float ambient = 0.12 + noise(uv * 4.0 + uTime * 0.08) * 0.08;
+                ambient += noise(uv * 8.0 - uTime * 0.05) * 0.04;
+
+                float heat = ambient;
+
+                // Mouse heat source (primary - intense)
+                heat += heatSignature(uv, uMouse, 0.18, uTime, 0.7);
+
+                // Static heat sources with varied pulsing
+                heat += heatSignature(uv, uHeatSource1, 0.14, uTime * 1.3, 0.45);
+                heat += heatSignature(uv, uHeatSource2, 0.12, uTime * 0.9, 0.4);
+                heat += heatSignature(uv, uHeatSource3, 0.1, uTime * 1.6, 0.35);
+                heat += heatSignature(uv, uHeatSource4, 0.16, uTime * 0.7, 0.5);
+
+                // Scroll-based heat variation
+                float scrollHeat = uScrollProgress * 0.25;
+                heat += scrollHeat * smoothstep(0.6, 0.0, abs(uv.y - 0.5));
+
+                // Apply dithering
+                heat = clamp(heat + dither, 0.0, 1.0);
+
+                vec3 col = thermalGradient(heat);
+
+                // Subtle vignette effect
+                float vignette = 1.0 - length(uv - 0.5) * 0.4;
+                col *= vignette;
+
+                // CRT-style scan lines
+                float scanline = 0.95 + 0.05 * sin(fragCoord.y * 1.5);
+                col *= scanline;
+
+                // Slight color aberration at edges
+                float aberration = length(uv - 0.5) * 0.02;
+                col.r *= 1.0 + aberration;
+                col.b *= 1.0 - aberration;
+
+                gl_FragColor = vec4(col, 1.0);
+            }
+        `;
+
+        function initThreeJS() {
+            const canvas = document.getElementById('thermal-bg');
+
+            scene = new THREE.Scene();
+            camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+            camera.position.z = 1;
+
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const geometry = new THREE.PlaneGeometry(2, 2);
+
+            thermalMaterial = new THREE.ShaderMaterial({
+                vertexShader,
+                fragmentShader,
+                uniforms: {
+                    uTime: { value: 0 },
+                    uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                    uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+                    uHeatSource1: { value: new THREE.Vector2(0.15, 0.25) },
+                    uHeatSource2: { value: new THREE.Vector2(0.85, 0.75) },
+                    uHeatSource3: { value: new THREE.Vector2(0.25, 0.85) },
+                    uHeatSource4: { value: new THREE.Vector2(0.75, 0.15) },
+                    uScrollProgress: { value: 0 }
+                }
+            });
+
+            const mesh = new THREE.Mesh(geometry, thermalMaterial);
+            scene.add(mesh);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            thermalMaterial.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+        }
+
+        function animateThreeJS() {
+            requestAnimationFrame(animateThreeJS);
+
+            thermalMaterial.uniforms.uTime.value += 0.016;
+
+            // Animate heat sources with organic movement
+            const time = thermalMaterial.uniforms.uTime.value;
+            thermalMaterial.uniforms.uHeatSource1.value.x = 0.15 + Math.sin(time * 0.4) * 0.12;
+            thermalMaterial.uniforms.uHeatSource1.value.y = 0.25 + Math.cos(time * 0.3) * 0.1;
+
+            thermalMaterial.uniforms.uHeatSource2.value.x = 0.85 + Math.cos(time * 0.35) * 0.1;
+            thermalMaterial.uniforms.uHeatSource2.value.y = 0.75 + Math.sin(time * 0.5) * 0.12;
+
+            thermalMaterial.uniforms.uHeatSource3.value.x = 0.25 + Math.sin(time * 0.6) * 0.08;
+            thermalMaterial.uniforms.uHeatSource3.value.y = 0.85 + Math.cos(time * 0.4) * 0.08;
+
+            thermalMaterial.uniforms.uHeatSource4.value.x = 0.75 + Math.cos(time * 0.5) * 0.1;
+            thermalMaterial.uniforms.uHeatSource4.value.y = 0.15 + Math.sin(time * 0.35) * 0.1;
+
+            renderer.render(scene, camera);
+        }
+
+        // ========================================
+        // CUSTOM CURSOR SYSTEM
+        // ========================================
+
+        const cursor = document.getElementById('cursor');
+        const cursorTrail1 = document.getElementById('cursorTrail1');
+        const cursorTrail2 = document.getElementById('cursorTrail2');
+        const cursorTrail3 = document.getElementById('cursorTrail3');
+        const crosshairH = document.getElementById('crosshairH');
+        const crosshairV = document.getElementById('crosshairV');
+        const readoutCursor = document.getElementById('readoutCursor');
+        const readoutTemp = document.getElementById('readoutTemp');
+        const tempMarker = document.getElementById('tempMarker');
+
+        let cursorX = 0, cursorY = 0;
+        let trail1X = 0, trail1Y = 0;
+        let trail2X = 0, trail2Y = 0;
+        let trail3X = 0, trail3Y = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            if (isMobile()) return;
+
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorX = e.clientX;
+            cursorY = e.clientY;
+
+            // Update shader mouse position
+            if (thermalMaterial) {
+                thermalMaterial.uniforms.uMouse.value.set(
+                    e.clientX / window.innerWidth,
+                    1.0 - (e.clientY / window.innerHeight)
+                );
+            }
+
+            // Update readout using textContent (safe)
+            if (readoutCursor) {
+                readoutCursor.textContent = Math.round(e.clientX) + ',' + Math.round(e.clientY);
+            }
+
+            // Calculate temperature based on position
+            const tempBase = 15 + (e.clientY / window.innerHeight) * 40;
+            if (readoutTemp) {
+                readoutTemp.textContent = tempBase.toFixed(1) + 'C';
+            }
+
+            // Update temperature marker
+            if (tempMarker) {
+                const markerPos = (e.clientY / window.innerHeight) * 230;
+                tempMarker.style.top = markerPos + 'px';
+            }
+
+            // Update crosshairs
+            if (crosshairH) crosshairH.style.top = e.clientY + 'px';
+            if (crosshairV) crosshairV.style.left = e.clientX + 'px';
+        });
+
+        function updateCursor() {
+            if (isMobile()) {
+                requestAnimationFrame(updateCursor);
+                return;
+            }
+
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+
+            // Trail with eased delay
+            trail1X += (cursorX - trail1X) * 0.15;
+            trail1Y += (cursorY - trail1Y) * 0.15;
+            cursorTrail1.style.left = trail1X + 'px';
+            cursorTrail1.style.top = trail1Y + 'px';
+
+            trail2X += (trail1X - trail2X) * 0.15;
+            trail2Y += (trail1Y - trail2Y) * 0.15;
+            cursorTrail2.style.left = trail2X + 'px';
+            cursorTrail2.style.top = trail2Y + 'px';
+
+            trail3X += (trail2X - trail3X) * 0.15;
+            trail3Y += (trail2Y - trail3Y) * 0.15;
+            cursorTrail3.style.left = trail3X + 'px';
+            cursorTrail3.style.top = trail3Y + 'px';
+
+            requestAnimationFrame(updateCursor);
+        }
+
+        // Hover state for interactive elements
+        function setupCursorHovers() {
+            if (isMobile()) return;
+
+            const interactiveElements = document.querySelectorAll('a, button, .heat-card');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+            });
+        }
+
+        // ========================================
+        // HEAT CARD MOUSE TRACKING
+        // ========================================
+
+        function setupHeatCards() {
+            document.querySelectorAll('.heat-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    card.style.setProperty('--mouse-x', x + '%');
+                    card.style.setProperty('--mouse-y', y + '%');
+                });
+            });
+        }
+
+        // ========================================
+        // GSAP ANIMATIONS - DESKTOP ONLY
+        // ========================================
+
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        function initAnimations() {
+            // Skip all GSAP animations on mobile
+            if (isMobile()) return;
+
+            // Hero animations with stagger
+            const heroTl = gsap.timeline({ delay: 0.3 });
+
+            heroTl.from('.hero-eyebrow', {
+                opacity: 0,
+                x: -50,
+                duration: 1,
+                ease: 'power3.out'
+            })
+            .from('.hero-title .line', {
+                opacity: 0,
+                y: 80,
+                stagger: 0.15,
+                duration: 1.2,
+                ease: 'power3.out'
+            }, '-=0.6')
+            .from('.hero-tagline', {
+                opacity: 0,
+                y: 40,
+                duration: 1,
+                ease: 'power3.out'
+            }, '-=0.8')
+            .from('.hero-location', {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                ease: 'power3.out'
+            }, '-=0.6')
+            .from('.hero-cta', {
+                opacity: 0,
+                y: 40,
+                duration: 1,
+                ease: 'power3.out'
+            }, '-=0.5')
+            .from('.scroll-indicator', {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                ease: 'power3.out'
+            }, '-=0.3');
+
+            // Section headers with reveal
+            gsap.utils.toArray('.section-header').forEach(header => {
+                gsap.from(header, {
+                    scrollTrigger: {
+                        trigger: header,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    opacity: 0,
+                    y: 60,
+                    duration: 1.2,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Service cards with stagger and heat effect
+            gsap.utils.toArray('.service-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 90%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    opacity: 0,
+                    y: 80,
+                    scale: 0.95,
+                    duration: 1,
+                    delay: i * 0.1,
+                    ease: 'power3.out'
+                });
+
+                // Heat pulse effect on scroll
+                gsap.to(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    boxShadow: '0 0 40px rgba(255, 234, 0, 0.2), inset 0 0 30px rgba(255, 140, 0, 0.08)',
+                    duration: 0.6,
+                    yoyo: true,
+                    repeat: 1
+                });
+            });
+
+            // Pricing cards with scale effect
+            gsap.utils.toArray('.pricing-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 88%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    opacity: 0,
+                    y: 100,
+                    scale: 0.9,
+                    duration: 1.2,
+                    delay: i * 0.15,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Stats counter animation using textContent (safe)
+            gsap.utils.toArray('.stat-value').forEach(stat => {
+                const targetValue = parseFloat(stat.getAttribute('data-value'));
+                const suffix = stat.getAttribute('data-suffix') || '';
+                const isDecimal = targetValue !== Math.floor(targetValue);
+                const counter = { value: 0 };
+
+                gsap.to(counter, {
+                    scrollTrigger: {
+                        trigger: stat,
+                        start: 'top 88%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    value: targetValue,
+                    duration: 2.5,
+                    ease: 'power2.out',
+                    onUpdate: function() {
+                        if (isDecimal) {
+                            stat.textContent = counter.value.toFixed(1) + suffix;
+                        } else {
+                            stat.textContent = Math.floor(counter.value) + suffix;
+                        }
+                    }
+                });
+            });
+
+            // Form fields animation
+            gsap.utils.toArray('.form-group').forEach((group, i) => {
+                gsap.from(group, {
+                    scrollTrigger: {
+                        trigger: group,
+                        start: 'top 92%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    opacity: 0,
+                    x: -40,
+                    duration: 0.8,
+                    delay: i * 0.1,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Scroll progress for shader
+            ScrollTrigger.create({
+                start: 'top top',
+                end: 'bottom bottom',
+                onUpdate: (self) => {
+                    if (thermalMaterial) {
+                        thermalMaterial.uniforms.uScrollProgress.value = self.progress;
+                    }
+                }
+            });
+        }
+
+        // ========================================
+        // BUTTON HOVER EFFECTS
+        // ========================================
+
+        function setupButtonEffects() {
+            if (isMobile()) return;
+
+            document.querySelectorAll('.thermal-btn').forEach(btn => {
+                btn.addEventListener('mouseenter', () => {
+                    gsap.to(btn, {
+                        boxShadow: btn.classList.contains('thermal-btn-primary')
+                            ? '0 0 80px rgba(255, 45, 0, 0.6), 0 0 120px rgba(255, 140, 0, 0.3)'
+                            : '0 0 60px rgba(0, 212, 255, 0.4), 0 0 100px rgba(0, 255, 163, 0.2)',
+                        duration: 0.4
+                    });
+                });
+
+                btn.addEventListener('mouseleave', () => {
+                    gsap.to(btn, {
+                        boxShadow: btn.classList.contains('thermal-btn-primary')
+                            ? '0 0 40px rgba(255, 45, 0, 0.3), inset 0 0 30px rgba(255, 255, 255, 0.1)'
+                            : '0 0 25px rgba(0, 212, 255, 0.15), inset 0 0 20px rgba(0, 212, 255, 0.05)',
+                        duration: 0.4
+                    });
+                });
+            });
+        }
+
+        // ========================================
+        // FORM HANDLING
+        // ========================================
+
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const btnText = btn.querySelector('.btn-text');
+            const originalText = btnText ? btnText.textContent : 'Send Message';
+
+            if (!isMobile()) {
+                gsap.to(btn, {
+                    background: 'linear-gradient(135deg, #ff2d00, #ff8c00, #ffea00)',
+                    boxShadow: '0 0 100px rgba(255, 45, 0, 0.8)',
+                    duration: 0.4
+                });
+            }
+
+            if (btnText) btnText.textContent = 'Transmitting...';
+
+            setTimeout(() => {
+                if (btnText) btnText.textContent = 'Message Sent!';
+                if (!isMobile()) {
+                    gsap.to(btn, {
+                        background: 'linear-gradient(135deg, #39ff14, #00ffa3)',
+                        boxShadow: '0 0 80px rgba(57, 255, 20, 0.6)',
+                        duration: 0.4
+                    });
+                }
+
+                setTimeout(() => {
+                    if (btnText) btnText.textContent = originalText;
+                    if (!isMobile()) {
+                        gsap.to(btn, {
+                            background: 'linear-gradient(135deg, #ff2d00, #ff8c00, #ffea00)',
+                            boxShadow: '0 0 40px rgba(255, 45, 0, 0.3)',
+                            duration: 0.5
+                        });
+                    }
+                    e.target.reset();
+                }, 2500);
+            }, 1800);
+        });
+
+        // ========================================
+        // LOADING SCREEN
+        // ========================================
+
+        function hideLoading() {
+            const loadingScreen = document.getElementById('loadingScreen');
+
+            if (isMobile()) {
+                // Simple fade on mobile without GSAP
+                loadingScreen.style.transition = 'opacity 0.6s ease';
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        isLoaded = true;
+                    }, 600);
+                }, 1200);
+            } else {
+                gsap.to(loadingScreen, {
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: 1.2,
+                    ease: 'power2.inOut',
+                    onComplete: () => {
+                        loadingScreen.style.display = 'none';
+                        isLoaded = true;
+                        initAnimations();
+                    }
+                });
+            }
+        }
+
+        // ========================================
+        // THERMAL FLARE PARALLAX
+        // ========================================
+
+        function setupFlareParallax() {
+            if (isMobile()) return;
+
+            document.addEventListener('mousemove', (e) => {
+                const flares = document.querySelectorAll('.thermal-flare');
+                flares.forEach((flare, i) => {
+                    const speed = (i + 1) * 0.015;
+                    const x = (window.innerWidth / 2 - e.clientX) * speed;
+                    const y = (window.innerHeight / 2 - e.clientY) * speed;
+                    gsap.to(flare, {
+                        x: x,
+                        y: y,
+                        duration: 1.2,
+                        ease: 'power2.out'
+                    });
+                });
+            });
+        }
+
+        // ========================================
+        // TEMPERATURE CARD HOVER EFFECT
+        // ========================================
+
+        function setupTempCards() {
+            if (isMobile()) return;
+
+            document.querySelectorAll('.heat-card').forEach(card => {
+                const tempDisplay = card.querySelector('.heat-card-temp');
+                if (!tempDisplay || !tempDisplay.getAttribute('data-temp')) return;
+
+                const baseTemp = parseFloat(tempDisplay.getAttribute('data-temp'));
+
+                card.addEventListener('mouseenter', () => {
+                    const newTemp = baseTemp + 12;
+                    tempDisplay.textContent = newTemp.toFixed(1) + 'C';
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    tempDisplay.textContent = baseTemp.toFixed(1) + 'C';
+                });
+            });
+        }
+
+        // ========================================
+        // NAV SCROLL EFFECT
+        // ========================================
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('mainNav');
+            if (window.scrollY > 80) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // ========================================
+        // SMOOTH SCROLL
+        // ========================================
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    if (isMobile()) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                        gsap.to(window, {
+                            duration: 1.2,
+                            scrollTo: { y: target, offsetY: 80 },
+                            ease: 'power3.inOut'
+                        });
+                    }
+                }
+            });
+        });
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+
+        window.addEventListener('load', () => {
+            initThreeJS();
+            animateThreeJS();
+
+            if (!isMobile()) {
+                updateCursor();
+                setupCursorHovers();
+                setupButtonEffects();
+                setupFlareParallax();
+                setupTempCards();
+            }
+
+            setupHeatCards();
+            hideLoading();
+        });
+
+        // Fallback for slow loading
+        setTimeout(() => {
+            if (!isLoaded) {
+                hideLoading();
+            }
+        }, 5000);
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            if (!isMobile()) {
+                setupCursorHovers();
+            }
+        });
+    </script>
+</body>
+</html>

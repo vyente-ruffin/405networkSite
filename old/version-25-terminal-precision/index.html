@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Terminal Precision</title>
+
+    <!-- CDN Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            /* Terminal Colors */
+            --terminal-green: #33ff33;
+            --terminal-amber: #ffb000;
+            --matrix-black: #0c0c0c;
+            --monochrome-white: #e8e8e8;
+            --terminal-gray: #1a1a1a;
+
+            /* Semantic Colors */
+            --primary: var(--terminal-green);
+            --secondary: var(--terminal-amber);
+            --background: var(--matrix-black);
+            --surface: var(--terminal-gray);
+            --text-primary: var(--monochrome-white);
+            --text-secondary: var(--terminal-green);
+            --text-accent: var(--terminal-amber);
+
+            /* Typography - Monospace */
+            --font-mono: 'Courier New', Courier, monospace;
+            --font-size-hero: 4rem;
+            --font-size-h1: 3rem;
+            --font-size-h2: 2.25rem;
+            --font-size-h3: 1.5rem;
+            --font-size-body: 1rem;
+            --font-size-small: 0.875rem;
+
+            /* Spacing System */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            --spacing-xl: 6rem;
+
+            /* Layout */
+            --max-width: 1400px;
+            --section-padding: 6rem 2rem;
+            --terminal-border: 2px solid var(--terminal-green);
+
+            /* Transitions */
+            --transition-fast: 0.15s linear;
+            --transition-base: 0.3s linear;
+        }
+
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-body);
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--background);
+            overflow-x: hidden;
+            -webkit-font-smoothing: auto;
+            -moz-osx-font-smoothing: auto;
+        }
+
+        /* CRT Scanline Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1000;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        /* CRT Screen Curvature (subtle) */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                transparent 70%,
+                rgba(0, 0, 0, 0.3) 100%
+            );
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Canvas for Three.js */
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        h1 { font-size: var(--font-size-h1); }
+        h2 { font-size: var(--font-size-h2); }
+        h3 { font-size: var(--font-size-h3); }
+
+        p {
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: all var(--transition-base);
+        }
+
+        /* ===== TERMINAL GLOW EFFECT ===== */
+        .terminal-glow {
+            text-shadow:
+                0 0 5px var(--terminal-green),
+                0 0 10px var(--terminal-green),
+                0 0 20px rgba(51, 255, 51, 0.5);
+        }
+
+        .amber-glow {
+            text-shadow:
+                0 0 5px var(--terminal-amber),
+                0 0 10px var(--terminal-amber),
+                0 0 20px rgba(255, 176, 0, 0.5);
+        }
+
+        /* ===== CURSOR BLINK ===== */
+        .cursor {
+            display: inline-block;
+            width: 0.6em;
+            height: 1em;
+            background: var(--terminal-green);
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .section {
+            padding: var(--section-padding);
+            position: relative;
+        }
+
+        .terminal-box {
+            background: var(--surface);
+            border: var(--terminal-border);
+            padding: var(--spacing-md);
+            box-shadow:
+                inset 0 0 20px rgba(51, 255, 51, 0.05),
+                0 0 10px rgba(51, 255, 51, 0.2);
+            position: relative;
+        }
+
+        .terminal-box::before {
+            content: '> ';
+            color: var(--terminal-green);
+            position: absolute;
+            top: var(--spacing-sm);
+            left: var(--spacing-sm);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: transparent;
+            color: var(--terminal-green);
+            border: var(--terminal-border);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            position: relative;
+        }
+
+        .btn::before {
+            content: '> ';
+            position: absolute;
+            left: 1rem;
+            opacity: 0;
+            transition: all var(--transition-base);
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+            left: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--terminal-green);
+            color: var(--matrix-black);
+            box-shadow:
+                0 0 20px rgba(51, 255, 51, 0.5),
+                inset 0 0 20px rgba(51, 255, 51, 0.2);
+        }
+
+        .btn-secondary {
+            color: var(--terminal-amber);
+            border-color: var(--terminal-amber);
+        }
+
+        .btn-secondary:hover {
+            background: var(--terminal-amber);
+            color: var(--matrix-black);
+            box-shadow:
+                0 0 20px rgba(255, 176, 0, 0.5),
+                inset 0 0 20px rgba(255, 176, 0, 0.2);
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1001;
+            background: var(--matrix-black);
+            border-bottom: var(--terminal-border);
+        }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--terminal-green);
+            text-shadow:
+                0 0 5px var(--terminal-green),
+                0 0 10px rgba(51, 255, 51, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--monochrome-white);
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            transition: all var(--transition-base);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--terminal-green);
+            border-bottom-color: var(--terminal-green);
+            text-shadow: 0 0 10px rgba(51, 255, 51, 0.8);
+        }
+
+        .nav-cta {
+            padding: 0.75rem 1.5rem !important;
+            background: transparent !important;
+            color: var(--terminal-green) !important;
+            border: 2px solid var(--terminal-green) !important;
+            border-bottom: 2px solid var(--terminal-green) !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--terminal-green) !important;
+            color: var(--matrix-black) !important;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background: var(--terminal-green);
+            transition: all var(--transition-base);
+        }
+
+        /* ===== HERO SECTION ===== */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: left;
+            padding-top: 80px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            padding: var(--spacing-xl) var(--spacing-md);
+        }
+
+        .hero-prefix {
+            font-size: 1.25rem;
+            color: var(--terminal-amber);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .hero-title {
+            font-size: var(--font-size-hero);
+            margin-bottom: var(--spacing-md);
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+            max-width: 700px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .terminal-prompt {
+            margin-top: var(--spacing-lg);
+            padding: var(--spacing-md);
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid var(--terminal-green);
+            font-family: var(--font-mono);
+            color: var(--terminal-green);
+        }
+
+        .prompt-line {
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== SERVICES SECTION ===== */
+        #services {
+            background: var(--terminal-gray);
+        }
+
+        .section-header {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: var(--font-size-h1);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            max-width: 700px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .service-card {
+            transition: all var(--transition-base);
+            position: relative;
+            padding-top: var(--spacing-lg);
+        }
+
+        .service-card:hover {
+            transform: translateX(8px);
+        }
+
+        .service-card:hover .terminal-box {
+            box-shadow:
+                inset 0 0 30px rgba(51, 255, 51, 0.1),
+                0 0 20px rgba(51, 255, 51, 0.4);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
+            display: block;
+            color: var(--terminal-amber);
+        }
+
+        .service-title {
+            margin-bottom: var(--spacing-sm);
+            color: var(--terminal-green);
+        }
+
+        .service-description {
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .service-code {
+            margin-top: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            background: var(--matrix-black);
+            border-left: 3px solid var(--terminal-amber);
+            font-size: 0.875rem;
+            color: var(--terminal-amber);
+        }
+
+        /* ===== STATS SECTION ===== */
+        #stats {
+            background: var(--matrix-black);
+            border-top: var(--terminal-border);
+            border-bottom: var(--terminal-border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .stat-card {
+            padding: var(--spacing-lg);
+            border: 1px solid var(--terminal-green);
+            background: rgba(26, 26, 26, 0.5);
+            text-align: center;
+            transition: all var(--transition-base);
+        }
+
+        .stat-card:hover {
+            background: rgba(51, 255, 51, 0.05);
+            box-shadow:
+                inset 0 0 30px rgba(51, 255, 51, 0.1),
+                0 0 20px rgba(51, 255, 51, 0.3);
+        }
+
+        .stat-number {
+            font-family: var(--font-mono);
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: var(--spacing-sm);
+            color: var(--terminal-green);
+            text-shadow:
+                0 0 10px var(--terminal-green),
+                0 0 20px rgba(51, 255, 51, 0.5);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--text-primary);
+        }
+
+        /* ===== PRICING SECTION ===== */
+        #pricing {
+            background: var(--terminal-gray);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .pricing-card {
+            padding: var(--spacing-lg);
+            transition: all var(--transition-base);
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--terminal-amber);
+        }
+
+        .pricing-card.featured .pricing-title {
+            color: var(--terminal-amber);
+        }
+
+        .pricing-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--terminal-amber);
+            color: var(--matrix-black);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .pricing-title {
+            font-size: 1.75rem;
+            margin-bottom: var(--spacing-md);
+            color: var(--terminal-green);
+        }
+
+        .pricing-price {
+            font-family: var(--font-mono);
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: var(--spacing-sm);
+            color: var(--terminal-green);
+        }
+
+        .pricing-period {
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .pricing-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(51, 255, 51, 0.2);
+            color: var(--text-primary);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--terminal-green);
+            font-weight: 700;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+        }
+
+        /* ===== CONTACT SECTION ===== */
+        #contact {
+            background: var(--matrix-black);
+            border-top: var(--terminal-border);
+        }
+
+        .contact-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .contact-info {
+            padding: var(--spacing-lg);
+            border: 1px solid var(--terminal-green);
+            background: rgba(26, 26, 26, 0.5);
+        }
+
+        .contact-info h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--terminal-amber);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+            font-family: var(--font-mono);
+        }
+
+        .contact-item-icon {
+            color: var(--terminal-green);
+            min-width: 30px;
+        }
+
+        .contact-item-text {
+            color: var(--text-primary);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: var(--spacing-xs);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--terminal-green);
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--terminal-green);
+            color: var(--text-primary);
+            transition: all var(--transition-base);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: rgba(51, 255, 51, 0.05);
+            box-shadow:
+                inset 0 0 20px rgba(51, 255, 51, 0.1),
+                0 0 10px rgba(51, 255, 51, 0.3);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(232, 232, 232, 0.5);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--terminal-gray);
+            color: var(--text-primary);
+            padding: var(--spacing-xl) var(--spacing-md) var(--spacing-md);
+            border-top: var(--terminal-border);
+        }
+
+        .footer-content {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .footer-section h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--terminal-green);
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+            display: block;
+        }
+
+        .footer-section a:hover {
+            color: var(--terminal-green);
+            text-shadow: 0 0 10px rgba(51, 255, 51, 0.5);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        .social-links a {
+            display: inline-flex;
+            width: 50px;
+            height: 50px;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            color: var(--terminal-green);
+            border: 1px solid var(--terminal-green);
+            font-size: 1.25rem;
+            transition: all var(--transition-base);
+        }
+
+        .social-links a:hover {
+            background: var(--terminal-green);
+            color: var(--matrix-black);
+            box-shadow: 0 0 20px rgba(51, 255, 51, 0.5);
+        }
+
+        .footer-bottom {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(51, 255, 51, 0.3);
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        /* ===== ACCESSIBILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--terminal-green);
+            outline-offset: 4px;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+
+        /* Tablet (1024px) */
+        @media (max-width: 1024px) {
+            :root {
+                --font-size-hero: 3.25rem;
+                --font-size-h1: 2.5rem;
+                --font-size-h2: 2rem;
+                --font-size-h3: 1.25rem;
+                --section-padding: 4rem 1.5rem;
+            }
+
+            .services-grid,
+            .pricing-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: var(--spacing-md);
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+        }
+
+        /* Mobile (768px) */
+        @media (max-width: 768px) {
+            :root {
+                --font-size-hero: 2.5rem;
+                --font-size-h1: 2rem;
+                --font-size-h2: 1.75rem;
+                --font-size-h3: 1.125rem;
+                --font-size-body: 0.9375rem;
+                --section-padding: 3rem 1rem;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--matrix-black);
+                flex-direction: column;
+                padding: var(--spacing-md);
+                border-top: var(--terminal-border);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            #hero {
+                text-align: left;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-md);
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .terminal-prompt {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Small Mobile (480px) */
+        @media (max-width: 480px) {
+            :root {
+                --font-size-hero: 2rem;
+                --font-size-h1: 1.75rem;
+                --font-size-h2: 1.5rem;
+                --section-padding: 2rem 1rem;
+            }
+
+            .btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .stat-number {
+                font-size: 3rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Canvas -->
+    <canvas id="background-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="logo" aria-label="405Network Inc.">$ 405NET_</div>
+            <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#services">services</a></li>
+                <li><a href="#stats">stats</a></li>
+                <li><a href="#pricing">pricing</a></li>
+                <li><a href="#contact" class="nav-cta">contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="hero-content">
+            <div class="hero-prefix terminal-glow">$ sudo execute solution</div>
+            <h1 class="hero-title terminal-glow">WE MAKE<br>I.T. HAPPEN<span class="cursor"></span></h1>
+            <p class="hero-subtitle">Precision IT solutions engineered for technical excellence. Developer-focused infrastructure and enterprise-grade systems.</p>
+            <div class="hero-buttons">
+                <a href="#contact" class="btn">EXECUTE</a>
+                <a href="#services" class="btn btn-secondary">QUERY SERVICES</a>
+            </div>
+            <div class="terminal-prompt">
+                <div class="prompt-line">$ 405network --status</div>
+                <div class="prompt-line">> Online | 99.9% uptime | 15+ years</div>
+                <div class="prompt-line">> Ready to serve</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title terminal-glow">$ ls -la services/</h2>
+                <p class="section-subtitle">Core IT infrastructure and development services</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="terminal-box">
+                        <span class="service-icon" aria-hidden="true">☁</span>
+                        <h3 class="service-title">cloud_solutions.sh</h3>
+                        <p class="service-description">Scalable cloud architecture. Migration, deployment, and optimization services built on modern infrastructure.</p>
+                        <div class="service-code">// Uptime: 99.9% | Latency: &lt;50ms</div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="terminal-box">
+                        <span class="service-icon" aria-hidden="true">🛡</span>
+                        <h3 class="service-title">cybersecurity.sh</h3>
+                        <p class="service-description">Enterprise security frameworks. Penetration testing, vulnerability assessment, and 24/7 threat monitoring.</p>
+                        <div class="service-code">// CVE scanning | Zero-day protection</div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="terminal-box">
+                        <span class="service-icon" aria-hidden="true">💻</span>
+                        <h3 class="service-title">development.sh</h3>
+                        <p class="service-description">Custom software engineering. Full-stack development, API design, and microservices architecture.</p>
+                        <div class="service-code">// CI/CD | Test coverage: 95%+</div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="terminal-box">
+                        <span class="service-icon" aria-hidden="true">🔧</span>
+                        <h3 class="service-title">support.sh</h3>
+                        <p class="service-description">24/7 technical support with SLA guarantees. Monitoring, maintenance, and rapid incident response.</p>
+                        <div class="service-code">// Response time: &lt;15min</div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="terminal-box">
+                        <span class="service-icon" aria-hidden="true">🏗</span>
+                        <h3 class="service-title">infrastructure.sh</h3>
+                        <p class="service-description">Enterprise network design. Server architecture, containerization, and infrastructure as code.</p>
+                        <div class="service-code">// Docker | Kubernetes | Terraform</div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="terminal-box">
+                        <span class="service-icon" aria-hidden="true">📊</span>
+                        <h3 class="service-title">consulting.sh</h3>
+                        <p class="service-description">Strategic technology advisory. System audits, optimization strategies, and digital transformation.</p>
+                        <div class="service-code">// ROI tracking | KPI dashboards</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="section">
+        <div class="container">
+            <h2 class="section-title terminal-glow">$ cat /var/log/metrics.log</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number terminal-glow">15+</div>
+                    <div class="stat-label">YEARS ACTIVE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number terminal-glow">500+</div>
+                    <div class="stat-label">CLIENTS SERVED</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number terminal-glow">2K+</div>
+                    <div class="stat-label">PROJECTS DEPLOYED</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number terminal-glow">99.9%</div>
+                    <div class="stat-label">UPTIME SLA</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title terminal-glow">$ cat pricing.conf</h2>
+                <p class="section-subtitle">Transparent service tiers with no hidden costs</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card terminal-box">
+                    <h3 class="pricing-title">STARTER</h3>
+                    <div class="pricing-price terminal-glow">$499</div>
+                    <div class="pricing-period">/month</div>
+                    <ul class="pricing-features">
+                        <li>Essential IT support</li>
+                        <li>Cloud backup (50GB)</li>
+                        <li>Email support</li>
+                        <li>Monthly system checks</li>
+                        <li>Basic monitoring</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-secondary">INIT</a>
+                </div>
+
+                <div class="pricing-card terminal-box featured">
+                    <div class="pricing-badge">RECOMMENDED</div>
+                    <h3 class="pricing-title">PROFESSIONAL</h3>
+                    <div class="pricing-price amber-glow">$999</div>
+                    <div class="pricing-period">/month</div>
+                    <ul class="pricing-features">
+                        <li>24/7 priority support</li>
+                        <li>Cloud backup (500GB)</li>
+                        <li>Phone + email support</li>
+                        <li>Advanced security</li>
+                        <li>Dedicated account manager</li>
+                        <li>Quarterly reviews</li>
+                    </ul>
+                    <a href="#contact" class="btn">EXECUTE</a>
+                </div>
+
+                <div class="pricing-card terminal-box">
+                    <h3 class="pricing-title">ENTERPRISE</h3>
+                    <div class="pricing-price terminal-glow">CUSTOM</div>
+                    <div class="pricing-period">tailored config</div>
+                    <ul class="pricing-features">
+                        <li>Custom infrastructure</li>
+                        <li>Unlimited cloud storage</li>
+                        <li>Dedicated support team</li>
+                        <li>Enterprise security</li>
+                        <li>On-site consultations</li>
+                        <li>SLA guarantees</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-secondary">CONFIGURE</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="contact-container">
+            <h2 class="section-title terminal-glow">$ ./contact.sh --init</h2>
+            <p class="section-subtitle">Execute connection protocol</p>
+
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3 class="amber-glow">CONNECTION INFO</h3>
+                    <div class="contact-item">
+                        <span class="contact-item-icon">[PHONE]:</span>
+                        <span class="contact-item-text">(555) 405-TECH</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-item-icon">[EMAIL]:</span>
+                        <span class="contact-item-text">ops@405network.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-item-icon">[ADDR]:</span>
+                        <span class="contact-item-text">405 Tech Boulevard<br>Suite 200<br>Innovation District</span>
+                    </div>
+                </div>
+
+                <form class="contact-form" aria-label="Contact form">
+                    <div class="form-group">
+                        <label for="name">NAME</label>
+                        <input type="text" id="name" name="name" required placeholder="Enter name" aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">EMAIL</label>
+                        <input type="email" id="email" name="email" required placeholder="user@domain.com" aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">COMPANY</label>
+                        <input type="text" id="company" name="company" placeholder="Optional">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">MESSAGE</label>
+                        <textarea id="message" name="message" required placeholder="Enter query..." aria-required="true"></textarea>
+                    </div>
+                    <button type="submit" class="btn">TRANSMIT</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>$ 405NETWORK INC.</h3>
+                <p>Technical precision since 2009. Enterprise-grade IT infrastructure and development services.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="LinkedIn">in</a>
+                    <a href="#" aria-label="Twitter">𝕏</a>
+                    <a href="#" aria-label="GitHub">gh</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>SERVICES</h3>
+                <a href="#services">Cloud Solutions</a>
+                <a href="#services">Cybersecurity</a>
+                <a href="#services">Development</a>
+                <a href="#services">IT Support</a>
+            </div>
+            <div class="footer-section">
+                <h3>COMPANY</h3>
+                <a href="#stats">Metrics</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>RESOURCES</h3>
+                <a href="#">Documentation</a>
+                <a href="#">API Reference</a>
+                <a href="#">System Status</a>
+                <a href="#">Support Portal</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 405Network Inc. All rights reserved. | <a href="#">Privacy</a> | <a href="#">Terms</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // ===== THREE.JS SETUP =====
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('background-canvas'),
+            alpha: true,
+            antialias: false
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        camera.position.z = 5;
+
+        // Matrix-style falling code particles
+        const isMobile = window.innerWidth < 768;
+        const particleCount = isMobile ? 60 : 150;
+        const particles = [];
+
+        // Create text particles (small boxes representing code characters)
+        for (let i = 0; i < particleCount; i++) {
+            const geometry = new THREE.BoxGeometry(0.08, 0.15, 0.08);
+
+            // Terminal green material
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x33ff33,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            const particle = new THREE.Mesh(geometry, material);
+
+            // Random position across screen width
+            particle.position.x = (Math.random() - 0.5) * 20;
+            particle.position.y = Math.random() * 20 + 10;
+            particle.position.z = (Math.random() - 0.5) * 10;
+
+            // Store falling properties
+            particle.userData = {
+                fallSpeed: Math.random() * 0.05 + 0.02,
+                resetY: particle.position.y,
+                opacity: Math.random() * 0.4 + 0.3
+            };
+
+            particle.material.opacity = particle.userData.opacity;
+
+            scene.add(particle);
+            particles.push(particle);
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            particles.forEach(particle => {
+                // Fall down
+                particle.position.y -= particle.userData.fallSpeed;
+
+                // Reset to top when reaches bottom
+                if (particle.position.y < -10) {
+                    particle.position.y = particle.userData.resetY;
+                    particle.position.x = (Math.random() - 0.5) * 20;
+                }
+
+                // Subtle rotation
+                particle.rotation.y += 0.01;
+
+                // Opacity flicker
+                const flicker = Math.random() * 0.1;
+                particle.material.opacity = particle.userData.opacity + flicker;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ===== GSAP ANIMATIONS =====
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Typewriter effect for hero title
+        const heroTitle = document.querySelector('.hero-title');
+        const titleText = heroTitle.textContent.replace('<span class="cursor"></span>', '');
+        heroTitle.textContent = '';
+
+        let charIndex = 0;
+        const typewriterInterval = setInterval(() => {
+            if (charIndex < titleText.length) {
+                heroTitle.textContent += titleText[charIndex];
+                charIndex++;
+            } else {
+                clearInterval(typewriterInterval);
+                // Add cursor after typing
+                const cursor = document.createElement('span');
+                cursor.className = 'cursor';
+                heroTitle.appendChild(cursor);
+            }
+        }, 100);
+
+        // Hero subtitle and buttons
+        gsap.from('.hero-prefix', {
+            duration: 0.5,
+            opacity: 0,
+            y: -20,
+            ease: 'power2.out'
+        });
+
+        gsap.from('.hero-subtitle', {
+            duration: 0.8,
+            y: 40,
+            opacity: 0,
+            delay: 2.5,
+            ease: 'power2.out'
+        });
+
+        gsap.from('.hero-buttons', {
+            duration: 0.8,
+            y: 40,
+            opacity: 0,
+            delay: 3,
+            ease: 'power2.out'
+        });
+
+        gsap.from('.terminal-prompt', {
+            duration: 0.8,
+            y: 40,
+            opacity: 0,
+            delay: 3.5,
+            ease: 'power2.out'
+        });
+
+        // Section reveals
+        gsap.utils.toArray('section:not(#hero)').forEach(section => {
+            gsap.from(section, {
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top 80%',
+                    end: 'bottom 20%',
+                    toggleActions: 'play none none reverse'
+                },
+                y: 60,
+                opacity: 0,
+                duration: 0.6,
+                ease: 'power2.out'
+            });
+        });
+
+        // Service cards staggered reveal
+        gsap.from('.service-card', {
+            scrollTrigger: {
+                trigger: '.services-grid',
+                start: 'top 75%'
+            },
+            x: -60,
+            opacity: 0,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: 'power2.out'
+        });
+
+        // Stats counter animation
+        gsap.utils.toArray('.stat-number').forEach(stat => {
+            const target = stat.textContent;
+            const isPercentage = target.includes('%');
+            const value = parseFloat(target);
+
+            ScrollTrigger.create({
+                trigger: stat,
+                start: 'top 80%',
+                onEnter: () => {
+                    gsap.from(stat, {
+                        duration: 1.5,
+                        textContent: 0,
+                        snap: { textContent: isPercentage ? 0.1 : 1 },
+                        ease: 'power2.out',
+                        onUpdate: function() {
+                            stat.textContent = isPercentage
+                                ? this.targets()[0].textContent + '%'
+                                : Math.ceil(this.targets()[0].textContent) + (target.includes('+') ? '+' : '');
+                        }
+                    });
+                }
+            });
+        });
+
+        // Pricing cards reveal
+        gsap.from('.pricing-card', {
+            scrollTrigger: {
+                trigger: '.pricing-grid',
+                start: 'top 75%'
+            },
+            y: 80,
+            opacity: 0,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: 'power2.out'
+        });
+
+        // Contact form reveal
+        gsap.from('.contact-grid > *', {
+            scrollTrigger: {
+                trigger: '.contact-grid',
+                start: 'top 75%'
+            },
+            x: (index) => index === 0 ? -60 : 60,
+            opacity: 0,
+            duration: 0.7,
+            stagger: 0.2,
+            ease: 'power2.out'
+        });
+
+        // ===== MOBILE MENU =====
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const isExpanded = navLinks.classList.contains('active');
+            menuToggle.setAttribute('aria-expanded', isExpanded);
+
+            // Animate menu toggle bars
+            const spans = menuToggle.querySelectorAll('span');
+            if (isExpanded) {
+                spans[0].style.transform = 'rotate(45deg) translateY(10px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translateY(-10px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+                const spans = menuToggle.querySelectorAll('span');
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            });
+        });
+
+        // ===== SMOOTH SCROLL =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ===== FORM HANDLING =====
+        const contactForm = document.querySelector('.contact-form');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData);
+
+            console.log('Form submitted:', data);
+
+            // Show success message (in production, send to backend)
+            alert('Message transmitted successfully. We will respond shortly.');
+            contactForm.reset();
+        });
+
+        // ===== ACTIVE NAV LINK =====
+        const sections = document.querySelectorAll('section[id]');
+        const navLinksAll = document.querySelectorAll('.nav-links a:not(.nav-cta)');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinksAll.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

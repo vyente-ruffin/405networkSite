@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <meta name="description" content="Orange County's trusted MSP since 2011. Let 405Network be your CTO, Cloud, Infrastructure and AI Officer.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================
+           CSS RESET & BASE
+        ======================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #ffffff;
+            --accent: #007bff;
+            --gray-light: #f5f5f5;
+            --gray-medium: #888888;
+
+            --font-main: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+
+            --weight-light: 300;
+            --weight-regular: 400;
+            --weight-medium: 500;
+            --weight-bold: 700;
+
+            --border: 3px solid var(--black);
+            --shadow: 4px 4px 0px var(--black);
+            --shadow-hover: 2px 2px 0px var(--black);
+
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-slow: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-main);
+            font-weight: var(--weight-light);
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+            cursor: crosshair;
+            overflow-x: hidden;
+        }
+
+        /* Dot Grid Background */
+        .dot-grid {
+            background-image: radial-gradient(#00000010 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* ========================================
+           TYPOGRAPHY
+        ======================================== */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: var(--weight-bold);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 10vw, 8rem);
+        }
+
+        h2 {
+            font-size: clamp(2rem, 6vw, 4rem);
+        }
+
+        h3 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+        }
+
+        p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            max-width: 65ch;
+        }
+
+        .text-outline {
+            -webkit-text-stroke: 2px var(--black);
+            color: transparent;
+        }
+
+        .text-accent {
+            color: var(--accent);
+        }
+
+        .text-muted {
+            color: var(--gray-medium);
+        }
+
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 clamp(1.5rem, 5vw, 4rem);
+        }
+
+        .section {
+            padding: clamp(4rem, 10vw, 8rem) 0;
+        }
+
+        .divider {
+            height: 4px;
+            background: var(--black);
+            width: 100%;
+            margin: 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+            gap: clamp(2rem, 5vw, 4rem);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+            gap: clamp(1.5rem, 4vw, 3rem);
+        }
+
+        /* ========================================
+           COMPONENTS
+        ======================================== */
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            font-weight: var(--weight-bold);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: var(--border);
+            background: var(--white);
+            color: var(--black);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translate(2px, 2px);
+        }
+
+        .btn-primary {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: var(--white);
+            border-color: var(--accent);
+        }
+
+        .btn-accent:hover {
+            background: var(--black);
+            border-color: var(--black);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border: var(--border);
+            padding: clamp(1.5rem, 4vw, 2.5rem);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translate(2px, 2px);
+        }
+
+        /* Numbers */
+        .number-xl {
+            font-size: clamp(4rem, 15vw, 10rem);
+            font-weight: var(--weight-bold);
+            line-height: 0.9;
+            letter-spacing: -0.05em;
+        }
+
+        /* ========================================
+           REVEAL ANIMATION
+        ======================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: var(--transition-slow);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* ========================================
+           HEADER / NAV
+        ======================================== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--white);
+            border-bottom: var(--border);
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem clamp(1.5rem, 5vw, 4rem);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: var(--weight-bold);
+            text-decoration: none;
+            color: var(--black);
+            letter-spacing: -0.02em;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            font-size: 0.875rem;
+            font-weight: var(--weight-medium);
+            text-decoration: none;
+            color: var(--black);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+        }
+
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background: var(--black);
+            transition: var(--transition);
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 100%;
+                height: 100vh;
+                background: var(--white);
+                flex-direction: column;
+                justify-content: center;
+                gap: 3rem;
+                transition: var(--transition);
+                border-left: var(--border);
+            }
+
+            .nav.active {
+                right: 0;
+            }
+
+            .nav a {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ========================================
+           HERO
+        ======================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 6rem;
+            position: relative;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        .hero-title {
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            font-weight: var(--weight-light);
+            margin-bottom: 2rem;
+            max-width: 50ch;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--black);
+        }
+
+        .hero-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .hero-meta-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gray-medium);
+        }
+
+        .hero-meta-value {
+            font-size: 1.25rem;
+            font-weight: var(--weight-bold);
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--gray-medium);
+        }
+
+        .hero-scroll-line {
+            width: 1px;
+            height: 60px;
+            background: var(--black);
+            animation: scroll-pulse 2s infinite;
+        }
+
+        @keyframes scroll-pulse {
+            0%, 100% { transform: scaleY(1); opacity: 1; }
+            50% { transform: scaleY(0.5); opacity: 0.5; }
+        }
+
+        /* ========================================
+           ABOUT / STATS
+        ======================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0;
+        }
+
+        .stat-item {
+            padding: clamp(2rem, 5vw, 4rem);
+            border-right: var(--border);
+            border-bottom: var(--border);
+        }
+
+        .stat-item:nth-child(1) { border-left: var(--border); border-top: var(--border); }
+        .stat-item:nth-child(2) { border-top: var(--border); }
+        .stat-item:nth-child(3) { border-top: var(--border); border-right: var(--border); }
+
+        @media (max-width: 768px) {
+            .stat-item {
+                border-left: var(--border);
+                border-right: var(--border);
+            }
+            .stat-item:first-child {
+                border-top: var(--border);
+            }
+        }
+
+        .stat-number {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray-medium);
+        }
+
+        /* ========================================
+           SERVICES
+        ======================================== */
+        .services-intro {
+            max-width: 800px;
+            margin-bottom: 4rem;
+        }
+
+        .service-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .service-number {
+            font-size: 3rem;
+            font-weight: var(--weight-bold);
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: var(--weight-bold);
+        }
+
+        .service-desc {
+            font-weight: var(--weight-light);
+            color: var(--gray-medium);
+        }
+
+        /* ========================================
+           MISSION
+        ======================================== */
+        .mission {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .mission-quote {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: var(--weight-light);
+            line-height: 1.4;
+            max-width: 900px;
+        }
+
+        .mission-quote strong {
+            font-weight: var(--weight-bold);
+            color: var(--accent);
+        }
+
+        .mission-attribution {
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gray-medium);
+        }
+
+        /* ========================================
+           PRICING
+        ======================================== */
+        .pricing-intro {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 4rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+            gap: 0;
+        }
+
+        .price-card {
+            padding: clamp(2rem, 5vw, 3rem);
+            border: var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .price-card:not(:first-child) {
+            margin-left: -3px;
+        }
+
+        @media (max-width: 1024px) {
+            .price-card:not(:first-child) {
+                margin-left: 0;
+                margin-top: -3px;
+            }
+        }
+
+        .price-card:hover {
+            z-index: 10;
+            background: var(--gray-light);
+        }
+
+        .price-card.featured {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .price-card.featured:hover {
+            background: var(--black);
+        }
+
+        .price-tier {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: var(--weight-bold);
+        }
+
+        .price-tier.silver { color: var(--accent); }
+        .price-tier.gold { color: #ffb700; }
+        .price-tier.platinum { color: #e5e4e2; }
+
+        .price-name {
+            font-size: 2rem;
+            font-weight: var(--weight-bold);
+        }
+
+        .price-target {
+            font-size: 0.875rem;
+            color: var(--gray-medium);
+            margin-top: 0.5rem;
+        }
+
+        .price-card.featured .price-target {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .price-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .price-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.9375rem;
+            line-height: 1.4;
+        }
+
+        .price-features li::before {
+            content: '+';
+            font-weight: var(--weight-bold);
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .price-card.featured .price-features li::before {
+            color: var(--white);
+        }
+
+        .price-cta {
+            margin-top: auto;
+        }
+
+        .price-card.featured .btn {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+        }
+
+        .price-card.featured .btn:hover {
+            background: var(--accent);
+            color: var(--white);
+            border-color: var(--accent);
+        }
+
+        /* ========================================
+           CTA SECTION
+        ======================================== */
+        .cta-section {
+            text-align: center;
+        }
+
+        .cta-title {
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-text {
+            margin: 0 auto 2.5rem;
+            color: var(--gray-medium);
+        }
+
+        /* ========================================
+           FOOTER
+        ======================================== */
+        .footer {
+            background: var(--black);
+            color: var(--white);
+            padding: clamp(3rem, 8vw, 5rem) 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-brand .logo {
+            color: var(--white);
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .footer-tagline {
+            font-size: 0.875rem;
+            color: var(--gray-medium);
+            max-width: 250px;
+        }
+
+        .footer-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1.5rem;
+            color: var(--gray-medium);
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .footer-bottom {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-copy {
+            font-size: 0.875rem;
+            color: var(--gray-medium);
+        }
+
+        .footer-location {
+            font-size: 0.875rem;
+            color: var(--gray-medium);
+        }
+
+        /* ========================================
+           UTILITIES
+        ======================================== */
+        .mb-0 { margin-bottom: 0; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+
+        /* Selection */
+        ::selection {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--white);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--black);
+        }
+
+        /* Focus States */
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="dot-grid">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="#" class="logo">405<span>Network</span></a>
+            <nav class="nav" id="nav">
+                <a href="#services">Services</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero section">
+        <div class="container">
+            <div class="hero-content">
+                <div>
+                    <h1 class="hero-title reveal">
+                        Information<br>
+                        <span class="text-outline">Technology</span><br>
+                        <span class="text-accent">Reimagined</span>
+                    </h1>
+                    <p class="hero-subtitle reveal reveal-delay-1">
+                        Let 405Network be your Chief Technology, Cloud, Infrastructure and AI Officer.
+                    </p>
+                    <div class="reveal reveal-delay-2">
+                        <a href="#pricing" class="btn btn-primary">View Plans</a>
+                    </div>
+                    <div class="hero-meta reveal reveal-delay-3">
+                        <div class="hero-meta-item">
+                            <span class="hero-meta-label">Location</span>
+                            <span class="hero-meta-value">Orange County, CA</span>
+                        </div>
+                        <div class="hero-meta-item">
+                            <span class="hero-meta-label">Established</span>
+                            <span class="hero-meta-value">2011</span>
+                        </div>
+                        <div class="hero-meta-item">
+                            <span class="hero-meta-label">Focus</span>
+                            <span class="hero-meta-value">SMB Solutions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-scroll">
+                <span>Scroll</span>
+                <div class="hero-scroll-line"></div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Stats -->
+    <section class="section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item reveal">
+                    <span class="number-xl stat-number">25+</span>
+                    <span class="stat-label">Years Combined IT Expertise</span>
+                </div>
+                <div class="stat-item reveal reveal-delay-1">
+                    <span class="number-xl stat-number">13</span>
+                    <span class="stat-label">Years in Business</span>
+                </div>
+                <div class="stat-item reveal reveal-delay-2">
+                    <span class="number-xl stat-number">24/7</span>
+                    <span class="stat-label">Support Available</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Services -->
+    <section id="services" class="section">
+        <div class="container">
+            <div class="services-intro reveal">
+                <h2 class="mb-3">What We Do</h2>
+                <p class="text-muted">Comprehensive IT support plans tailored to meet the unique needs of your business.</p>
+            </div>
+            <div class="grid-2">
+                <div class="card service-card reveal">
+                    <span class="service-number">01</span>
+                    <h3 class="service-title">Support & Communication</h3>
+                    <p class="service-desc">Text-based support from technical experts. Slack and Microsoft Teams integration for real-time collaboration.</p>
+                </div>
+                <div class="card service-card reveal reveal-delay-1">
+                    <span class="service-number">02</span>
+                    <h3 class="service-title">Device Management</h3>
+                    <p class="service-desc">Complete Windows and macOS device management and optimization for your entire fleet.</p>
+                </div>
+                <div class="card service-card reveal reveal-delay-2">
+                    <span class="service-number">03</span>
+                    <h3 class="service-title">Cloud & Administration</h3>
+                    <p class="service-desc">G-Suite administration, Microsoft Azure cloud services, and DevOps implementation.</p>
+                </div>
+                <div class="card service-card reveal reveal-delay-3">
+                    <span class="service-number">04</span>
+                    <h3 class="service-title">Infrastructure</h3>
+                    <p class="service-desc">Server performance optimization, maintenance, and comprehensive network monitoring.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission -->
+    <section class="section mission">
+        <div class="container">
+            <blockquote class="mission-quote reveal">
+                "At 405Network, we believe technology should <strong>empower</strong> your business, not complicate it. We deliver <strong>simple, transparent</strong> IT solutions that let you focus on what you do best."
+            </blockquote>
+            <p class="mission-attribution reveal reveal-delay-1">405Network Inc.</p>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Pricing -->
+    <section id="pricing" class="section">
+        <div class="container">
+            <div class="pricing-intro reveal">
+                <h2 class="mb-3">Simple, Transparent Pricing</h2>
+                <p class="text-muted">Choose the plan that fits your business. No hidden fees, no surprises.</p>
+            </div>
+            <div class="pricing-grid">
+                <!-- Silver -->
+                <div class="card price-card reveal">
+                    <div>
+                        <span class="price-tier silver">Silver</span>
+                        <h3 class="price-name">Essential</h3>
+                        <p class="price-target">Small businesses with essential IT needs</p>
+                    </div>
+                    <ul class="price-features">
+                        <li>Remote Monitoring & Management</li>
+                        <li>Help Desk Support</li>
+                        <li>Patch Management</li>
+                        <li>Antivirus & Anti-malware</li>
+                        <li>Basic Backup & Disaster Recovery</li>
+                    </ul>
+                    <div class="price-cta">
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeBRCLx9K78KhcanobwXIDd9fmf3AgdXb6NbJpk-oio46CU_g/viewform" class="btn" target="_blank" rel="noopener">Get Started</a>
+                    </div>
+                </div>
+
+                <!-- Gold (Featured) -->
+                <div class="card price-card featured reveal reveal-delay-1">
+                    <div>
+                        <span class="price-tier gold">Gold</span>
+                        <h3 class="price-name">Advanced</h3>
+                        <p class="price-target">Medium businesses needing advanced support</p>
+                    </div>
+                    <ul class="price-features">
+                        <li>All Silver Plan Services</li>
+                        <li>Extended Help Desk (12x5)</li>
+                        <li>Bi-weekly Patch Management</li>
+                        <li>Advanced Threat Detection</li>
+                        <li>Comprehensive Backup & DR</li>
+                    </ul>
+                    <div class="price-cta">
+                        <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill" class="btn" target="_blank" rel="noopener">Get Started</a>
+                    </div>
+                </div>
+
+                <!-- Platinum -->
+                <div class="card price-card reveal reveal-delay-2">
+                    <div>
+                        <span class="price-tier platinum">Platinum</span>
+                        <h3 class="price-name">Enterprise</h3>
+                        <p class="price-target">Large businesses with complex IT needs</p>
+                    </div>
+                    <ul class="price-features">
+                        <li>All Gold Plan Services</li>
+                        <li>24x7 Help Desk Support</li>
+                        <li>Weekly Patch Management</li>
+                        <li>Full Suite Security Solutions</li>
+                        <li>Advanced Business Continuity</li>
+                        <li>Strategic IT Consulting</li>
+                    </ul>
+                    <div class="price-cta">
+                        <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill" class="btn" target="_blank" rel="noopener">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- CTA -->
+    <section id="contact" class="section cta-section">
+        <div class="container">
+            <h2 class="cta-title reveal">Ready to Reimagine Your IT?</h2>
+            <p class="cta-text reveal reveal-delay-1">Let's discuss how 405Network can transform your technology infrastructure.</p>
+            <a href="mailto:hello@405network.com" class="btn btn-accent reveal reveal-delay-2">Contact Us</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">405<span>Network</span></a>
+                    <p class="footer-tagline">Information Technology, Reimagined. Your trusted MSP partner since 2011.</p>
+                </div>
+                <div>
+                    <h4 class="footer-title">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">Support & Communication</a></li>
+                        <li><a href="#services">Device Management</a></li>
+                        <li><a href="#services">Cloud & Administration</a></li>
+                        <li><a href="#services">Infrastructure</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Plans</h4>
+                    <ul class="footer-links">
+                        <li><a href="#pricing">Silver Plan</a></li>
+                        <li><a href="#pricing">Gold Plan</a></li>
+                        <li><a href="#pricing">Platinum Plan</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Contact</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:hello@405network.com">hello@405network.com</a></li>
+                        <li><a href="#contact">Get in Touch</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2024 405Network Inc. All rights reserved.</p>
+                <p class="footer-location">Orange County, California</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('nav');
+
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        });
+
+        // Close menu when clicking nav links
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+                menuToggle.classList.remove('active');
+            });
+        });
+
+        // Reveal on Scroll
+        const reveals = document.querySelectorAll('.reveal');
+
+        const revealOnScroll = () => {
+            const windowHeight = window.innerHeight;
+            const revealPoint = 100;
+
+            reveals.forEach(reveal => {
+                const revealTop = reveal.getBoundingClientRect().top;
+
+                if (revealTop < windowHeight - revealPoint) {
+                    reveal.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

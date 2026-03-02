@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>405Network Inc. | Warm Brutalism</title>
+
+    <!-- CDN Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            /* Warm Earth Tones */
+            --terracotta: #e07856;
+            --warm-beige: #f5e6d3;
+            --forest-green: #2d5016;
+            --charcoal: #333333;
+
+            /* Semantic Colors */
+            --primary: var(--terracotta);
+            --secondary: var(--forest-green);
+            --background: var(--warm-beige);
+            --surface: #ffffff;
+            --text-primary: var(--charcoal);
+            --text-secondary: #555555;
+            --text-light: #777777;
+
+            /* Brutalist Borders */
+            --border-thick: 10px;
+            --border-medium: 8px;
+            --border-thin: 4px;
+            --border-color: var(--charcoal);
+
+            /* Typography Scale */
+            --font-heading: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
+            --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-size-hero: 4rem;
+            --font-size-h1: 3rem;
+            --font-size-h2: 2.25rem;
+            --font-size-h3: 1.75rem;
+            --font-size-body: 1.125rem;
+            --font-size-small: 0.875rem;
+
+            /* Brutalist Shadows */
+            --shadow-brutal: 12px 12px 0 var(--charcoal);
+            --shadow-brutal-hover: 16px 16px 0 var(--charcoal);
+            --shadow-brutal-inset: 8px 8px 0 rgba(0, 0, 0, 0.15);
+            --shadow-text: 4px 4px 0 rgba(0, 0, 0, 0.2);
+
+            /* Spacing System */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            --spacing-xl: 6rem;
+
+            /* Layout */
+            --max-width: 1400px;
+            --section-padding: 6rem 2rem;
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+
+            /* Transitions */
+            --transition-fast: 0.15s ease-out;
+            --transition-base: 0.3s ease-out;
+            --transition-slow: 0.5s ease-out;
+        }
+
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            font-size: var(--font-size-body);
+            line-height: 1.7;
+            color: var(--text-primary);
+            background: var(--background);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Canvas for Three.js */
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            font-weight: 900;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+        }
+
+        h1 { font-size: var(--font-size-h1); }
+        h2 { font-size: var(--font-size-h2); }
+        h3 { font-size: var(--font-size-h3); }
+
+        p {
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-secondary);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: all var(--transition-base);
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .section {
+            padding: var(--section-padding);
+            position: relative;
+        }
+
+        .brutal-box {
+            background: var(--surface);
+            border: var(--border-thick) solid var(--border-color);
+            box-shadow: var(--shadow-brutal);
+            transition: all var(--transition-base);
+        }
+
+        .brutal-box:hover {
+            box-shadow: var(--shadow-brutal-hover);
+            transform: translate(-4px, -4px);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: var(--border-medium) solid var(--border-color);
+            background: var(--primary);
+            color: var(--surface);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-brutal);
+        }
+
+        .btn:hover {
+            background: var(--charcoal);
+            color: var(--primary);
+            box-shadow: var(--shadow-brutal-hover);
+            transform: translate(-4px, -4px);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--charcoal);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary);
+            color: var(--surface);
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: var(--surface);
+            border-bottom: var(--border-medium) solid var(--border-color);
+            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-shadow: var(--shadow-text);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            padding: 0.5rem 0;
+            border-bottom: var(--border-thin) solid transparent;
+            transition: all var(--transition-base);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .nav-cta {
+            padding: 0.75rem 1.5rem;
+            border: var(--border-medium) solid var(--border-color);
+            background: var(--primary);
+            color: var(--surface);
+            font-weight: 900;
+            box-shadow: 6px 6px 0 var(--charcoal);
+            transition: all var(--transition-base);
+        }
+
+        .nav-cta:hover {
+            background: var(--charcoal);
+            color: var(--primary);
+            box-shadow: 8px 8px 0 var(--charcoal);
+            transform: translate(-2px, -2px);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 30px;
+            height: 4px;
+            background: var(--charcoal);
+            transition: all var(--transition-base);
+        }
+
+        /* ===== HERO SECTION ===== */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 80px;
+            position: relative;
+            background: linear-gradient(135deg, var(--warm-beige) 0%, #ecdcc5 100%);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            padding: var(--spacing-xl) var(--spacing-md);
+        }
+
+        .hero-title {
+            font-size: var(--font-size-hero);
+            margin-bottom: var(--spacing-md);
+            color: var(--charcoal);
+            text-shadow: 6px 6px 0 var(--primary);
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .organic-shape {
+            position: absolute;
+            border: var(--border-medium) solid var(--border-color);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .organic-shape-1 {
+            top: 10%;
+            left: 5%;
+            width: 150px;
+            height: 150px;
+            background: var(--primary);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morph1 8s ease-in-out infinite;
+        }
+
+        .organic-shape-2 {
+            bottom: 15%;
+            right: 8%;
+            width: 200px;
+            height: 200px;
+            background: var(--secondary);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: morph2 10s ease-in-out infinite;
+        }
+
+        @keyframes morph1 {
+            0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            25% { border-radius: 60% 40% 50% 50% / 30% 60% 40% 70%; }
+            50% { border-radius: 50% 60% 30% 70% / 50% 40% 60% 40%; }
+            75% { border-radius: 70% 30% 60% 40% / 60% 50% 30% 60%; }
+        }
+
+        @keyframes morph2 {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            25% { border-radius: 30% 70% 60% 40% / 50% 60% 40% 60%; }
+            50% { border-radius: 70% 30% 40% 60% / 40% 70% 60% 30%; }
+            75% { border-radius: 40% 60% 70% 30% / 60% 40% 30% 70%; }
+        }
+
+        /* ===== SERVICES SECTION ===== */
+        #services {
+            background: var(--surface);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            font-size: var(--font-size-h1);
+            text-shadow: var(--shadow-text);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto var(--spacing-lg);
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .service-card {
+            padding: var(--spacing-lg);
+            background: var(--background);
+            border: var(--border-thick) solid var(--border-color);
+            box-shadow: var(--shadow-brutal);
+            transition: all var(--transition-base);
+            position: relative;
+        }
+
+        .service-card:hover {
+            box-shadow: var(--shadow-brutal-hover);
+            transform: translate(-4px, -4px);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: var(--border-thin) solid var(--primary);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            pointer-events: none;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            display: block;
+        }
+
+        .service-title {
+            margin-bottom: var(--spacing-sm);
+            color: var(--primary);
+        }
+
+        .service-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===== STATS SECTION ===== */
+        #stats {
+            background: linear-gradient(135deg, var(--primary) 0%, #c96645 100%);
+            color: var(--surface);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .stat-card {
+            padding: var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.1);
+            border: var(--border-medium) solid var(--surface);
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-family: var(--font-heading);
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: var(--spacing-sm);
+            color: var(--surface);
+            text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            font-size: 1.125rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--surface);
+        }
+
+        /* ===== PRICING SECTION ===== */
+        #pricing {
+            background: var(--background);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .pricing-card {
+            padding: var(--spacing-lg);
+            background: var(--surface);
+            border: var(--border-thick) solid var(--border-color);
+            box-shadow: var(--shadow-brutal);
+            transition: all var(--transition-base);
+            text-align: center;
+        }
+
+        .pricing-card:hover {
+            box-shadow: var(--shadow-brutal-hover);
+            transform: translate(-4px, -4px);
+        }
+
+        .pricing-card.featured {
+            background: var(--primary);
+            color: var(--surface);
+            transform: scale(1.05);
+            z-index: 10;
+            position: relative;
+        }
+
+        .pricing-card.featured .pricing-title,
+        .pricing-card.featured .pricing-price,
+        .pricing-card.featured .pricing-features li {
+            color: var(--surface);
+        }
+
+        .pricing-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--secondary);
+            color: var(--surface);
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--spacing-md);
+            border: var(--border-thin) solid var(--border-color);
+        }
+
+        .pricing-title {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-md);
+            color: var(--charcoal);
+        }
+
+        .pricing-price {
+            font-family: var(--font-heading);
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: var(--spacing-sm);
+            color: var(--primary);
+        }
+
+        .pricing-card.featured .pricing-price {
+            color: var(--surface);
+        }
+
+        .pricing-period {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: var(--spacing-lg);
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 0.75rem 0;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li::before {
+            content: '■';
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-right: var(--spacing-sm);
+        }
+
+        .pricing-card.featured .pricing-features li::before {
+            color: var(--surface);
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+        }
+
+        .pricing-card.featured .btn {
+            background: var(--surface);
+            color: var(--primary);
+        }
+
+        .pricing-card.featured .btn:hover {
+            background: var(--charcoal);
+            color: var(--surface);
+        }
+
+        /* ===== CONTACT SECTION ===== */
+        #contact {
+            background: var(--surface);
+        }
+
+        .contact-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .contact-info {
+            padding: var(--spacing-lg);
+            background: var(--background);
+            border: var(--border-medium) solid var(--border-color);
+            box-shadow: var(--shadow-brutal-inset);
+        }
+
+        .contact-info h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--primary);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .contact-item-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .contact-item-text {
+            color: var(--text-secondary);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: var(--spacing-xs);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 1rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            border: var(--border-medium) solid var(--border-color);
+            background: var(--surface);
+            color: var(--text-primary);
+            transition: all var(--transition-base);
+            box-shadow: inset 4px 4px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: inset 4px 4px 0 rgba(224, 120, 86, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-light);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--charcoal);
+            color: var(--warm-beige);
+            padding: var(--spacing-xl) var(--spacing-md) var(--spacing-md);
+            border-top: var(--border-thick) solid var(--primary);
+        }
+
+        .footer-content {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .footer-section h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--primary);
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--warm-beige);
+            margin-bottom: var(--spacing-sm);
+            display: block;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        .social-links a {
+            display: inline-flex;
+            width: 50px;
+            height: 50px;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: var(--surface);
+            border: var(--border-thin) solid var(--warm-beige);
+            font-size: 1.5rem;
+            transition: all var(--transition-base);
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .social-links a:hover {
+            background: var(--surface);
+            color: var(--primary);
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+            transform: translate(-2px, -2px);
+        }
+
+        .footer-bottom {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding-top: var(--spacing-md);
+            border-top: 4px solid rgba(245, 230, 211, 0.2);
+            text-align: center;
+            color: var(--warm-beige);
+        }
+
+        /* ===== ACCESSIBILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        :focus-visible {
+            outline: 4px solid var(--primary);
+            outline-offset: 4px;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+
+        /* Tablet (1024px) */
+        @media (max-width: 1024px) {
+            :root {
+                --font-size-hero: 3rem;
+                --font-size-h1: 2.5rem;
+                --font-size-h2: 2rem;
+                --font-size-h3: 1.5rem;
+                --section-padding: 4rem 1.5rem;
+            }
+
+            .services-grid,
+            .pricing-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: var(--spacing-md);
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+        }
+
+        /* Mobile (768px) */
+        @media (max-width: 768px) {
+            :root {
+                --font-size-hero: 2.5rem;
+                --font-size-h1: 2rem;
+                --font-size-h2: 1.75rem;
+                --font-size-h3: 1.25rem;
+                --font-size-body: 1rem;
+                --section-padding: 3rem 1rem;
+                --border-thick: 8px;
+                --border-medium: 6px;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--surface);
+                flex-direction: column;
+                padding: var(--spacing-md);
+                border-top: var(--border-medium) solid var(--border-color);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero-title {
+                text-shadow: 4px 4px 0 var(--primary);
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-md);
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .pricing-card {
+                padding: var(--spacing-md);
+                max-width: 100%;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .organic-shape-1,
+            .organic-shape-2 {
+                display: none;
+            }
+
+            /* Fix: Reset contact section transforms on mobile */
+            .contact-info,
+            .contact-form {
+                opacity: 1;
+                transform: translateX(0) !important;
+            }
+        }
+
+        /* Small Mobile (480px) */
+        @media (max-width: 480px) {
+            :root {
+                --font-size-hero: 2rem;
+                --font-size-h1: 1.75rem;
+                --font-size-h2: 1.5rem;
+                --section-padding: 2rem 1rem;
+                --border-thick: 6px;
+                --border-medium: 4px;
+            }
+
+            .btn {
+                padding: 0.875rem 2rem;
+                font-size: 0.9rem;
+            }
+
+            .stat-number {
+                font-size: 3rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Canvas -->
+    <canvas id="background-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="logo" aria-label="405Network Inc.">405<span style="color: var(--secondary);">NET</span></div>
+            <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#services">Services</a></li>
+                <li><a href="#stats">About</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#contact" class="nav-cta">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="organic-shape organic-shape-1" aria-hidden="true"></div>
+        <div class="organic-shape organic-shape-2" aria-hidden="true"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">WE MAKE I.T. HAPPEN</h1>
+            <p class="hero-subtitle">Bold, confident IT solutions for businesses that demand reliability and innovation. Grounded expertise meets approachable service.</p>
+            <div class="hero-buttons">
+                <a href="#contact" class="btn">Get Started</a>
+                <a href="#services" class="btn btn-secondary">Our Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Comprehensive IT solutions built on solid foundations and delivered with confidence</p>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <span class="service-icon" aria-hidden="true">☁️</span>
+                    <h3 class="service-title">Cloud Solutions</h3>
+                    <p class="service-description">Scalable infrastructure that grows with your business. Migration, management, and optimization services.</p>
+                </div>
+
+                <div class="service-card">
+                    <span class="service-icon" aria-hidden="true">🛡️</span>
+                    <h3 class="service-title">Cybersecurity</h3>
+                    <p class="service-description">Comprehensive protection strategies. Threat detection, prevention, and rapid incident response.</p>
+                </div>
+
+                <div class="service-card">
+                    <span class="service-icon" aria-hidden="true">💻</span>
+                    <h3 class="service-title">Development</h3>
+                    <p class="service-description">Custom software solutions tailored to your unique business needs and workflows.</p>
+                </div>
+
+                <div class="service-card">
+                    <span class="service-icon" aria-hidden="true">🔧</span>
+                    <h3 class="service-title">IT Support</h3>
+                    <p class="service-description">24/7 technical support and maintenance. Keeping your systems running smoothly.</p>
+                </div>
+
+                <div class="service-card">
+                    <span class="service-icon" aria-hidden="true">🏗️</span>
+                    <h3 class="service-title">Infrastructure</h3>
+                    <p class="service-description">Design and implementation of robust network architecture and server environments.</p>
+                </div>
+
+                <div class="service-card">
+                    <span class="service-icon" aria-hidden="true">📊</span>
+                    <h3 class="service-title">Consulting</h3>
+                    <p class="service-description">Strategic IT planning and optimization. Expert guidance for digital transformation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="section">
+        <div class="container">
+            <h2 class="section-title" style="color: var(--surface);">Built on Experience</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Clients Served</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2K+</div>
+                    <div class="stat-label">Projects Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime Guarantee</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="section">
+        <div class="container">
+            <h2 class="section-title">Straightforward Pricing</h2>
+            <p class="section-subtitle">No hidden fees. No complicated tiers. Just honest pricing for solid service.</p>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3 class="pricing-title">Starter</h3>
+                    <div class="pricing-price">$499</div>
+                    <div class="pricing-period">per month</div>
+                    <ul class="pricing-features">
+                        <li>Essential IT support</li>
+                        <li>Cloud backup (50GB)</li>
+                        <li>Email support</li>
+                        <li>Monthly system checkups</li>
+                        <li>Basic security monitoring</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-secondary">Get Started</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <h3 class="pricing-title">Professional</h3>
+                    <div class="pricing-price">$999</div>
+                    <div class="pricing-period">per month</div>
+                    <ul class="pricing-features">
+                        <li>24/7 IT support</li>
+                        <li>Cloud backup (500GB)</li>
+                        <li>Priority phone support</li>
+                        <li>Advanced security suite</li>
+                        <li>Dedicated account manager</li>
+                        <li>Quarterly strategy sessions</li>
+                    </ul>
+                    <a href="#contact" class="btn">Get Started</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3 class="pricing-title">Enterprise</h3>
+                    <div class="pricing-price">Custom</div>
+                    <div class="pricing-period">tailored to you</div>
+                    <ul class="pricing-features">
+                        <li>Custom infrastructure design</li>
+                        <li>Unlimited cloud storage</li>
+                        <li>Dedicated support team</li>
+                        <li>Enterprise security platform</li>
+                        <li>On-site consultations</li>
+                        <li>SLA guarantees</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-secondary">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="contact-container">
+            <h2 class="section-title">Let's Work Together</h2>
+            <p class="section-subtitle">Ready to make I.T. happen? Get in touch and let's build something solid.</p>
+
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    <div class="contact-item">
+                        <span class="contact-item-icon" aria-hidden="true">📞</span>
+                        <span class="contact-item-text">(555) 405-TECH</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-item-icon" aria-hidden="true">✉️</span>
+                        <span class="contact-item-text">info@405network.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-item-icon" aria-hidden="true">📍</span>
+                        <span class="contact-item-text">405 Tech Boulevard<br>Suite 200<br>Innovation District</span>
+                    </div>
+                </div>
+
+                <form class="contact-form" aria-label="Contact form">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required placeholder="Your Name" aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required placeholder="your@email.com" aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" id="company" name="company" placeholder="Your Company (Optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required placeholder="Tell us about your project..." aria-required="true"></textarea>
+                    </div>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>405Network Inc.</h3>
+                <p>Making I.T. happen with confidence and expertise since 2009. Your trusted partner for reliable technology solutions.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="LinkedIn">in</a>
+                    <a href="#" aria-label="Twitter">𝕏</a>
+                    <a href="#" aria-label="Facebook">f</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Services</h3>
+                <a href="#services">Cloud Solutions</a>
+                <a href="#services">Cybersecurity</a>
+                <a href="#services">Development</a>
+                <a href="#services">IT Support</a>
+            </div>
+            <div class="footer-section">
+                <h3>Company</h3>
+                <a href="#stats">About Us</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="#">Blog</a>
+                <a href="#">Case Studies</a>
+                <a href="#">Documentation</a>
+                <a href="#">Support</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 405Network Inc. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Wait for DOM and libraries to load
+        window.addEventListener('load', function() {
+            // Check if libraries loaded successfully
+            if (typeof THREE === 'undefined' || typeof gsap === 'undefined') {
+                console.warn('CDN libraries not loaded - 3D effects disabled');
+                initBasicFeatures();
+                return;
+            }
+
+            // ===== THREE.JS SETUP =====
+            const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('background-canvas'),
+            alpha: true,
+            antialias: true
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight, false);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        camera.position.z = 5;
+
+        // Organic Blob Particles
+        const isMobile = window.innerWidth < 768;
+        const particleCount = isMobile ? 30 : 80;
+        const particles = [];
+
+        // Create blob geometries with varying sizes
+        for (let i = 0; i < particleCount; i++) {
+            const size = Math.random() * 0.15 + 0.08;
+            const geometry = new THREE.SphereGeometry(size, 16, 16);
+
+            // Random material color (terracotta, forest green, or charcoal)
+            const colors = [0xe07856, 0x2d5016, 0x333333];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            const material = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.4,
+                wireframe: Math.random() > 0.5
+            });
+
+            const particle = new THREE.Mesh(geometry, material);
+
+            // Random position
+            particle.position.x = (Math.random() - 0.5) * 20;
+            particle.position.y = (Math.random() - 0.5) * 20;
+            particle.position.z = (Math.random() - 0.5) * 10;
+
+            // Store movement properties
+            particle.userData = {
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.01,
+                    y: (Math.random() - 0.5) * 0.01,
+                    z: (Math.random() - 0.5) * 0.01
+                },
+                floatSpeed: Math.random() * 0.002 + 0.001,
+                floatRange: Math.random() * 2 + 1,
+                originalY: particle.position.y,
+                time: Math.random() * Math.PI * 2
+            };
+
+            scene.add(particle);
+            particles.push(particle);
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            particles.forEach(particle => {
+                // Rotate particles
+                particle.rotation.x += particle.userData.rotationSpeed.x;
+                particle.rotation.y += particle.userData.rotationSpeed.y;
+                particle.rotation.z += particle.userData.rotationSpeed.z;
+
+                // Float motion
+                particle.userData.time += particle.userData.floatSpeed;
+                particle.position.y = particle.userData.originalY +
+                    Math.sin(particle.userData.time) * particle.userData.floatRange;
+
+                // Subtle morphing effect by scaling
+                const scale = 1 + Math.sin(particle.userData.time * 2) * 0.1;
+                particle.scale.set(scale, scale, scale);
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Responsive resize function (Three.js mobile best practice)
+        function resizeRendererToDisplaySize(renderer) {
+            const canvas = renderer.domElement;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            const needResize = canvas.width !== width || canvas.height !== height;
+            if (needResize) {
+                renderer.setSize(width, height, false);
+            }
+            return needResize;
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            resizeRendererToDisplaySize(renderer);
+        });
+
+        // ===== GSAP ANIMATIONS =====
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero animations
+        gsap.from('.hero-title', {
+            duration: 1,
+            y: 100,
+            opacity: 0,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero-subtitle', {
+            duration: 1,
+            y: 60,
+            opacity: 0,
+            delay: 0.3,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero-buttons', {
+            duration: 1,
+            y: 60,
+            opacity: 0,
+            delay: 0.6,
+            ease: 'power3.out'
+        });
+
+        // Section reveals with bold transitions
+        gsap.utils.toArray('section:not(#hero)').forEach(section => {
+            gsap.from(section, {
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top 80%',
+                    end: 'bottom 20%',
+                    toggleActions: 'play none none reverse'
+                },
+                y: 100,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+        });
+
+        // Service cards staggered reveal
+        gsap.from('.service-card', {
+            scrollTrigger: {
+                trigger: '.services-grid',
+                start: 'top 75%'
+            },
+            y: 80,
+            opacity: 0,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: 'back.out(1.2)'
+        });
+
+        // Stats counter animation
+        gsap.utils.toArray('.stat-number').forEach(stat => {
+            const target = stat.textContent;
+            const isPercentage = target.includes('%');
+            const value = parseFloat(target);
+
+            ScrollTrigger.create({
+                trigger: stat,
+                start: 'top 80%',
+                onEnter: () => {
+                    gsap.from(stat, {
+                        duration: 1.5,
+                        textContent: 0,
+                        snap: { textContent: isPercentage ? 0.1 : 1 },
+                        ease: 'power2.out',
+                        onUpdate: function() {
+                            stat.textContent = isPercentage
+                                ? this.targets()[0].textContent + '%'
+                                : Math.ceil(this.targets()[0].textContent) + (target.includes('+') ? '+' : '');
+                        }
+                    });
+                }
+            });
+        });
+
+        // Pricing cards reveal
+        gsap.from('.pricing-card', {
+            scrollTrigger: {
+                trigger: '.pricing-grid',
+                start: 'top 75%'
+            },
+            y: 100,
+            opacity: 0,
+            duration: 0.7,
+            stagger: 0.2,
+            ease: 'power2.out'
+        });
+
+        // Contact form reveal
+        gsap.from('.contact-grid > *', {
+            scrollTrigger: {
+                trigger: '.contact-grid',
+                start: 'top 75%'
+            },
+            x: (index) => index === 0 ? -80 : 80,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power2.out'
+        });
+
+        // ===== MOBILE MENU =====
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const isExpanded = navLinks.classList.contains('active');
+            menuToggle.setAttribute('aria-expanded', isExpanded);
+
+            // Animate menu toggle bars
+            const spans = menuToggle.querySelectorAll('span');
+            if (isExpanded) {
+                spans[0].style.transform = 'rotate(45deg) translateY(10px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translateY(-10px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+                const spans = menuToggle.querySelectorAll('span');
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            });
+        });
+
+        // ===== SMOOTH SCROLL =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ===== FORM HANDLING =====
+        const contactForm = document.querySelector('.contact-form');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData);
+
+            console.log('Form submitted:', data);
+
+            // Show success message (in production, send to backend)
+            alert('Thank you for your message! We\'ll get back to you soon.');
+            contactForm.reset();
+        });
+
+        // ===== ACTIVE NAV LINK =====
+        const sections = document.querySelectorAll('section[id]');
+        const navLinksAll = document.querySelectorAll('.nav-links a:not(.nav-cta)');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinksAll.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        }); // End of window.load event listener
+
+        // Basic features that work without 3D libraries
+        function initBasicFeatures() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinksEl = document.querySelector('.nav-links');
+
+            if (menuToggle && navLinksEl) {
+                menuToggle.addEventListener('click', () => {
+                    navLinksEl.classList.toggle('active');
+                    menuToggle.setAttribute('aria-expanded', navLinksEl.classList.contains('active'));
+                });
+
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navLinksEl.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            const contactForm = document.querySelector('.contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    alert('Thank you for your message! We will get back to you soon.');
+                    contactForm.reset();
+                });
+            }
+
+            const sections = document.querySelectorAll('section[id]');
+            const navLinksAll = document.querySelectorAll('.nav-links a');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                navLinksAll.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').slice(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

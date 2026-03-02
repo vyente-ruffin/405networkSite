@@ -1,0 +1,2607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | V13 CRYSTALLINE FROST</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           CSS RESET & BASE STYLES
+           ======================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Crystalline Frost Palette */
+            --ice-white: #f0f8ff;
+            --frost-blue: #a8d8ea;
+            --crystal: #e0ffff;
+            --silver: #c0c0c0;
+            --deep-frost: #87ceeb;
+            --arctic-blue: #6eb5d9;
+            --glacier: #b0e0e6;
+            --prism-pink: #ffd1dc;
+            --prism-lavender: #e6e6fa;
+            --prism-mint: #b2fef7;
+            --dark-ice: #4a6670;
+            --midnight-frost: #2c3e4a;
+
+            /* Typography */
+            --font-heading: 'Raleway', sans-serif;
+            --font-body: 'Quicksand', sans-serif;
+
+            /* Spacing */
+            --section-padding: 120px 0;
+            --container-width: 1400px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            cursor: none;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, var(--midnight-frost) 0%, var(--dark-ice) 50%, var(--midnight-frost) 100%);
+            color: var(--ice-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+            cursor: none;
+        }
+
+        /* ========================================
+           CUSTOM CURSOR - SNOWFLAKE
+           ======================================== */
+        .cursor-snowflake {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-snowflake svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--ice-white);
+            filter: drop-shadow(0 0 10px rgba(168, 216, 234, 0.8));
+            animation: snowflake-spin 8s linear infinite;
+        }
+
+        @keyframes snowflake-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cursor-frost-ring {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(168, 216, 234, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cursor-frost-ring.expanded {
+            width: 80px;
+            height: 80px;
+            border-color: rgba(224, 255, 255, 0.6);
+            background: radial-gradient(circle, rgba(168, 216, 234, 0.1) 0%, transparent 70%);
+        }
+
+        /* Frost particle trail */
+        .frost-particle {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, var(--crystal) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: frost-fade 1s ease-out forwards;
+        }
+
+        @keyframes frost-fade {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+
+        /* ========================================
+           WEBGL CANVAS
+           ======================================== */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* ========================================
+           NAVIGATION
+           ======================================== */
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(44, 62, 74, 0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .nav-container.scrolled {
+            background: rgba(44, 62, 74, 0.95);
+            padding: 15px 60px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-logo-crystal {
+            width: 50px;
+            height: 50px;
+            position: relative;
+        }
+
+        .nav-logo-crystal svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: var(--crystal);
+            stroke-width: 1.5;
+            filter: drop-shadow(0 0 15px rgba(224, 255, 255, 0.5));
+        }
+
+        .nav-logo-text {
+            font-family: var(--font-heading);
+            font-weight: 200;
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--ice-white) 0%, var(--frost-blue) 50%, var(--crystal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 50px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--font-heading);
+            font-weight: 300;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--ice-white);
+            text-decoration: none;
+            position: relative;
+            padding: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--crystal), transparent);
+            transition: all 0.4s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover {
+            color: var(--crystal);
+        }
+
+        .nav-links a:hover::before {
+            width: 120%;
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 0 60px;
+            overflow: hidden;
+        }
+
+        .hero-crystals-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .hero-crystal {
+            position: absolute;
+            opacity: 0.6;
+            animation: crystal-float 20s ease-in-out infinite;
+        }
+
+        @keyframes crystal-float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-10px) rotate(-3deg); }
+            75% { transform: translateY(-30px) rotate(7deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 1000px;
+        }
+
+        .hero-tagline {
+            font-family: var(--font-heading);
+            font-weight: 200;
+            font-size: 1rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: var(--frost-blue);
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero-title {
+            font-family: var(--font-heading);
+            font-weight: 100;
+            font-size: 6rem;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .hero-title span {
+            display: block;
+            background: linear-gradient(135deg, var(--ice-white) 0%, var(--frost-blue) 30%, var(--crystal) 60%, var(--prism-lavender) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 30px rgba(168, 216, 234, 0.3));
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 1.4rem;
+            color: var(--glacier);
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateY(30px);
+            letter-spacing: 1px;
+        }
+
+        .hero-cta-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero-cta {
+            padding: 18px 50px;
+            font-family: var(--font-heading);
+            font-weight: 400;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-cta-primary {
+            background: linear-gradient(135deg, var(--frost-blue) 0%, var(--crystal) 100%);
+            color: var(--midnight-frost);
+            border: none;
+            box-shadow: 0 10px 40px rgba(168, 216, 234, 0.4);
+        }
+
+        .hero-cta-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(168, 216, 234, 0.6);
+        }
+
+        .hero-cta-secondary {
+            background: transparent;
+            color: var(--ice-white);
+            border: 1px solid rgba(224, 255, 255, 0.4);
+        }
+
+        .hero-cta-secondary:hover {
+            background: rgba(224, 255, 255, 0.1);
+            border-color: var(--crystal);
+            transform: translateY(-5px);
+        }
+
+        .hero-scroll-indicator {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+        }
+
+        .hero-scroll-text {
+            font-family: var(--font-heading);
+            font-weight: 300;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--frost-blue);
+        }
+
+        .hero-scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(180deg, var(--crystal), transparent);
+            position: relative;
+        }
+
+        .hero-scroll-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--crystal);
+            border-radius: 50%;
+            animation: scroll-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scroll-pulse {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            50% { transform: translateX(-50%) translateY(30px); opacity: 0.3; }
+        }
+
+        /* ========================================
+           CRYSTAL SHAPES - SVG DEFINITIONS
+           ======================================== */
+        .crystal-shape {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .crystal-facet {
+            fill: none;
+            stroke: var(--crystal);
+            stroke-width: 0.5;
+            opacity: 0.4;
+        }
+
+        .crystal-inner {
+            fill: rgba(224, 255, 255, 0.05);
+            stroke: var(--frost-blue);
+            stroke-width: 0.3;
+        }
+
+        .crystal-refraction {
+            fill: url(#prism-gradient);
+            opacity: 0.3;
+        }
+
+        /* ========================================
+           SERVICES SECTION
+           ======================================== */
+        .services-section {
+            padding: var(--section-padding);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-label {
+            font-family: var(--font-heading);
+            font-weight: 300;
+            font-size: 0.8rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--frost-blue);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-weight: 100;
+            font-size: 4rem;
+            background: linear-gradient(135deg, var(--ice-white) 0%, var(--frost-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 1.1rem;
+            color: var(--glacier);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 60px;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg,
+                rgba(44, 62, 74, 0.6) 0%,
+                rgba(74, 102, 112, 0.3) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(224, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 50px 35px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(60px);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--crystal), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(168, 216, 234, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(224, 255, 255, 0.3);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3),
+                        0 0 80px rgba(168, 216, 234, 0.1);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-card:hover::after {
+            opacity: 1;
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .service-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--frost-blue);
+            stroke-width: 1;
+            fill: none;
+            filter: drop-shadow(0 0 20px rgba(168, 216, 234, 0.4));
+            transition: all 0.4s ease;
+        }
+
+        .service-card:hover .service-icon svg {
+            stroke: var(--crystal);
+            filter: drop-shadow(0 0 30px rgba(224, 255, 255, 0.6));
+        }
+
+        .service-title {
+            font-family: var(--font-heading);
+            font-weight: 400;
+            font-size: 1.3rem;
+            color: var(--ice-white);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .service-description {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.95rem;
+            color: var(--glacier);
+            line-height: 1.8;
+        }
+
+        .service-crystal-accent {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            opacity: 0.1;
+            transition: all 0.4s ease;
+        }
+
+        .service-card:hover .service-crystal-accent {
+            opacity: 0.2;
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        /* ========================================
+           PRICING SECTION
+           ======================================== */
+        .pricing-section {
+            padding: var(--section-padding);
+            position: relative;
+            background: linear-gradient(180deg,
+                transparent 0%,
+                rgba(44, 62, 74, 0.5) 50%,
+                transparent 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 60px;
+        }
+
+        .pricing-card {
+            background: linear-gradient(135deg,
+                rgba(44, 62, 74, 0.7) 0%,
+                rgba(74, 102, 112, 0.4) 100%);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(224, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(60px);
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.05) translateY(60px);
+            border-color: rgba(168, 216, 234, 0.3);
+            box-shadow: 0 0 80px rgba(168, 216, 234, 0.2);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: linear-gradient(135deg, var(--frost-blue), var(--crystal));
+            color: var(--midnight-frost);
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            padding: 8px 50px;
+            transform: rotate(45deg);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4),
+                        0 0 100px rgba(168, 216, 234, 0.15);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-15px);
+        }
+
+        .pricing-crystal-header {
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 60px;
+        }
+
+        .pricing-tier {
+            font-family: var(--font-heading);
+            font-weight: 300;
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--frost-blue);
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .pricing-name {
+            font-family: var(--font-heading);
+            font-weight: 200;
+            font-size: 2.5rem;
+            color: var(--ice-white);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .pricing-name::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--crystal), transparent);
+        }
+
+        .pricing-price {
+            margin-bottom: 40px;
+        }
+
+        .pricing-amount {
+            font-family: var(--font-heading);
+            font-weight: 200;
+            font-size: 4rem;
+            background: linear-gradient(135deg, var(--ice-white), var(--frost-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pricing-period {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.9rem;
+            color: var(--glacier);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .pricing-features li {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.95rem;
+            color: var(--glacier);
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(224, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .pricing-features li::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--crystal);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            opacity: 0.6;
+        }
+
+        .pricing-cta {
+            display: inline-block;
+            padding: 18px 50px;
+            font-family: var(--font-heading);
+            font-weight: 400;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+        }
+
+        .pricing-card:not(.featured) .pricing-cta {
+            background: transparent;
+            color: var(--ice-white);
+            border: 1px solid rgba(224, 255, 255, 0.3);
+        }
+
+        .pricing-card:not(.featured) .pricing-cta:hover {
+            background: rgba(224, 255, 255, 0.1);
+            border-color: var(--crystal);
+        }
+
+        .pricing-card.featured .pricing-cta {
+            background: linear-gradient(135deg, var(--frost-blue), var(--crystal));
+            color: var(--midnight-frost);
+            border: none;
+            box-shadow: 0 10px 40px rgba(168, 216, 234, 0.3);
+        }
+
+        .pricing-card.featured .pricing-cta:hover {
+            box-shadow: 0 15px 50px rgba(168, 216, 234, 0.5);
+            transform: translateY(-3px);
+        }
+
+        /* ========================================
+           CRYSTAL GROWTH SECTION
+           ======================================== */
+        .crystal-showcase {
+            padding: 150px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .crystal-growth-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-crystal {
+            position: relative;
+            width: 400px;
+            height: 500px;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .main-crystal svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .crystal-text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .crystal-stat {
+            font-family: var(--font-heading);
+            font-weight: 100;
+            font-size: 6rem;
+            background: linear-gradient(135deg, var(--ice-white), var(--crystal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .crystal-stat-label {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 1rem;
+            color: var(--frost-blue);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .floating-crystals {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .float-crystal {
+            position: absolute;
+            opacity: 0;
+            transform: translateY(50px) scale(0.8);
+        }
+
+        /* ========================================
+           CONTACT SECTION
+           ======================================== */
+        .contact-section {
+            padding: var(--section-padding);
+            position: relative;
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 60px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .contact-info {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+
+        .contact-info-title {
+            font-family: var(--font-heading);
+            font-weight: 100;
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--ice-white), var(--frost-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+        }
+
+        .contact-info-text {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 1.1rem;
+            color: var(--glacier);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .contact-details {
+            list-style: none;
+        }
+
+        .contact-details li {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            font-family: var(--font-body);
+            font-weight: 300;
+            color: var(--ice-white);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(168, 216, 234, 0.2), rgba(224, 255, 255, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(224, 255, 255, 0.2);
+        }
+
+        .contact-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--crystal);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .contact-form-container {
+            background: linear-gradient(135deg,
+                rgba(44, 62, 74, 0.6) 0%,
+                rgba(74, 102, 112, 0.3) 100%);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(224, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 50px;
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 18px 25px;
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 1rem;
+            color: var(--ice-white);
+            background: rgba(44, 62, 74, 0.5);
+            border: 1px solid rgba(224, 255, 255, 0.1);
+            border-radius: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--glacier);
+            opacity: 0.6;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--frost-blue);
+            box-shadow: 0 0 30px rgba(168, 216, 234, 0.2);
+            background: rgba(44, 62, 74, 0.7);
+        }
+
+        .form-textarea {
+            resize: none;
+            height: 150px;
+        }
+
+        .form-submit {
+            padding: 20px 50px;
+            font-family: var(--font-heading);
+            font-weight: 400;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--frost-blue), var(--crystal));
+            color: var(--midnight-frost);
+            border: none;
+            border-radius: 50px;
+            cursor: none;
+            transition: all 0.4s ease;
+            align-self: flex-start;
+        }
+
+        .form-submit:hover {
+            box-shadow: 0 15px 50px rgba(168, 216, 234, 0.4);
+            transform: translateY(-3px);
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        .footer {
+            padding: 80px 60px 40px;
+            background: linear-gradient(180deg, transparent, rgba(44, 62, 74, 0.8));
+            position: relative;
+        }
+
+        .footer-content {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand {
+            max-width: 350px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .footer-logo-crystal {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo-crystal svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--crystal);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .footer-logo-text {
+            font-family: var(--font-heading);
+            font-weight: 200;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            color: var(--ice-white);
+        }
+
+        .footer-description {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.95rem;
+            color: var(--glacier);
+            line-height: 1.8;
+        }
+
+        .footer-column h4 {
+            font-family: var(--font-heading);
+            font-weight: 400;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--ice-white);
+            margin-bottom: 25px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.9rem;
+            color: var(--glacier);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .footer-links a:hover {
+            color: var(--crystal);
+            padding-left: 10px;
+        }
+
+        .footer-bottom {
+            padding-top: 40px;
+            border-top: 1px solid rgba(224, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-copyright {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: 0.85rem;
+            color: var(--glacier);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-social a {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(224, 255, 255, 0.05);
+            border: 1px solid rgba(224, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: rgba(224, 255, 255, 0.1);
+            border-color: var(--crystal);
+            transform: translateY(-3px);
+        }
+
+        .footer-social svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--glacier);
+            transition: fill 0.3s ease;
+        }
+
+        .footer-social a:hover svg {
+            fill: var(--crystal);
+        }
+
+        /* ========================================
+           PRISMATIC REFRACTION OVERLAY
+           ======================================== */
+        .prism-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.15;
+            mix-blend-mode: overlay;
+            background:
+                linear-gradient(45deg,
+                    transparent 0%,
+                    rgba(255, 209, 220, 0.1) 20%,
+                    transparent 40%,
+                    rgba(230, 230, 250, 0.1) 60%,
+                    transparent 80%,
+                    rgba(178, 254, 247, 0.1) 100%);
+            animation: prism-shift 20s ease-in-out infinite;
+        }
+
+        @keyframes prism-shift {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(10px) translateY(-10px); }
+            50% { transform: translateX(-5px) translateY(5px); }
+            75% { transform: translateX(5px) translateY(10px); }
+        }
+
+        /* ========================================
+           FROST BORDER DECORATION
+           ======================================== */
+        .frost-border {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .frost-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent,
+                var(--frost-blue),
+                var(--crystal),
+                var(--frost-blue),
+                transparent);
+            opacity: 0.5;
+        }
+
+        .frost-border::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent,
+                var(--frost-blue),
+                var(--crystal),
+                var(--frost-blue),
+                transparent);
+            opacity: 0.5;
+        }
+
+        /* ========================================
+           RESPONSIVE STYLES
+           ======================================== */
+        @media (max-width: 1200px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pricing-grid {
+                gap: 30px;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1) translateY(60px);
+            }
+
+            .pricing-card.featured:hover {
+                transform: scale(1) translateY(-15px);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 4rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 50px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-cta-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+
+        /* ========================================
+           LOADING SCREEN
+           ======================================== */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--midnight-frost);
+            z-index: 100000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-crystal {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            animation: loading-float 2s ease-in-out infinite;
+        }
+
+        @keyframes loading-float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .loading-text {
+            font-family: var(--font-heading);
+            font-weight: 200;
+            font-size: 1rem;
+            letter-spacing: 6px;
+            color: var(--frost-blue);
+            margin-top: 30px;
+            opacity: 0;
+            animation: loading-pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loading-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .loading-progress {
+            width: 200px;
+            height: 2px;
+            background: rgba(168, 216, 234, 0.2);
+            margin-top: 30px;
+            border-radius: 1px;
+            overflow: hidden;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--frost-blue), var(--crystal));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-crystal">
+            <svg viewBox="0 0 100 100">
+                <defs>
+                    <linearGradient id="loading-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#a8d8ea"/>
+                        <stop offset="50%" style="stop-color:#e0ffff"/>
+                        <stop offset="100%" style="stop-color:#a8d8ea"/>
+                    </linearGradient>
+                </defs>
+                <polygon points="50,5 95,50 50,95 5,50" fill="none" stroke="url(#loading-grad)" stroke-width="1"/>
+                <polygon points="50,15 85,50 50,85 15,50" fill="none" stroke="url(#loading-grad)" stroke-width="0.5" opacity="0.5"/>
+                <polygon points="50,25 75,50 50,75 25,50" fill="rgba(224,255,255,0.1)"/>
+            </svg>
+        </div>
+        <div class="loading-text">CRYSTALLIZING</div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar" id="loading-progress"></div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-snowflake" id="cursor-snowflake">
+        <svg viewBox="0 0 50 50">
+            <line x1="25" y1="5" x2="25" y2="45" stroke="currentColor" stroke-width="1"/>
+            <line x1="5" y1="25" x2="45" y2="25" stroke="currentColor" stroke-width="1"/>
+            <line x1="11" y1="11" x2="39" y2="39" stroke="currentColor" stroke-width="1"/>
+            <line x1="39" y1="11" x2="11" y2="39" stroke="currentColor" stroke-width="1"/>
+            <circle cx="25" cy="25" r="3" fill="currentColor"/>
+            <circle cx="25" cy="10" r="2" fill="currentColor"/>
+            <circle cx="25" cy="40" r="2" fill="currentColor"/>
+            <circle cx="10" cy="25" r="2" fill="currentColor"/>
+            <circle cx="40" cy="25" r="2" fill="currentColor"/>
+        </svg>
+    </div>
+    <div class="cursor-frost-ring" id="cursor-ring"></div>
+
+    <!-- Frost Border -->
+    <div class="frost-border"></div>
+
+    <!-- Prismatic Overlay -->
+    <div class="prism-overlay"></div>
+
+    <!-- WebGL Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav-container" id="nav">
+        <div class="nav-logo">
+            <div class="nav-logo-crystal">
+                <svg viewBox="0 0 50 50">
+                    <polygon points="25,2 48,25 25,48 2,25"/>
+                    <line x1="25" y1="2" x2="25" y2="48"/>
+                    <line x1="2" y1="25" x2="48" y2="25"/>
+                </svg>
+            </div>
+            <span class="nav-logo-text">405NETWORK</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+        <div class="hero-crystals-container" id="hero-crystals"></div>
+        <div class="hero-content">
+            <span class="hero-tagline">Orange County, CA | Est. 2011</span>
+            <h1 class="hero-title">
+                <span>Information</span>
+                <span>Technology,</span>
+                <span>Reimagined</span>
+            </h1>
+            <p class="hero-subtitle">Crystalline clarity in every solution. Pure performance in every service.</p>
+            <div class="hero-cta-container">
+                <a href="#pricing" class="hero-cta hero-cta-primary">Explore Plans</a>
+                <a href="#contact" class="hero-cta hero-cta-secondary">Get in Touch</a>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator" id="scroll-indicator">
+            <span class="hero-scroll-text">Scroll to Explore</span>
+            <div class="hero-scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section" id="services">
+        <div class="section-header">
+            <span class="section-label">What We Offer</span>
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Crystal-clear solutions engineered for modern enterprise excellence</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 80 80">
+                        <circle cx="40" cy="35" r="15"/>
+                        <path d="M25 55 Q40 65 55 55"/>
+                        <path d="M20 45 L25 50 L20 55"/>
+                        <path d="M60 45 L55 50 L60 55"/>
+                        <line x1="40" y1="55" x2="40" y2="70"/>
+                        <circle cx="40" cy="72" r="3"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Support & Communication</h3>
+                <p class="service-description">24/7 responsive support with crystal-clear communication channels. We keep you connected.</p>
+                <svg class="service-crystal-accent" viewBox="0 0 100 100">
+                    <polygon points="50,10 90,50 50,90 10,50" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.3"/>
+                </svg>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 80 80">
+                        <rect x="15" y="20" width="20" height="35" rx="3"/>
+                        <rect x="45" y="15" width="20" height="45" rx="3"/>
+                        <line x1="25" y1="65" x2="25" y2="75"/>
+                        <line x1="55" y1="65" x2="55" y2="75"/>
+                        <circle cx="25" cy="28" r="3"/>
+                        <circle cx="55" cy="23" r="3"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Device Management</h3>
+                <p class="service-description">Unified endpoint management for all your devices. Seamless control, pristine security.</p>
+                <svg class="service-crystal-accent" viewBox="0 0 100 100">
+                    <polygon points="50,10 90,50 50,90 10,50" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.3"/>
+                </svg>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 80 80">
+                        <ellipse cx="40" cy="25" rx="25" ry="10"/>
+                        <path d="M15 25 L15 50 Q40 65 65 50 L65 25"/>
+                        <ellipse cx="40" cy="50" rx="25" ry="10" fill="none"/>
+                        <line x1="40" y1="35" x2="40" y2="60"/>
+                        <circle cx="40" cy="40" r="5"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Cloud & Admin</h3>
+                <p class="service-description">Enterprise cloud solutions with administrative excellence. Elevate your infrastructure.</p>
+                <svg class="service-crystal-accent" viewBox="0 0 100 100">
+                    <polygon points="50,10 90,50 50,90 10,50" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.3"/>
+                </svg>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 80 80">
+                        <rect x="10" y="30" width="60" height="25" rx="3"/>
+                        <line x1="20" y1="35" x2="20" y2="50"/>
+                        <line x1="30" y1="35" x2="30" y2="50"/>
+                        <line x1="40" y1="35" x2="40" y2="50"/>
+                        <circle cx="60" cy="42" r="5"/>
+                        <line x1="40" y1="20" x2="40" y2="30"/>
+                        <line x1="40" y1="55" x2="40" y2="65"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Infrastructure</h3>
+                <p class="service-description">Rock-solid infrastructure built for scale. Foundation as strong as ice, as clear as crystal.</p>
+                <svg class="service-crystal-accent" viewBox="0 0 100 100">
+                    <polygon points="50,10 90,50 50,90 10,50" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.3"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Crystal Showcase / Stats -->
+    <section class="crystal-showcase" id="about">
+        <div class="crystal-growth-container">
+            <div class="main-crystal" id="main-crystal">
+                <svg viewBox="0 0 400 500">
+                    <defs>
+                        <linearGradient id="prism-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ffd1dc"/>
+                            <stop offset="33%" style="stop-color:#e6e6fa"/>
+                            <stop offset="66%" style="stop-color:#b2fef7"/>
+                            <stop offset="100%" style="stop-color:#a8d8ea"/>
+                        </linearGradient>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Main crystal body -->
+                    <polygon class="crystal-main" points="200,20 350,150 320,380 200,480 80,380 50,150"
+                             fill="rgba(224,255,255,0.05)" stroke="#a8d8ea" stroke-width="1" filter="url(#glow)"/>
+                    <!-- Inner facets -->
+                    <polygon points="200,60 300,150 280,350 200,420 120,350 100,150"
+                             fill="none" stroke="#e0ffff" stroke-width="0.5" opacity="0.6"/>
+                    <polygon points="200,100 260,160 245,320 200,370 155,320 140,160"
+                             fill="rgba(168,216,234,0.05)" stroke="#a8d8ea" stroke-width="0.3" opacity="0.4"/>
+                    <!-- Refraction lines -->
+                    <line x1="200" y1="20" x2="200" y2="480" stroke="url(#prism-gradient)" stroke-width="0.5" opacity="0.4"/>
+                    <line x1="50" y1="150" x2="350" y2="150" stroke="url(#prism-gradient)" stroke-width="0.5" opacity="0.4"/>
+                    <line x1="80" y1="380" x2="320" y2="380" stroke="url(#prism-gradient)" stroke-width="0.5" opacity="0.4"/>
+                    <!-- Diagonal facets -->
+                    <line x1="200" y1="20" x2="350" y2="150" stroke="#e0ffff" stroke-width="0.3" opacity="0.5"/>
+                    <line x1="200" y1="20" x2="50" y2="150" stroke="#e0ffff" stroke-width="0.3" opacity="0.5"/>
+                    <line x1="200" y1="480" x2="320" y2="380" stroke="#e0ffff" stroke-width="0.3" opacity="0.5"/>
+                    <line x1="200" y1="480" x2="80" y2="380" stroke="#e0ffff" stroke-width="0.3" opacity="0.5"/>
+                    <!-- Prism highlight -->
+                    <polygon points="200,60 280,130 200,200" fill="url(#prism-gradient)" opacity="0.15"/>
+                </svg>
+            </div>
+            <div class="crystal-text-overlay">
+                <div class="crystal-stat">14+</div>
+                <div class="crystal-stat-label">Years of Excellence</div>
+            </div>
+            <div class="floating-crystals" id="floating-crystals"></div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="section-header">
+            <span class="section-label">Investment</span>
+            <h2 class="section-title">Pricing Plans</h2>
+            <p class="section-subtitle">Transparent pricing as clear as crystal. No hidden fees, just pure value.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <svg class="pricing-crystal-header" viewBox="0 0 120 60">
+                    <polygon points="60,5 110,30 60,55 10,30" fill="none" stroke="#c0c0c0" stroke-width="0.5"/>
+                </svg>
+                <div class="pricing-tier">Starter</div>
+                <div class="pricing-name">Silver</div>
+                <div class="pricing-price">
+                    <span class="pricing-amount">$49</span>
+                    <span class="pricing-period">/user/month</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>Basic Support Coverage</li>
+                    <li>Device Management (5 devices)</li>
+                    <li>Cloud Storage (50GB)</li>
+                    <li>Email Support</li>
+                    <li>Monthly Reports</li>
+                </ul>
+                <a href="#contact" class="pricing-cta">Get Started</a>
+            </div>
+            <div class="pricing-card featured">
+                <svg class="pricing-crystal-header" viewBox="0 0 120 60">
+                    <polygon points="60,5 110,30 60,55 10,30" fill="none" stroke="#a8d8ea" stroke-width="1"/>
+                </svg>
+                <div class="pricing-tier">Professional</div>
+                <div class="pricing-name">Gold</div>
+                <div class="pricing-price">
+                    <span class="pricing-amount">$79</span>
+                    <span class="pricing-period">/user/month</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>Priority Support 24/7</li>
+                    <li>Device Management (Unlimited)</li>
+                    <li>Cloud Storage (500GB)</li>
+                    <li>Phone & Email Support</li>
+                    <li>Weekly Reports & Analytics</li>
+                </ul>
+                <a href="#contact" class="pricing-cta">Get Started</a>
+            </div>
+            <div class="pricing-card">
+                <svg class="pricing-crystal-header" viewBox="0 0 120 60">
+                    <polygon points="60,5 110,30 60,55 10,30" fill="none" stroke="#e0ffff" stroke-width="0.5"/>
+                </svg>
+                <div class="pricing-tier">Enterprise</div>
+                <div class="pricing-name">Platinum</div>
+                <div class="pricing-price">
+                    <span class="pricing-amount">$129</span>
+                    <span class="pricing-period">/user/month</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>Dedicated Account Manager</li>
+                    <li>Full Infrastructure Suite</li>
+                    <li>Unlimited Cloud Storage</li>
+                    <li>On-site Support Available</li>
+                    <li>Custom Solutions & SLA</li>
+                </ul>
+                <a href="#contact" class="pricing-cta">Contact Sales</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="contact-container">
+            <div class="section-header">
+                <span class="section-label">Get in Touch</span>
+                <h2 class="section-title">Contact Us</h2>
+                <p class="section-subtitle">Let's crystallize your technology vision together</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3 class="contact-info-title">Let's Connect</h3>
+                    <p class="contact-info-text">Ready to transform your IT infrastructure? Our team of experts is here to guide you through every step of your digital journey.</p>
+                    <ul class="contact-details">
+                        <li>
+                            <div class="contact-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                            </div>
+                            <span>Orange County, California</span>
+                        </li>
+                        <li>
+                            <div class="contact-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                </svg>
+                            </div>
+                            <span>(949) 555-0405</span>
+                        </li>
+                        <li>
+                            <div class="contact-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                            </div>
+                            <span>hello@405network.com</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="contact-form-container">
+                    <form class="contact-form" id="contact-form">
+                        <div class="form-group">
+                            <input type="text" class="form-input" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-input" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-input" placeholder="Company">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-textarea" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="form-submit">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-crystal">
+                        <svg viewBox="0 0 50 50">
+                            <polygon points="25,2 48,25 25,48 2,25"/>
+                            <line x1="25" y1="2" x2="25" y2="48"/>
+                            <line x1="2" y1="25" x2="48" y2="25"/>
+                        </svg>
+                    </div>
+                    <span class="footer-logo-text">405NETWORK</span>
+                </div>
+                <p class="footer-description">Information Technology, Reimagined. Serving Orange County businesses since 2011 with crystal-clear solutions and pristine service.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#services">Support</a></li>
+                    <li><a href="#services">Device Management</a></li>
+                    <li><a href="#services">Cloud Solutions</a></li>
+                    <li><a href="#services">Infrastructure</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Legal</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">SLA</a></li>
+                    <li><a href="#">Compliance</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">&copy; 2024 405Network Inc. All rights reserved.</p>
+            <div class="footer-social">
+                <a href="#" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                        <rect x="2" y="9" width="4" height="12"/>
+                        <circle cx="4" cy="4" r="2"/>
+                    </svg>
+                </a>
+                <a href="#" aria-label="Twitter">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+                    </svg>
+                </a>
+                <a href="#" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // ========================================
+        // WEBGL SHADER SCENE
+        // ========================================
+
+        class CrystallineFrostScene {
+            constructor() {
+                this.canvas = document.getElementById('webgl-canvas');
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+                this.clock = new THREE.Clock();
+                this.mouse = new THREE.Vector2();
+                this.targetMouse = new THREE.Vector2();
+
+                this.crystals = [];
+                this.particles = [];
+
+                this.init();
+            }
+
+            init() {
+                this.camera.position.z = 5;
+
+                // Create shader material with Bayer dithering
+                this.createDitheringPlane();
+                this.createCrystalParticles();
+                this.createFloatingCrystals();
+
+                this.addEventListeners();
+                this.animate();
+            }
+
+            createDitheringPlane() {
+                const vertexShader = `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `;
+
+                const fragmentShader = `
+                    uniform float uTime;
+                    uniform vec2 uResolution;
+                    uniform vec2 uMouse;
+                    varying vec2 vUv;
+
+                    // Bayer 8x8 dithering
+                    float bayer2(vec2 a) {
+                        a = floor(a);
+                        return fract(a.x / 2.0 + a.y * a.y * 0.75);
+                    }
+
+                    float bayer4(vec2 a) {
+                        return bayer2(0.5 * a) * 0.25 + bayer2(a);
+                    }
+
+                    float bayer8(vec2 a) {
+                        return bayer4(0.5 * a) * 0.25 + bayer2(a);
+                    }
+
+                    // Prismatic refraction
+                    vec3 prismaticRefraction(vec2 uv, float dither) {
+                        float wave = sin(uv.x * 30.0 + uTime * 0.5) * cos(uv.y * 25.0 + uTime * 0.3);
+                        float r = dither + 0.02 * sin(uv.x * 50.0 + wave);
+                        float g = dither + 0.01 * cos(uv.y * 45.0 - wave);
+                        float b = dither - 0.02 * sin(uv.x * 50.0 - wave);
+                        return vec3(r, g, b);
+                    }
+
+                    // Crystalline pattern
+                    float crystalPattern(vec2 uv) {
+                        vec2 grid = abs(fract(uv * 10.0 + uTime * 0.1) - 0.5);
+                        float d = min(grid.x, grid.y);
+                        return smoothstep(0.0, 0.02, d);
+                    }
+
+                    // Ice fractal
+                    float iceFractal(vec2 uv) {
+                        float val = 0.0;
+                        float amp = 0.5;
+                        float freq = 2.0;
+                        for(int i = 0; i < 4; i++) {
+                            val += amp * abs(sin(uv.x * freq + uTime * 0.2) * cos(uv.y * freq * 1.3 - uTime * 0.15));
+                            freq *= 2.0;
+                            amp *= 0.5;
+                        }
+                        return val;
+                    }
+
+                    void main() {
+                        vec2 uv = vUv;
+                        vec2 fragCoord = uv * uResolution;
+
+                        // Base frost colors
+                        vec3 midnightFrost = vec3(0.173, 0.243, 0.29);
+                        vec3 frostBlue = vec3(0.659, 0.847, 0.918);
+                        vec3 crystal = vec3(0.878, 1.0, 1.0);
+                        vec3 glacier = vec3(0.69, 0.878, 0.902);
+
+                        // Dithering
+                        float dither = bayer8(fragCoord);
+
+                        // Prismatic effect
+                        vec3 prism = prismaticRefraction(uv, dither);
+
+                        // Crystal pattern
+                        float pattern = crystalPattern(uv);
+
+                        // Ice fractal
+                        float ice = iceFractal(uv);
+
+                        // Mouse influence
+                        float mouseDist = length(uv - uMouse);
+                        float mouseInfluence = smoothstep(0.5, 0.0, mouseDist);
+
+                        // Combine effects
+                        vec3 baseColor = mix(midnightFrost, frostBlue, ice * 0.3);
+                        baseColor = mix(baseColor, crystal, pattern * 0.1);
+                        baseColor = mix(baseColor, prism, dither * 0.15);
+
+                        // Add mouse glow
+                        baseColor += glacier * mouseInfluence * 0.2;
+
+                        // Vignette
+                        float vignette = 1.0 - length(uv - 0.5) * 0.5;
+                        baseColor *= vignette;
+
+                        // Final dithering pass
+                        baseColor += (dither - 0.5) * 0.03;
+
+                        gl_FragColor = vec4(baseColor, 0.6);
+                    }
+                `;
+
+                this.shaderMaterial = new THREE.ShaderMaterial({
+                    vertexShader,
+                    fragmentShader,
+                    uniforms: {
+                        uTime: { value: 0 },
+                        uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                        uMouse: { value: new THREE.Vector2(0.5, 0.5) }
+                    },
+                    transparent: true
+                });
+
+                const geometry = new THREE.PlaneGeometry(10, 10);
+                const plane = new THREE.Mesh(geometry, this.shaderMaterial);
+                plane.position.z = -2;
+                this.scene.add(plane);
+            }
+
+            createCrystalParticles() {
+                const particleCount = 200;
+                const positions = new Float32Array(particleCount * 3);
+                const scales = new Float32Array(particleCount);
+
+                for (let i = 0; i < particleCount; i++) {
+                    positions[i * 3] = (Math.random() - 0.5) * 15;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 15;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+                    scales[i] = Math.random() * 0.5 + 0.2;
+                }
+
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
+
+                const vertexShader = `
+                    attribute float scale;
+                    varying float vScale;
+                    void main() {
+                        vScale = scale;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = scale * 50.0 * (300.0 / -mvPosition.z);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `;
+
+                const fragmentShader = `
+                    uniform float uTime;
+                    varying float vScale;
+                    void main() {
+                        vec2 center = gl_PointCoord - vec2(0.5);
+                        float dist = length(center);
+                        if (dist > 0.5) discard;
+
+                        // Diamond shape
+                        float diamond = abs(center.x) + abs(center.y);
+                        if (diamond > 0.5) discard;
+
+                        float alpha = (1.0 - diamond * 2.0) * 0.6;
+                        vec3 color = mix(vec3(0.659, 0.847, 0.918), vec3(0.878, 1.0, 1.0), vScale);
+
+                        gl_FragColor = vec4(color, alpha);
+                    }
+                `;
+
+                const material = new THREE.ShaderMaterial({
+                    vertexShader,
+                    fragmentShader,
+                    uniforms: {
+                        uTime: { value: 0 }
+                    },
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false
+                });
+
+                this.particleSystem = new THREE.Points(geometry, material);
+                this.scene.add(this.particleSystem);
+            }
+
+            createFloatingCrystals() {
+                const crystalGeometry = new THREE.OctahedronGeometry(0.15, 0);
+
+                for (let i = 0; i < 15; i++) {
+                    const material = new THREE.MeshBasicMaterial({
+                        color: new THREE.Color().setHSL(0.55 + Math.random() * 0.1, 0.5, 0.7),
+                        transparent: true,
+                        opacity: 0.3,
+                        wireframe: true
+                    });
+
+                    const crystal = new THREE.Mesh(crystalGeometry, material);
+                    crystal.position.set(
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 5
+                    );
+                    crystal.rotation.set(
+                        Math.random() * Math.PI,
+                        Math.random() * Math.PI,
+                        Math.random() * Math.PI
+                    );
+                    crystal.userData = {
+                        rotationSpeed: {
+                            x: (Math.random() - 0.5) * 0.02,
+                            y: (Math.random() - 0.5) * 0.02,
+                            z: (Math.random() - 0.5) * 0.02
+                        },
+                        floatOffset: Math.random() * Math.PI * 2,
+                        floatSpeed: Math.random() * 0.5 + 0.5
+                    };
+
+                    this.crystals.push(crystal);
+                    this.scene.add(crystal);
+                }
+            }
+
+            addEventListeners() {
+                window.addEventListener('resize', () => this.onResize());
+                window.addEventListener('mousemove', (e) => this.onMouseMove(e));
+            }
+
+            onResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.shaderMaterial.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+            }
+
+            onMouseMove(e) {
+                this.targetMouse.x = e.clientX / window.innerWidth;
+                this.targetMouse.y = 1.0 - e.clientY / window.innerHeight;
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                const time = this.clock.getElapsedTime();
+
+                // Update shader uniforms
+                this.shaderMaterial.uniforms.uTime.value = time;
+                this.particleSystem.material.uniforms.uTime.value = time;
+
+                // Smooth mouse movement
+                this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.05;
+                this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.05;
+                this.shaderMaterial.uniforms.uMouse.value.copy(this.mouse);
+
+                // Animate particles
+                const positions = this.particleSystem.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i + 1] += Math.sin(time + i) * 0.001;
+                }
+                this.particleSystem.geometry.attributes.position.needsUpdate = true;
+                this.particleSystem.rotation.y = time * 0.05;
+
+                // Animate crystals
+                this.crystals.forEach(crystal => {
+                    crystal.rotation.x += crystal.userData.rotationSpeed.x;
+                    crystal.rotation.y += crystal.userData.rotationSpeed.y;
+                    crystal.rotation.z += crystal.userData.rotationSpeed.z;
+                    crystal.position.y += Math.sin(time * crystal.userData.floatSpeed + crystal.userData.floatOffset) * 0.002;
+                });
+
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // ========================================
+        // CUSTOM CURSOR
+        // ========================================
+
+        class CrystalCursor {
+            constructor() {
+                this.snowflake = document.getElementById('cursor-snowflake');
+                this.ring = document.getElementById('cursor-ring');
+                this.mouseX = 0;
+                this.mouseY = 0;
+                this.ringX = 0;
+                this.ringY = 0;
+                this.isHovering = false;
+                this.particles = [];
+                this.particleInterval = null;
+
+                this.init();
+            }
+
+            init() {
+                document.addEventListener('mousemove', (e) => this.onMouseMove(e));
+                document.addEventListener('mouseenter', () => this.show());
+                document.addEventListener('mouseleave', () => this.hide());
+
+                // Add hover states
+                const interactiveElements = document.querySelectorAll('a, button, input, textarea, .service-card, .pricing-card');
+                interactiveElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => this.setHover(true));
+                    el.addEventListener('mouseleave', () => this.setHover(false));
+                });
+
+                this.animate();
+            }
+
+            onMouseMove(e) {
+                this.mouseX = e.clientX;
+                this.mouseY = e.clientY;
+
+                // Create frost particle trail
+                if (Math.random() > 0.85) {
+                    this.createFrostParticle(e.clientX, e.clientY);
+                }
+            }
+
+            createFrostParticle(x, y) {
+                const particle = document.createElement('div');
+                particle.className = 'frost-particle';
+                particle.style.left = x + (Math.random() - 0.5) * 20 + 'px';
+                particle.style.top = y + (Math.random() - 0.5) * 20 + 'px';
+                document.body.appendChild(particle);
+
+                setTimeout(() => particle.remove(), 1000);
+            }
+
+            setHover(state) {
+                this.isHovering = state;
+                if (state) {
+                    this.ring.classList.add('expanded');
+                } else {
+                    this.ring.classList.remove('expanded');
+                }
+            }
+
+            show() {
+                this.snowflake.style.opacity = '1';
+                this.ring.style.opacity = '1';
+            }
+
+            hide() {
+                this.snowflake.style.opacity = '0';
+                this.ring.style.opacity = '0';
+            }
+
+            animate() {
+                // Smooth cursor following
+                this.snowflake.style.left = this.mouseX + 'px';
+                this.snowflake.style.top = this.mouseY + 'px';
+
+                // Ring follows with lag
+                this.ringX += (this.mouseX - this.ringX) * 0.15;
+                this.ringY += (this.mouseY - this.ringY) * 0.15;
+                this.ring.style.left = this.ringX + 'px';
+                this.ring.style.top = this.ringY + 'px';
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // ========================================
+        // GSAP ANIMATIONS
+        // ========================================
+
+        class CrystalAnimations {
+            constructor() {
+                gsap.registerPlugin(ScrollTrigger);
+                this.init();
+            }
+
+            init() {
+                this.heroAnimations();
+                this.serviceAnimations();
+                this.pricingAnimations();
+                this.crystalGrowthAnimations();
+                this.contactAnimations();
+                this.navAnimations();
+                this.createHeroCrystals();
+                this.createFloatingCrystals();
+            }
+
+            heroAnimations() {
+                const heroTL = gsap.timeline({ delay: 1.5 });
+
+                heroTL
+                    .to('.hero-tagline', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: 'power3.out'
+                    })
+                    .to('.hero-title', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1.2,
+                        ease: 'power3.out'
+                    }, '-=0.6')
+                    .to('.hero-subtitle', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: 'power3.out'
+                    }, '-=0.6')
+                    .to('.hero-cta-container', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: 'power3.out'
+                    }, '-=0.6')
+                    .to('#scroll-indicator', {
+                        opacity: 1,
+                        duration: 1,
+                        ease: 'power3.out'
+                    }, '-=0.3');
+            }
+
+            serviceAnimations() {
+                gsap.utils.toArray('.service-card').forEach((card, i) => {
+                    gsap.to(card, {
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        delay: i * 0.15,
+                        ease: 'power3.out'
+                    });
+                });
+            }
+
+            pricingAnimations() {
+                gsap.utils.toArray('.pricing-card').forEach((card, i) => {
+                    const isFeatured = card.classList.contains('featured');
+                    gsap.to(card, {
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        opacity: 1,
+                        y: isFeatured ? 0 : 0,
+                        scale: isFeatured ? 1.05 : 1,
+                        duration: 0.8,
+                        delay: i * 0.2,
+                        ease: 'power3.out'
+                    });
+                });
+            }
+
+            crystalGrowthAnimations() {
+                gsap.to('#main-crystal', {
+                    scrollTrigger: {
+                        trigger: '.crystal-showcase',
+                        start: 'top 80%',
+                        end: 'center center',
+                        scrub: 1
+                    },
+                    opacity: 1,
+                    scale: 1,
+                    rotation: 0,
+                    ease: 'power2.out'
+                });
+
+                // Crystal shatter effect on hover
+                const mainCrystal = document.getElementById('main-crystal');
+                if (mainCrystal) {
+                    mainCrystal.addEventListener('mouseenter', () => {
+                        gsap.to(mainCrystal, {
+                            scale: 1.05,
+                            duration: 0.3,
+                            ease: 'power2.out'
+                        });
+                    });
+
+                    mainCrystal.addEventListener('mouseleave', () => {
+                        gsap.to(mainCrystal, {
+                            scale: 1,
+                            duration: 0.3,
+                            ease: 'power2.out'
+                        });
+                    });
+                }
+            }
+
+            contactAnimations() {
+                gsap.to('.contact-info', {
+                    scrollTrigger: {
+                        trigger: '.contact-grid',
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    opacity: 1,
+                    x: 0,
+                    duration: 1,
+                    ease: 'power3.out'
+                });
+
+                gsap.to('.contact-form-container', {
+                    scrollTrigger: {
+                        trigger: '.contact-grid',
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    opacity: 1,
+                    x: 0,
+                    duration: 1,
+                    delay: 0.2,
+                    ease: 'power3.out'
+                });
+            }
+
+            navAnimations() {
+                const nav = document.getElementById('nav');
+
+                ScrollTrigger.create({
+                    trigger: document.body,
+                    start: 'top -100px',
+                    onUpdate: (self) => {
+                        if (self.direction === 1 && self.progress > 0.01) {
+                            nav.classList.add('scrolled');
+                        } else if (self.progress < 0.01) {
+                            nav.classList.remove('scrolled');
+                        }
+                    }
+                });
+            }
+
+            createHeroCrystals() {
+                const container = document.getElementById('hero-crystals');
+                const crystalCount = 20;
+
+                for (let i = 0; i < crystalCount; i++) {
+                    const crystal = document.createElement('div');
+                    crystal.className = 'hero-crystal';
+                    crystal.innerHTML = `
+                        <svg width="${40 + Math.random() * 60}" height="${60 + Math.random() * 80}" viewBox="0 0 50 70">
+                            <polygon points="25,5 45,25 35,65 15,65 5,25"
+                                     fill="none"
+                                     stroke="rgba(168,216,234,${0.1 + Math.random() * 0.2})"
+                                     stroke-width="0.5"/>
+                            <polygon points="25,10 40,25 32,60 18,60 10,25"
+                                     fill="rgba(224,255,255,${0.02 + Math.random() * 0.03})"/>
+                        </svg>
+                    `;
+                    crystal.style.left = Math.random() * 100 + '%';
+                    crystal.style.top = Math.random() * 100 + '%';
+                    crystal.style.animationDelay = Math.random() * 5 + 's';
+                    crystal.style.animationDuration = 15 + Math.random() * 10 + 's';
+                    container.appendChild(crystal);
+                }
+            }
+
+            createFloatingCrystals() {
+                const container = document.getElementById('floating-crystals');
+                if (!container) return;
+
+                const positions = [
+                    { x: '10%', y: '20%', size: 50, delay: 0 },
+                    { x: '85%', y: '30%', size: 40, delay: 0.3 },
+                    { x: '15%', y: '70%', size: 45, delay: 0.6 },
+                    { x: '80%', y: '65%', size: 55, delay: 0.9 },
+                    { x: '5%', y: '45%', size: 35, delay: 1.2 },
+                    { x: '92%', y: '50%', size: 38, delay: 1.5 }
+                ];
+
+                positions.forEach((pos, i) => {
+                    const crystal = document.createElement('div');
+                    crystal.className = 'float-crystal';
+                    crystal.innerHTML = `
+                        <svg width="${pos.size}" height="${pos.size * 1.4}" viewBox="0 0 50 70">
+                            <defs>
+                                <linearGradient id="float-grad-${i}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ffd1dc;stop-opacity:0.3"/>
+                                    <stop offset="50%" style="stop-color:#e6e6fa;stop-opacity:0.3"/>
+                                    <stop offset="100%" style="stop-color:#b2fef7;stop-opacity:0.3"/>
+                                </linearGradient>
+                            </defs>
+                            <polygon points="25,5 45,25 35,65 15,65 5,25"
+                                     fill="url(#float-grad-${i})"
+                                     stroke="#a8d8ea"
+                                     stroke-width="0.5"/>
+                            <line x1="25" y1="5" x2="25" y2="65" stroke="#e0ffff" stroke-width="0.3" opacity="0.5"/>
+                        </svg>
+                    `;
+                    crystal.style.left = pos.x;
+                    crystal.style.top = pos.y;
+                    container.appendChild(crystal);
+
+                    gsap.to(crystal, {
+                        scrollTrigger: {
+                            trigger: '.crystal-showcase',
+                            start: 'top 80%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        opacity: 0.8,
+                        y: 0,
+                        scale: 1,
+                        duration: 1,
+                        delay: pos.delay,
+                        ease: 'power3.out'
+                    });
+
+                    // Floating animation
+                    gsap.to(crystal, {
+                        y: -20 + Math.random() * 40,
+                        rotation: -10 + Math.random() * 20,
+                        duration: 3 + Math.random() * 2,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: 'sine.inOut',
+                        delay: Math.random() * 2
+                    });
+                });
+            }
+        }
+
+        // ========================================
+        // LOADING SCREEN
+        // ========================================
+
+        class LoadingScreen {
+            constructor() {
+                this.loadingScreen = document.getElementById('loading-screen');
+                this.progressBar = document.getElementById('loading-progress');
+                this.progress = 0;
+
+                this.init();
+            }
+
+            init() {
+                this.simulateLoading();
+            }
+
+            simulateLoading() {
+                const interval = setInterval(() => {
+                    this.progress += Math.random() * 15;
+                    if (this.progress >= 100) {
+                        this.progress = 100;
+                        clearInterval(interval);
+                        setTimeout(() => this.hideLoading(), 500);
+                    }
+                    this.progressBar.style.width = this.progress + '%';
+                }, 100);
+            }
+
+            hideLoading() {
+                this.loadingScreen.classList.add('hidden');
+            }
+        }
+
+        // ========================================
+        // FORM HANDLING
+        // ========================================
+
+        class ContactForm {
+            constructor() {
+                this.form = document.getElementById('contact-form');
+                this.init();
+            }
+
+            init() {
+                if (this.form) {
+                    this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+                }
+            }
+
+            handleSubmit(e) {
+                e.preventDefault();
+
+                // Add crystal shatter animation on submit
+                const button = this.form.querySelector('.form-submit');
+                gsap.to(button, {
+                    scale: 0.95,
+                    duration: 0.1,
+                    yoyo: true,
+                    repeat: 1,
+                    onComplete: () => {
+                        // Show success state
+                        button.textContent = 'Message Sent!';
+                        button.style.background = 'linear-gradient(135deg, #b2fef7, #e0ffff)';
+
+                        setTimeout(() => {
+                            button.textContent = 'Send Message';
+                            button.style.background = '';
+                            this.form.reset();
+                        }, 3000);
+                    }
+                });
+            }
+        }
+
+        // ========================================
+        // SMOOTH SCROLL
+        // ========================================
+
+        class SmoothScroll {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = document.querySelector(anchor.getAttribute('href'));
+                        if (target) {
+                            gsap.to(window, {
+                                scrollTo: {
+                                    y: target,
+                                    offsetY: 80
+                                },
+                                duration: 1.5,
+                                ease: 'power3.inOut'
+                            });
+                        }
+                    });
+                });
+            }
+        }
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize all modules
+            new LoadingScreen();
+            new CrystallineFrostScene();
+            new CrystalCursor();
+            new CrystalAnimations();
+            new ContactForm();
+
+            // Load GSAP ScrollTo plugin dynamically
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js';
+            script.onload = () => new SmoothScroll();
+            document.head.appendChild(script);
+        });
+
+        // ========================================
+        // PERFORMANCE OPTIMIZATIONS
+        // ========================================
+
+        // Throttle scroll events
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (scrollTimeout) return;
+            scrollTimeout = setTimeout(() => {
+                scrollTimeout = null;
+            }, 16);
+        }, { passive: true });
+
+        // Preload critical resources
+        const preloadResources = () => {
+            const fonts = [
+                'https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700&display=swap',
+                'https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap'
+            ];
+
+            fonts.forEach(font => {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'style';
+                link.href = font;
+                document.head.appendChild(link);
+            });
+        };
+
+        preloadResources();
+    </script>
+</body>
+</html>

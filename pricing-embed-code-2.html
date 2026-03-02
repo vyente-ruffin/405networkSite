@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Plan</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"> <!-- FontAwesome CDN -->
+    <style>
+        body {
+            background-color: #000; /* Black background color */
+            margin: 0;
+            padding: 20px; /* Padding to avoid cut-off content */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff; /* Default text color */
+        }
+        .card {
+            background-color: #fff;
+            color: #333;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px auto; /* Center card and add margin */
+            max-width: 300px; /* Consistent width */
+            display: flex;
+            flex-direction: column;
+        }
+        .card-header {
+            background-color: #ffb700; /* Gold color */
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.25em;
+        }
+        .card-body {
+            flex: 1;
+            padding: 20px;
+        }
+        .list-group-item {
+            background-color: #fff; /* Matching card background */
+            border: none; /* Remove borders */
+            padding-left: 0;
+        }
+        .list-group-item i {
+            color: #28a745; /* Green check color */
+            margin-right: 10px; /* Space between icon and text */
+        }
+        .btn {
+            background-color: #ffb700; /* Button color */
+            color: #fff; /* Text color */
+            border: none; /* Remove borders */
+            width: 100%; /* Full width button */
+            padding: 10px 0; /* Padding for button */
+            font-size: 1em; /* Slightly larger text */
+            border-radius: 5px; /* Rounded button */
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+        .btn:hover {
+            background-color: #cc9300; /* Darker shade on hover */
+        }
+        .card-footer {
+            background-color: #f8f9fa; /* Light grey footer */
+            padding: 10px;
+            text-align: center;
+            border-top: 1px solid #e9ecef; /* Subtle border */
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="my-0 font-weight-normal">Gold Plan</h4>
+    </div>
+    <div class="card-body">
+        <h5><b>For medium-sized businesses needing advanced IT support</b></h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><i class="fas fa-check"></i> All Silver Plan Services</li>
+            <li class="list-group-item"><i class="fas fa-check"></i> Extended Help Desk Support (12x5)</li>
+            <li class="list-group-item"><i class="fas fa-check"></i> Bi-weekly Patch Management</li>
+            <li class="list-group-item"><i class="fas fa-check"></i> Advanced Threat Detection</li>
+            <li class="list-group-item"><i class="fas fa-check"></i> Comprehensive Backup and Disaster Recovery</li>
+        </ul>
+        <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill" class="btn btn-lg btn-block mt-4">Learn More →</a>
+    </div>
+    <div class="card-footer">
+        <small>Contact us for more details</small>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

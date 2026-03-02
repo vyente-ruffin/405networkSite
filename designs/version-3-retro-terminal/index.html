@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <meta name="description" content="Orange County's trusted MSP. Let 405Network be your CTO, Cloud, Infrastructure and AI Officer. 25+ years combined IT expertise.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ═══════════════════════════════════════════════════════════════════
+           CSS RESET & ROOT VARIABLES
+           ═══════════════════════════════════════════════════════════════════ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            /* Terminal Colors */
+            --black: #0a0a0a;
+            --dark-gray: #0d0d0d;
+            --matrix-green: #00ff00;
+            --matrix-green-dim: #00cc00;
+            --matrix-green-glow: rgba(0, 255, 0, 0.5);
+            --amber: #ffb000;
+            --amber-dim: #cc8c00;
+            --red: #ff3333;
+            --cyan: #00ffff;
+            --white: #f0f0f0;
+            --gray: #333333;
+            --gray-light: #666666;
+
+            /* Tier Colors */
+            --silver-blue: #007bff;
+            --gold: #ffb700;
+            --platinum: #e5e4e2;
+
+            /* Typography */
+            --font-mono: 'Space Mono', 'IBM Plex Mono', 'Courier New', monospace;
+
+            /* Spacing */
+            --section-padding: 6rem 2rem;
+            --container-max: 1200px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-mono);
+            background-color: var(--black);
+            color: var(--matrix-green);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           GLOBAL EFFECTS
+           ═══════════════════════════════════════════════════════════════════ */
+
+        /* Scanlines Overlay */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .scanlines::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 0, 0.03) 2px,
+                rgba(0, 255, 0, 0.03) 4px
+            );
+            pointer-events: none;
+        }
+
+        /* CRT Vignette */
+        .crt-vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                transparent 60%,
+                rgba(0, 0, 0, 0.4) 100%
+            );
+        }
+
+        /* Dot Grid Background */
+        .dot-grid {
+            background-image: radial-gradient(rgba(0, 255, 0, 0.15) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Glow Effects */
+        .glow {
+            text-shadow:
+                0 0 5px var(--matrix-green),
+                0 0 10px var(--matrix-green),
+                0 0 20px var(--matrix-green),
+                0 0 40px var(--matrix-green-glow);
+        }
+
+        .glow-amber {
+            text-shadow:
+                0 0 5px var(--amber),
+                0 0 10px var(--amber),
+                0 0 20px var(--amber);
+        }
+
+        .glow-subtle {
+            text-shadow:
+                0 0 5px var(--matrix-green),
+                0 0 10px var(--matrix-green-glow);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           TYPOGRAPHY
+           ═══════════════════════════════════════════════════════════════════ */
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+        h2 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+        h3 { font-size: clamp(1.2rem, 3vw, 1.8rem); }
+
+        p {
+            font-size: 1rem;
+            max-width: 70ch;
+        }
+
+        a {
+            color: var(--matrix-green);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--amber);
+            text-shadow: 0 0 10px var(--amber);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           ANIMATIONS
+           ═══════════════════════════════════════════════════════════════════ */
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            95% { opacity: 0.9; }
+            96% { opacity: 1; }
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                transform: translate(0);
+                text-shadow: 0 0 10px var(--matrix-green);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+                text-shadow: -2px 0 var(--red), 2px 0 var(--cyan);
+            }
+            40% {
+                transform: translate(2px, -2px);
+                text-shadow: 2px 0 var(--red), -2px 0 var(--cyan);
+            }
+            60% {
+                transform: translate(-1px, 1px);
+                text-shadow: -1px 0 var(--cyan), 1px 0 var(--red);
+            }
+            80% {
+                transform: translate(1px, -1px);
+                text-shadow: 1px 0 var(--cyan), -1px 0 var(--red);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes scanline {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes matrixRain {
+            0% {
+                transform: translateY(-100%);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        .typing-animation {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid var(--matrix-green);
+            animation:
+                typing 3s steps(40) 1s forwards,
+                blink 0.75s step-end infinite;
+            width: 0;
+        }
+
+        .cursor::after {
+            content: '\2588';
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+        }
+
+        .flicker {
+            animation: flicker 5s infinite;
+        }
+
+        .glitch:hover {
+            animation: glitch 0.3s ease-in-out;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           LAYOUT COMPONENTS
+           ═══════════════════════════════════════════════════════════════════ */
+
+        .container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: var(--section-padding);
+            position: relative;
+        }
+
+        /* Terminal Window Chrome */
+        .terminal-window {
+            background: var(--dark-gray);
+            border: 1px solid var(--matrix-green);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow:
+                0 0 20px rgba(0, 255, 0, 0.1),
+                inset 0 0 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .terminal-header {
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-btn.close { background: #ff5f56; }
+        .terminal-btn.minimize { background: #ffbd2e; }
+        .terminal-btn.maximize { background: #27ca40; }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--gray-light);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .terminal-body {
+            padding: 1.5rem;
+            min-height: 200px;
+        }
+
+        /* ASCII Art Borders */
+        .ascii-border {
+            border: none;
+            position: relative;
+        }
+
+        .ascii-border::before {
+            content: '╔════════════════════════════════════════════════════════════════════╗';
+            display: block;
+            color: var(--matrix-green-dim);
+            font-size: 0.6rem;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .ascii-border::after {
+            content: '╚════════════════════════════════════════════════════════════════════╝';
+            display: block;
+            color: var(--matrix-green-dim);
+            font-size: 0.6rem;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════════════════════════════ */
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--matrix-green);
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--matrix-green);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-prefix {
+            color: var(--amber);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::before {
+            content: '> ';
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover::before {
+            opacity: 1;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--matrix-green);
+            box-shadow: 0 0 10px var(--matrix-green);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Mobile Nav Toggle */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--matrix-green);
+            transition: all 0.3s;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           HERO SECTION
+           ═══════════════════════════════════════════════════════════════════ */
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        .hero-prefix {
+            display: block;
+            font-size: 1rem;
+            color: var(--gray-light);
+            margin-bottom: 1rem;
+            letter-spacing: 0.2em;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero-title .company-name {
+            display: block;
+            color: var(--matrix-green);
+        }
+
+        .hero-tagline {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            color: var(--amber);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--gray-light);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--matrix-green);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray-light);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Matrix Rain Background */
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: 0;
+            font-size: 1rem;
+            line-height: 1.2;
+            color: var(--matrix-green);
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            animation: matrixRain 8s linear infinite;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════════════════════════════ */
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 2px solid var(--matrix-green);
+            background: transparent;
+            color: var(--matrix-green);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--matrix-green);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            color: var(--black);
+            box-shadow: 0 0 20px var(--matrix-green-glow);
+        }
+
+        .btn:hover::before {
+            left: 0;
+        }
+
+        .btn-primary {
+            background: var(--matrix-green);
+            color: var(--black);
+        }
+
+        .btn-primary::before {
+            background: var(--amber);
+        }
+
+        .btn-primary:hover {
+            border-color: var(--amber);
+            color: var(--black);
+        }
+
+        .btn-amber {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        .btn-amber::before {
+            background: var(--amber);
+        }
+
+        .btn-amber:hover {
+            color: var(--black);
+            box-shadow: 0 0 20px rgba(255, 176, 0, 0.5);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           ABOUT SECTION
+           ═══════════════════════════════════════════════════════════════════ */
+
+        .about {
+            background: var(--dark-gray);
+            position: relative;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--matrix-green), transparent);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.8rem;
+            color: var(--amber);
+            margin-bottom: 1rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            color: var(--matrix-green);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--gray-light);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .about-card {
+            padding: 2rem;
+            border: 1px solid var(--gray);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .about-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--matrix-green);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .about-card:hover {
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
+        }
+
+        .about-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .about-card h3 {
+            color: var(--matrix-green);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .about-card p {
+            color: var(--gray-light);
+            font-size: 0.95rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           SERVICES SECTION
+           ═══════════════════════════════════════════════════════════════════ */
+
+        .services {
+            position: relative;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            position: relative;
+            padding: 2rem;
+            background: var(--dark-gray);
+            border: 1px solid var(--gray);
+            transition: all 0.3s ease;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(135deg, var(--matrix-green) 0%, transparent 50%, var(--amber) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: transparent;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .service-card h3 {
+            color: var(--matrix-green);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .service-card p {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* ASCII Service Icons */
+        .ascii-icon {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            line-height: 1.2;
+            color: var(--matrix-green);
+            margin-bottom: 1rem;
+            display: block;
+            white-space: pre;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           PRICING SECTION
+           ═══════════════════════════════════════════════════════════════════ */
+
+        .pricing {
+            background: var(--dark-gray);
+            position: relative;
+        }
+
+        .pricing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--matrix-green), transparent);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .pricing-tier {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-target {
+            font-size: 0.85rem;
+            color: var(--gray-light);
+        }
+
+        /* Tier-specific colors */
+        .pricing-card.silver .pricing-tier,
+        .pricing-card.silver .pricing-name {
+            color: var(--silver-blue);
+        }
+
+        .pricing-card.silver .terminal-header {
+            border-bottom-color: var(--silver-blue);
+        }
+
+        .pricing-card.gold .pricing-tier,
+        .pricing-card.gold .pricing-name {
+            color: var(--gold);
+        }
+
+        .pricing-card.gold .terminal-header {
+            border-bottom-color: var(--gold);
+        }
+
+        .pricing-card.gold {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(255, 183, 0, 0.2);
+            transform: scale(1.02);
+        }
+
+        .pricing-card.platinum .pricing-tier,
+        .pricing-card.platinum .pricing-name {
+            color: var(--platinum);
+        }
+
+        .pricing-card.platinum .terminal-header {
+            border-bottom-color: var(--platinum);
+        }
+
+        .pricing-features {
+            padding: 2rem;
+            list-style: none;
+        }
+
+        .pricing-features li {
+            padding: 0.75rem 0;
+            font-size: 0.9rem;
+            color: var(--gray-light);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            border-bottom: 1px solid rgba(51, 51, 51, 0.5);
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features .check {
+            color: var(--matrix-green);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .pricing-cta {
+            padding: 1.5rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .pricing-cta .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Popular Badge */
+        .popular-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--gold);
+            color: var(--black);
+            padding: 0.5rem 1rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Progress Bars (Loading Bars) */
+        .progress-bar {
+            height: 8px;
+            background: var(--gray);
+            border-radius: 0;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--matrix-green);
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 100%
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--gray-light);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           CTA SECTION
+           ═══════════════════════════════════════════════════════════════════ */
+
+        .cta-section {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .cta-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-description {
+            font-size: 1.1rem;
+            color: var(--gray-light);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .cta-terminal {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .terminal-line {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .terminal-prompt {
+            color: var(--amber);
+        }
+
+        .terminal-command {
+            color: var(--matrix-green);
+        }
+
+        .terminal-output {
+            color: var(--gray-light);
+            padding-left: 1.5rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════════════════════════════ */
+
+        footer {
+            background: var(--dark-gray);
+            border-top: 1px solid var(--gray);
+            padding: 3rem 2rem;
+        }
+
+        .footer-content {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h4 {
+            color: var(--matrix-green);
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a::before {
+            content: '> ';
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover::before {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            max-width: var(--container-max);
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-copyright {
+            color: var(--gray-light);
+            font-size: 0.85rem;
+        }
+
+        .footer-ascii {
+            color: var(--matrix-green-dim);
+            font-size: 0.6rem;
+            text-align: center;
+            margin-top: 2rem;
+            opacity: 0.5;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════════════════════════════ */
+
+        @media (max-width: 768px) {
+            :root {
+                --section-padding: 4rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 10, 0.98);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1rem;
+                border-bottom: 1px solid var(--matrix-green);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.gold {
+                transform: scale(1);
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .typing-animation {
+                white-space: normal;
+                border-right: none;
+                animation: none;
+                width: auto;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           UTILITY CLASSES
+           ═══════════════════════════════════════════════════════════════════ */
+
+        .text-center { text-align: center; }
+        .text-amber { color: var(--amber); }
+        .text-green { color: var(--matrix-green); }
+        .text-muted { color: var(--gray-light); }
+        .mb-1 { margin-bottom: 1rem; }
+        .mb-2 { margin-bottom: 2rem; }
+        .mt-2 { margin-top: 2rem; }
+        .hidden { display: none; }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--matrix-green);
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body class="dot-grid">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-text">
+            <span class="glow">INITIALIZING SYSTEM</span><span class="loading-dots"></span>
+        </div>
+    </div>
+
+    <!-- Scanlines Overlay -->
+    <div class="scanlines"></div>
+
+    <!-- CRT Vignette -->
+    <div class="crt-vignette"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo glow-subtle">
+                <span class="logo-prefix">[</span>405Network<span class="logo-prefix">]</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="matrix-rain" id="matrixRain"></div>
+        <div class="hero-content">
+            <span class="hero-prefix">// SYSTEM READY</span>
+            <h1 class="hero-title flicker">
+                <span class="company-name glow">405NETWORK</span>
+            </h1>
+            <p class="hero-tagline glow-amber typing-animation">
+                Information Technology, Reimagined_
+            </p>
+            <p class="hero-description">
+                Let 405Network be your Chief Technology Officer, Cloud Architect,
+                Infrastructure Expert, and AI Specialist. Orange County's trusted
+                technology partner since 2011.
+            </p>
+            <div class="hero-cta">
+                <a href="#pricing" class="btn btn-primary">
+                    <span>./view_plans.sh</span>
+                </a>
+                <a href="#contact" class="btn btn-amber">
+                    <span>./contact_us.sh</span>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value glow">25+</span>
+                    <span class="stat-label">Years Combined Experience</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value glow">2011</span>
+                    <span class="stat-label">Established</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value glow">SMB</span>
+                    <span class="stat-label">Focused</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">// cat about.txt</span>
+                <h2 class="section-title glow-subtle glitch">WHO WE ARE</h2>
+                <p class="section-subtitle">
+                    A managed service provider delivering enterprise-grade IT solutions
+                    to small and medium businesses in Orange County, CA.
+                </p>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card terminal-window">
+                    <div class="terminal-header">
+                        <span class="terminal-btn close"></span>
+                        <span class="terminal-btn minimize"></span>
+                        <span class="terminal-btn maximize"></span>
+                        <span class="terminal-title">mission.sh</span>
+                    </div>
+                    <div class="terminal-body">
+                        <h3>$ OUR_MISSION</h3>
+                        <p>
+                            We offer comprehensive IT support plans tailored to meet the
+                            unique needs of your business. Our mission is to be the technology
+                            backbone that powers your success.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="about-card terminal-window">
+                    <div class="terminal-header">
+                        <span class="terminal-btn close"></span>
+                        <span class="terminal-btn minimize"></span>
+                        <span class="terminal-btn maximize"></span>
+                        <span class="terminal-title">approach.sh</span>
+                    </div>
+                    <div class="terminal-body">
+                        <h3>$ OUR_APPROACH</h3>
+                        <p>
+                            We act as your virtual CTO, handling everything from cloud
+                            infrastructure to AI integration. Focus on your business while
+                            we handle the technology complexity.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="about-card terminal-window">
+                    <div class="terminal-header">
+                        <span class="terminal-btn close"></span>
+                        <span class="terminal-btn minimize"></span>
+                        <span class="terminal-btn maximize"></span>
+                        <span class="terminal-title">expertise.sh</span>
+                    </div>
+                    <div class="terminal-body">
+                        <h3>$ EXPERTISE_LEVEL</h3>
+                        <p>
+                            With 25+ years of combined IT expertise, our team brings
+                            enterprise knowledge to SMB budgets. Local Orange County
+                            presence with global technology reach.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">// ls -la /services</span>
+                <h2 class="section-title glow-subtle glitch">WHAT WE DO</h2>
+                <p class="section-subtitle">
+                    Comprehensive managed IT services designed to keep your
+                    business running smoothly 24/7/365.
+                </p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <span class="ascii-icon">
+ [====]
+ |    |
+ |SMS |
+ [====]</span>
+                    <h3>Support & Communication</h3>
+                    <p>
+                        Text-based support from technical experts. Seamless Slack and
+                        Microsoft Teams integration for real-time collaboration and
+                        instant issue resolution.
+                    </p>
+                </div>
+
+                <div class="service-card">
+                    <span class="ascii-icon">
+  _____
+ |     |
+ |  W  |
+ |_____|</span>
+                    <h3>Windows Management</h3>
+                    <p>
+                        Complete Windows device management and optimization. From
+                        deployment to maintenance, we handle your Windows infrastructure
+                        with precision.
+                    </p>
+                </div>
+
+                <div class="service-card">
+                    <span class="ascii-icon">
+  .---.
+ /     \
+|  MAC  |
+ \_____/</span>
+                    <h3>macOS Management</h3>
+                    <p>
+                        Expert macOS device management for creative and professional
+                        environments. Keep your Apple ecosystem running at peak
+                        performance.
+                    </p>
+                </div>
+
+                <div class="service-card">
+                    <span class="ascii-icon">
+   [G]
+  /   \
+ |Suite|
+  \___/ </span>
+                    <h3>G-Suite Administration</h3>
+                    <p>
+                        Full Google Workspace administration and support. User management,
+                        security policies, and seamless collaboration tools configuration.
+                    </p>
+                </div>
+
+                <div class="service-card">
+                    <span class="ascii-icon">
+  /===\
+ | AZR |
+ |DevOp|
+  \===/</span>
+                    <h3>Azure & DevOps</h3>
+                    <p>
+                        Microsoft Azure cloud services and DevOps implementation.
+                        Infrastructure as code, CI/CD pipelines, and cloud-native
+                        architecture.
+                    </p>
+                </div>
+
+                <div class="service-card">
+                    <span class="ascii-icon">
+ [#####]
+ |     |
+ |SRV01|
+ [=====]</span>
+                    <h3>Server Optimization</h3>
+                    <p>
+                        Server performance optimization and maintenance. Proactive
+                        monitoring, resource management, and capacity planning for
+                        your infrastructure.
+                    </p>
+                </div>
+
+                <div class="service-card">
+                    <span class="ascii-icon">
+  o---o
+ /     \
+o NETW  o
+ \_____/</span>
+                    <h3>Network Monitoring</h3>
+                    <p>
+                        24/7 network monitoring and management. Detect issues before
+                        they impact your business with real-time alerts and automated
+                        remediation.
+                    </p>
+                </div>
+
+                <div class="service-card">
+                    <span class="ascii-icon">
+  [AI]
+ /    \
+|SMART |
+ \____/</span>
+                    <h3>AI Integration</h3>
+                    <p>
+                        Strategic AI implementation for business automation. Leverage
+                        cutting-edge artificial intelligence to streamline operations
+                        and gain competitive advantage.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">// cat pricing.json</span>
+                <h2 class="section-title glow-subtle glitch">PRICING TIERS</h2>
+                <p class="section-subtitle">
+                    Simple, transparent pricing. Choose the plan that fits your
+                    business needs.
+                </p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Silver Plan -->
+                <div class="pricing-card silver terminal-window">
+                    <div class="terminal-header">
+                        <span class="terminal-btn close"></span>
+                        <span class="terminal-btn minimize"></span>
+                        <span class="terminal-btn maximize"></span>
+                        <span class="terminal-title">silver_plan.cfg</span>
+                    </div>
+                    <div class="pricing-header">
+                        <span class="pricing-tier">Tier 01</span>
+                        <h3 class="pricing-name">SILVER</h3>
+                        <span class="pricing-target">Small businesses with essential IT needs</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Remote Monitoring & Management (RMM)</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Help Desk Support</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Patch Management</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Antivirus & Anti-malware Protection</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Basic Backup & Disaster Recovery</span>
+                        </li>
+                    </ul>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 33%;"></div>
+                    </div>
+                    <div class="pricing-cta">
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeBRCLx9K78KhcanobwXIDd9fmf3AgdXb6NbJpk-oio46CU_g/viewform"
+                           class="btn" target="_blank" rel="noopener">
+                            ./learn_more.sh
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Gold Plan -->
+                <div class="pricing-card gold terminal-window">
+                    <span class="popular-badge">RECOMMENDED</span>
+                    <div class="terminal-header">
+                        <span class="terminal-btn close"></span>
+                        <span class="terminal-btn minimize"></span>
+                        <span class="terminal-btn maximize"></span>
+                        <span class="terminal-title">gold_plan.cfg</span>
+                    </div>
+                    <div class="pricing-header">
+                        <span class="pricing-tier">Tier 02</span>
+                        <h3 class="pricing-name">GOLD</h3>
+                        <span class="pricing-target">Medium businesses needing advanced support</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>All Silver Plan Services</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Extended Help Desk Support (12x5)</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Bi-weekly Patch Management</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Advanced Threat Detection</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Comprehensive Backup & Disaster Recovery</span>
+                        </li>
+                    </ul>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 66%; background: var(--gold);"></div>
+                    </div>
+                    <div class="pricing-cta">
+                        <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill"
+                           class="btn btn-amber" target="_blank" rel="noopener">
+                            ./learn_more.sh
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Platinum Plan -->
+                <div class="pricing-card platinum terminal-window">
+                    <div class="terminal-header">
+                        <span class="terminal-btn close"></span>
+                        <span class="terminal-btn minimize"></span>
+                        <span class="terminal-btn maximize"></span>
+                        <span class="terminal-title">platinum_plan.cfg</span>
+                    </div>
+                    <div class="pricing-header">
+                        <span class="pricing-tier">Tier 03</span>
+                        <h3 class="pricing-name">PLATINUM</h3>
+                        <span class="pricing-target">Large businesses with complex IT needs</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>All Gold Plan Services</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>24x7 Help Desk Support</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Weekly Patch Management</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Full Suite Security Solutions</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Advanced Business Continuity</span>
+                        </li>
+                        <li>
+                            <span class="check">[+]</span>
+                            <span>Strategic IT Consulting</span>
+                        </li>
+                    </ul>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%; background: var(--platinum);"></div>
+                    </div>
+                    <div class="pricing-cta">
+                        <a href="https://docs.google.com/forms/d/1QTDIVDihcClO4fauoLUmUKPQvABHGS5RqsEDi3f6aTw/prefill"
+                           class="btn" target="_blank" rel="noopener">
+                            ./learn_more.sh
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <div class="cta-content">
+                <div class="section-header">
+                    <span class="section-label">// sudo ./connect.sh</span>
+                    <h2 class="cta-title glow glitch">READY TO UPGRADE?</h2>
+                    <p class="cta-description">
+                        Let's discuss how 405Network can transform your IT infrastructure
+                        and become your trusted technology partner.
+                    </p>
+                </div>
+
+                <div class="cta-terminal terminal-window">
+                    <div class="terminal-header">
+                        <span class="terminal-btn close"></span>
+                        <span class="terminal-btn minimize"></span>
+                        <span class="terminal-btn maximize"></span>
+                        <span class="terminal-title">connect@405network ~ </span>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">$</span>
+                            <span class="terminal-command">./get_started.sh --location="Orange County, CA"</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">> Initializing connection...</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">> 405Network team ready to assist</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">> 25+ years of IT expertise available</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">$</span>
+                            <span class="terminal-command cursor">_</span>
+                        </div>
+                        <div class="mt-2" style="text-align: center;">
+                            <a href="mailto:contact@405network.com" class="btn btn-primary">
+                                ./send_message.sh
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>// 405NETWORK INC.</h4>
+                <p>
+                    Information Technology, Reimagined.<br>
+                    Your trusted MSP partner in Orange County, CA.<br>
+                    Established 2011.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h4>// QUICK_LINKS</h4>
+                <ul class="footer-links">
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>// SERVICES</h4>
+                <ul class="footer-links">
+                    <li><a href="#services">Device Management</a></li>
+                    <li><a href="#services">Cloud Services</a></li>
+                    <li><a href="#services">Network Monitoring</a></li>
+                    <li><a href="#services">Security Solutions</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>// LOCATION</h4>
+                <p>
+                    Orange County, CA<br>
+                    United States<br><br>
+                    <a href="mailto:contact@405network.com" class="text-green">
+                        contact@405network.com
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-copyright">
+                <span class="text-green">&copy; 2024</span> 405Network Inc. All rights reserved.
+            </p>
+            <p class="text-muted" style="font-size: 0.8rem;">
+                // Powered by technology. Driven by results.
+            </p>
+        </div>
+
+        <pre class="footer-ascii">
+ _____ _____ _____   _   _      _                      _
+|  |  |     |   __| | \ | | ___| |___      _____  _ __| | __
+|  |  |  |  |__   | |  \| |/ _ \ __\ \ /\ / / _ \| '__| |/ /
+|_____|_____|_____| | |\  |  __/ |_ \ V  V / (_) | |  |   <
+                    |_| \_|\___|\__| \_/\_/ \___/|_|  |_|\_\
+        </pre>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Loading Screen
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1500);
+        });
+
+        // Mobile Navigation Toggle
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        navToggle.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+            // Animate hamburger
+            this.classList.toggle('active');
+        });
+
+        // Close mobile nav on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                navToggle.classList.remove('active');
+            });
+        });
+
+        // Matrix Rain Effect
+        function createMatrixRain() {
+            const container = document.getElementById('matrixRain');
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            const columns = Math.floor(window.innerWidth / 20);
+
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = (i * 20) + 'px';
+                column.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                column.style.animationDelay = (Math.random() * 5) + 's';
+
+                let text = '';
+                for (let j = 0; j < 50; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '\n';
+                }
+                column.textContent = text;
+                container.appendChild(column);
+            }
+        }
+
+        createMatrixRain();
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.about-card, .service-card, .pricing-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Typing effect for tagline
+        const tagline = document.querySelector('.typing-animation');
+        if (tagline) {
+            // Trigger animation after page load
+            setTimeout(() => {
+                tagline.style.width = '100%';
+            }, 500);
+        }
+
+        // Random glitch effect on hover elements
+        document.querySelectorAll('.glitch').forEach(el => {
+            el.addEventListener('mouseenter', function() {
+                this.style.animation = 'glitch 0.3s ease-in-out';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 300);
+            });
+        });
+
+        // Progress bar animation on scroll
+        const progressBars = document.querySelectorAll('.progress-fill');
+        const progressObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const width = entry.target.style.width;
+                    entry.target.style.width = '0';
+                    setTimeout(() => {
+                        entry.target.style.width = width;
+                    }, 200);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        progressBars.forEach(bar => progressObserver.observe(bar));
+
+        // Console Easter Egg
+        console.log('%c405NETWORK', 'color: #00ff00; font-size: 24px; font-weight: bold; text-shadow: 0 0 10px #00ff00;');
+        console.log('%cInformation Technology, Reimagined', 'color: #ffb000; font-size: 14px;');
+        console.log('%c// Welcome, fellow developer. Looking for a job? Get in touch.', 'color: #666; font-size: 12px;');
+    </script>
+</body>
+</html>

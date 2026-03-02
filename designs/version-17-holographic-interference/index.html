@@ -1,0 +1,2732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405Network Inc. | Information Technology, Reimagined</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --bg-base: #0a0a0a;
+            --bg-dark: #050505;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-dim: rgba(255, 255, 255, 0.4);
+
+            /* Holographic spectrum colors */
+            --holo-red: #ff3366;
+            --holo-orange: #ff6633;
+            --holo-yellow: #ffcc00;
+            --holo-green: #33ff66;
+            --holo-cyan: #00ffcc;
+            --holo-blue: #3366ff;
+            --holo-purple: #9933ff;
+            --holo-magenta: #ff33cc;
+
+            /* Iridescent gradients */
+            --gradient-holo-1: linear-gradient(135deg, var(--holo-cyan), var(--holo-purple), var(--holo-magenta));
+            --gradient-holo-2: linear-gradient(45deg, var(--holo-yellow), var(--holo-green), var(--holo-cyan));
+            --gradient-holo-3: linear-gradient(225deg, var(--holo-red), var(--holo-orange), var(--holo-yellow));
+
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Exo 2', sans-serif;
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-base);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Holographic Cursor */
+        .cursor-holo {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: screen;
+            transition: transform 0.1s ease-out;
+        }
+
+        .cursor-holo::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: conic-gradient(from 0deg,
+                var(--holo-red),
+                var(--holo-orange),
+                var(--holo-yellow),
+                var(--holo-green),
+                var(--holo-cyan),
+                var(--holo-blue),
+                var(--holo-purple),
+                var(--holo-magenta),
+                var(--holo-red)
+            ) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: cursorRotate 2s linear infinite;
+        }
+
+        .cursor-holo::after {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+        }
+
+        @keyframes cursorRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* WebGL Canvas */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Holographic Overlay Effects */
+        .holo-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.015) 2px,
+                    rgba(255, 255, 255, 0.015) 4px
+                );
+            animation: scanlineMove 8s linear infinite;
+        }
+
+        .holo-overlay::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(255, 51, 102, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(0, 255, 204, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(153, 51, 255, 0.03) 0%, transparent 60%);
+            animation: holoShift 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes scanlineMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100px; }
+        }
+
+        @keyframes holoShift {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Glitch Line Effect */
+        .glitch-line {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--holo-cyan) 20%,
+                var(--holo-magenta) 50%,
+                var(--holo-yellow) 80%,
+                transparent 100%
+            );
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Main Content Container */
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(10, 10, 10, 0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-logo-icon {
+            width: 50px;
+            height: 50px;
+            position: relative;
+        }
+
+        .nav-logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-logo-text {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            background: linear-gradient(90deg, var(--holo-cyan), var(--holo-purple), var(--holo-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: holoTextShift 4s ease-in-out infinite;
+        }
+
+        @keyframes holoTextShift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(60deg); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            text-decoration: none;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--holo-cyan), var(--holo-magenta));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s var(--ease-out-expo);
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-link:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .nav-cta {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-primary);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .nav-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 0;
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, var(--holo-cyan), var(--holo-purple), var(--holo-magenta)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .nav-cta::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--holo-cyan), var(--holo-purple), var(--holo-magenta));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .nav-cta span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-cta:hover::after {
+            opacity: 0.2;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 4rem 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 1200px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--holo-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .hero-title-main {
+            display: block;
+            position: relative;
+        }
+
+        .hero-title-main .char {
+            display: inline-block;
+            position: relative;
+            color: transparent;
+            background: linear-gradient(
+                135deg,
+                var(--holo-red) 0%,
+                var(--holo-orange) 14%,
+                var(--holo-yellow) 28%,
+                var(--holo-green) 42%,
+                var(--holo-cyan) 57%,
+                var(--holo-blue) 71%,
+                var(--holo-purple) 85%,
+                var(--holo-magenta) 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: holoCharShift 3s ease-in-out infinite;
+            animation-delay: calc(var(--char-index) * 0.1s);
+        }
+
+        @keyframes holoCharShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-title-sub {
+            display: block;
+            font-size: 0.35em;
+            font-weight: 400;
+            font-family: var(--font-body);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        .hero-tagline {
+            font-family: var(--font-body);
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            font-weight: 300;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+
+        .hero-tagline em {
+            font-style: normal;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .hero-tagline em::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--holo-cyan), var(--holo-magenta));
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 1.25rem 2.5rem;
+            border: none;
+            cursor: none;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--holo-cyan), var(--holo-purple));
+            color: var(--bg-base);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--holo-purple), var(--holo-magenta));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .btn-primary span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 10px 40px rgba(0, 255, 204, 0.3),
+                0 0 60px rgba(153, 51, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid transparent;
+            position: relative;
+        }
+
+        .btn-secondary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, var(--holo-cyan), var(--holo-purple)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 255, 204, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .hero-scroll-indicator {
+            position: absolute;
+            bottom: 4rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hero-scroll-text {
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .hero-scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(180deg, var(--holo-cyan), transparent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-scroll-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, var(--holo-magenta), transparent);
+            animation: scrollLine 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollLine {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+
+        /* Holographic Decorative Elements */
+        .holo-prism {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .holo-prism-1 {
+            top: 15%;
+            left: 5%;
+            width: 200px;
+            height: 200px;
+            background: conic-gradient(from 0deg at 50% 50%,
+                var(--holo-red),
+                var(--holo-orange),
+                var(--holo-yellow),
+                var(--holo-green),
+                var(--holo-cyan),
+                var(--holo-blue),
+                var(--holo-purple),
+                var(--holo-magenta),
+                var(--holo-red)
+            );
+            opacity: 0.1;
+            filter: blur(60px);
+            animation: prismRotate 20s linear infinite;
+        }
+
+        .holo-prism-2 {
+            bottom: 20%;
+            right: 10%;
+            width: 300px;
+            height: 300px;
+            background: conic-gradient(from 180deg at 50% 50%,
+                var(--holo-cyan),
+                var(--holo-blue),
+                var(--holo-purple),
+                var(--holo-magenta),
+                var(--holo-red),
+                var(--holo-orange),
+                var(--holo-yellow),
+                var(--holo-green),
+                var(--holo-cyan)
+            );
+            opacity: 0.1;
+            filter: blur(80px);
+            animation: prismRotate 25s linear infinite reverse;
+        }
+
+        @keyframes prismRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Services Section */
+        .services {
+            padding: 10rem 4rem;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 6rem;
+        }
+
+        .section-label {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--holo-cyan);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .section-label::before,
+        .section-label::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--holo-cyan));
+        }
+
+        .section-label::after {
+            background: linear-gradient(90deg, var(--holo-cyan), transparent);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title .highlight {
+            background: linear-gradient(90deg, var(--holo-cyan), var(--holo-purple), var(--holo-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            position: relative;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s var(--ease-out-expo);
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(0, 255, 204, 0.1) 0%,
+                rgba(153, 51, 255, 0.05) 50%,
+                rgba(255, 51, 204, 0.1) 100%
+            );
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--holo-cyan), var(--holo-purple), var(--holo-magenta));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--ease-out-expo);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 255, 204, 0.2);
+            box-shadow:
+                0 20px 60px rgba(0, 255, 204, 0.1),
+                0 0 40px rgba(153, 51, 255, 0.05);
+        }
+
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .service-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: url(#holoGradient);
+            stroke-width: 1.5;
+            fill: none;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 204, 0.3));
+        }
+
+        .service-number {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .service-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .service-description {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .service-features {
+            list-style: none;
+        }
+
+        .service-features li {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            padding: 0.5rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .service-features li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(135deg, var(--holo-cyan), var(--holo-purple));
+            transform: rotate(45deg);
+        }
+
+        /* Holographic Divider */
+        .holo-divider {
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                var(--holo-cyan) 20%,
+                var(--holo-purple) 50%,
+                var(--holo-magenta) 80%,
+                transparent
+            );
+            margin: 0 4rem;
+            position: relative;
+        }
+
+        .holo-divider::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: conic-gradient(from 0deg,
+                var(--holo-red),
+                var(--holo-orange),
+                var(--holo-yellow),
+                var(--holo-green),
+                var(--holo-cyan),
+                var(--holo-blue),
+                var(--holo-purple),
+                var(--holo-magenta),
+                var(--holo-red)
+            );
+            border-radius: 50%;
+            animation: prismRotate 3s linear infinite;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 10rem 4rem;
+            position: relative;
+            background: linear-gradient(180deg, var(--bg-base) 0%, var(--bg-dark) 50%, var(--bg-base) 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .pricing-card {
+            position: relative;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.6s var(--ease-out-expo);
+            transform-style: preserve-3d;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(0, 255, 204, 0.2) 25%,
+                rgba(153, 51, 255, 0.2) 50%,
+                rgba(255, 51, 204, 0.2) 75%,
+                transparent 100%
+            );
+            background-size: 400% 400%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            animation: holoShine 3s ease-in-out infinite;
+        }
+
+        @keyframes holoShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-15px) rotateX(5deg);
+            box-shadow:
+                0 30px 80px rgba(0, 255, 204, 0.15),
+                0 0 60px rgba(153, 51, 255, 0.1);
+        }
+
+        .pricing-card.featured {
+            background: rgba(0, 255, 204, 0.03);
+            border-color: rgba(0, 255, 204, 0.2);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-15px) rotateX(5deg);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, var(--holo-cyan), var(--holo-purple));
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--bg-base);
+        }
+
+        .pricing-tier {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-card:nth-child(1) .pricing-tier { color: #c0c0c0; }
+        .pricing-card:nth-child(2) .pricing-tier { color: #ffd700; }
+        .pricing-card:nth-child(3) .pricing-tier {
+            background: linear-gradient(90deg, #e5e4e2, #c0c0c0, #e5e4e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-currency {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .pricing-amount {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(180deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pricing-period {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+
+        .pricing-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .pricing-features li svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .pricing-features li svg.check {
+            stroke: var(--holo-green);
+        }
+
+        .pricing-features li svg.minus {
+            stroke: var(--text-dim);
+        }
+
+        .pricing-cta {
+            width: 100%;
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 1.25rem 2rem;
+            border: none;
+            cursor: none;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .pricing-card:nth-child(1) .pricing-cta {
+            background: transparent;
+            color: #c0c0c0;
+            border: 1px solid #c0c0c0;
+        }
+
+        .pricing-card:nth-child(2) .pricing-cta {
+            background: linear-gradient(135deg, #ffd700, #ffb700);
+            color: var(--bg-base);
+        }
+
+        .pricing-card:nth-child(3) .pricing-cta {
+            background: linear-gradient(135deg, #e5e4e2, #c0c0c0);
+            color: var(--bg-base);
+        }
+
+        .pricing-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 6rem 4rem;
+            background: linear-gradient(
+                90deg,
+                rgba(0, 255, 204, 0.03) 0%,
+                rgba(153, 51, 255, 0.03) 50%,
+                rgba(255, 51, 204, 0.03) 100%
+            );
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 60%;
+            background: linear-gradient(180deg, transparent, rgba(0, 255, 204, 0.3), transparent);
+        }
+
+        .stat-item:last-child::after {
+            display: none;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--holo-cyan), var(--holo-purple), var(--holo-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 10rem 4rem;
+            position: relative;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-info h3 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--text-primary), var(--holo-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-info p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 3rem;
+        }
+
+        .contact-details {
+            list-style: none;
+        }
+
+        .contact-details li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .contact-details li svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--holo-cyan);
+            flex-shrink: 0;
+        }
+
+        .contact-details li span {
+            color: var(--text-secondary);
+        }
+
+        .contact-form {
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--holo-cyan);
+            background: rgba(0, 255, 204, 0.03);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            width: 100%;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 1.25rem 2rem;
+            background: linear-gradient(135deg, var(--holo-cyan), var(--holo-purple));
+            border: none;
+            color: var(--bg-base);
+            cursor: none;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .form-submit:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 10px 40px rgba(0, 255, 204, 0.3),
+                0 0 60px rgba(153, 51, 255, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--bg-dark);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            background: linear-gradient(90deg, var(--holo-cyan), var(--holo-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-copyright {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .footer-links a {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--holo-cyan);
+        }
+
+        /* RGB Chromatic Aberration Effect */
+        .chromatic-text {
+            position: relative;
+        }
+
+        .chromatic-text::before,
+        .chromatic-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        .chromatic-text::before {
+            color: var(--holo-red);
+            transform: translate(-2px, 0);
+            mix-blend-mode: screen;
+            animation: chromaticR 4s ease-in-out infinite;
+        }
+
+        .chromatic-text::after {
+            color: var(--holo-cyan);
+            transform: translate(2px, 0);
+            mix-blend-mode: screen;
+            animation: chromaticB 4s ease-in-out infinite reverse;
+        }
+
+        @keyframes chromaticR {
+            0%, 100% { transform: translate(-2px, 0); }
+            33% { transform: translate(-3px, 1px); }
+            66% { transform: translate(-1px, -1px); }
+        }
+
+        @keyframes chromaticB {
+            0%, 100% { transform: translate(2px, 0); }
+            33% { transform: translate(3px, -1px); }
+            66% { transform: translate(1px, 1px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .nav {
+                padding: 1rem 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 6rem 2rem 4rem;
+            }
+
+            .services,
+            .pricing,
+            .contact {
+                padding: 6rem 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item::after {
+                display: none;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 2rem;
+                text-align: center;
+            }
+
+            .cursor-holo,
+            .cursor-trail {
+                display: none;
+            }
+
+            body {
+                cursor: auto;
+            }
+        }
+
+        /* Loading Screen */
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-base);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .loader-prism {
+            width: 100px;
+            height: 100px;
+            background: conic-gradient(from 0deg,
+                var(--holo-red),
+                var(--holo-orange),
+                var(--holo-yellow),
+                var(--holo-green),
+                var(--holo-cyan),
+                var(--holo-blue),
+                var(--holo-purple),
+                var(--holo-magenta),
+                var(--holo-red)
+            );
+            animation: prismRotate 1s linear infinite;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        .loader-text {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            letter-spacing: 0.3em;
+            color: var(--text-secondary);
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--holo-cyan), var(--holo-magenta));
+            animation: loadProgress 2s ease-out forwards;
+        }
+
+        @keyframes loadProgress {
+            to { width: 100%; }
+        }
+
+        /* Glitch Effect for Hover */
+        .glitch-hover {
+            position: relative;
+        }
+
+        .glitch-hover:hover {
+            animation: glitch 0.3s ease-in-out;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-2px, 2px); }
+            20% { transform: translate(2px, -2px); }
+            30% { transform: translate(-2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            50% { transform: translate(-2px, 2px); }
+            60% { transform: translate(2px, -2px); }
+            70% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+            90% { transform: translate(-2px, 2px); }
+        }
+
+        /* Holographic Card Shine Effect */
+        .holo-card-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .holo-card-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 40%,
+                rgba(255, 255, 255, 0.1) 45%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.1) 55%,
+                transparent 60%
+            );
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .holo-card-shine:hover::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-prism"></div>
+        <div class="loader-text">INITIALIZING HOLOGRAPHICS</div>
+        <div class="loader-bar"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-holo" id="cursor"></div>
+    <div class="cursor-trail" id="trail-1"></div>
+    <div class="cursor-trail" id="trail-2"></div>
+    <div class="cursor-trail" id="trail-3"></div>
+    <div class="cursor-trail" id="trail-4"></div>
+    <div class="cursor-trail" id="trail-5"></div>
+
+    <!-- Glitch Line -->
+    <div class="glitch-line" id="glitchLine"></div>
+
+    <!-- WebGL Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Holographic Overlay -->
+    <div class="holo-overlay"></div>
+
+    <!-- SVG Gradients for Icons -->
+    <svg width="0" height="0" style="position: absolute;">
+        <defs>
+            <linearGradient id="holoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#00ffcc;stop-opacity:1">
+                    <animate attributeName="stop-color" values="#00ffcc;#9933ff;#ff33cc;#00ffcc" dur="4s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="50%" style="stop-color:#9933ff;stop-opacity:1">
+                    <animate attributeName="stop-color" values="#9933ff;#ff33cc;#00ffcc;#9933ff" dur="4s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" style="stop-color:#ff33cc;stop-opacity:1">
+                    <animate attributeName="stop-color" values="#ff33cc;#00ffcc;#9933ff;#ff33cc" dur="4s" repeatCount="indefinite"/>
+                </stop>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="nav-logo">
+                <div class="nav-logo-icon">
+                    <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M25 5L45 15V35L25 45L5 35V15L25 5Z" stroke="url(#holoGradient)" stroke-width="2"/>
+                        <path d="M25 5V45M5 15L45 35M45 15L5 35" stroke="url(#holoGradient)" stroke-width="1" opacity="0.5"/>
+                        <circle cx="25" cy="25" r="8" stroke="url(#holoGradient)" stroke-width="2"/>
+                    </svg>
+                </div>
+                <span class="nav-logo-text">405NETWORK</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#services" class="nav-link">Services</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <a href="#contact" class="nav-cta glitch-hover">
+                <span>Get Started</span>
+            </a>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="holo-prism holo-prism-1"></div>
+            <div class="holo-prism holo-prism-2"></div>
+
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="hero-badge-dot"></span>
+                    <span>Orange County, CA | Est. 2011</span>
+                </div>
+
+                <h1 class="hero-title">
+                    <span class="hero-title-main" id="heroTitle">
+                        <!-- Characters will be injected by JS -->
+                    </span>
+                    <span class="hero-title-sub">Information Technology</span>
+                </h1>
+
+                <p class="hero-tagline">
+                    Transform your business with <em>next-generation</em> IT solutions.
+                    We make technology work seamlessly so you can focus on what matters.
+                </p>
+
+                <div class="hero-cta-group">
+                    <a href="#pricing" class="btn btn-primary">
+                        <span>View Plans</span>
+                    </a>
+                    <a href="#services" class="btn btn-secondary">
+                        <span>Explore Services</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-scroll-indicator">
+                <span class="hero-scroll-text">Scroll</span>
+                <div class="hero-scroll-line"></div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section class="services" id="services">
+            <div class="section-header">
+                <div class="section-label">What We Offer</div>
+                <h2 class="section-title">
+                    Enterprise-Grade <span class="highlight">Solutions</span>
+                </h2>
+                <p class="section-description">
+                    Comprehensive IT services designed to elevate your business infrastructure
+                    with cutting-edge technology and unparalleled support.
+                </p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card holo-card-shine">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M35 10C21.2 10 10 21.2 10 35s11.2 25 25 25 25-11.2 25-25S48.8 10 35 10z"/>
+                            <path d="M35 20v30M20 35h30"/>
+                            <circle cx="35" cy="35" r="8"/>
+                            <path d="M25 25l20 20M45 25l-20 20"/>
+                        </svg>
+                    </div>
+                    <div class="service-number">01</div>
+                    <h3 class="service-title">Support & Communication</h3>
+                    <p class="service-description">
+                        24/7 technical support with rapid response times. Our expert team ensures
+                        your systems stay operational and your team stays connected.
+                    </p>
+                    <ul class="service-features">
+                        <li>Live chat & phone support</li>
+                        <li>Remote diagnostics</li>
+                        <li>Priority escalation</li>
+                        <li>Team collaboration tools</li>
+                    </ul>
+                </div>
+
+                <div class="service-card holo-card-shine">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="15" y="20" width="40" height="30" rx="3"/>
+                            <rect x="25" y="50" width="20" height="8" rx="1"/>
+                            <rect x="20" y="58" width="30" height="2"/>
+                            <circle cx="35" cy="35" r="5"/>
+                            <path d="M28 32h-5M47 32h-5M28 38h-5M47 38h-5"/>
+                        </svg>
+                    </div>
+                    <div class="service-number">02</div>
+                    <h3 class="service-title">Device Management</h3>
+                    <p class="service-description">
+                        Centralized control over all your devices. From deployment to retirement,
+                        we handle the complete lifecycle of your hardware assets.
+                    </p>
+                    <ul class="service-features">
+                        <li>MDM solutions</li>
+                        <li>Asset tracking</li>
+                        <li>Security patching</li>
+                        <li>Hardware procurement</li>
+                    </ul>
+                </div>
+
+                <div class="service-card holo-card-shine">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="35" cy="20" rx="20" ry="8"/>
+                            <path d="M15 20v30c0 4.4 9 8 20 8s20-3.6 20-8V20"/>
+                            <ellipse cx="35" cy="35" rx="20" ry="8"/>
+                            <ellipse cx="35" cy="50" rx="20" ry="8"/>
+                        </svg>
+                    </div>
+                    <div class="service-number">03</div>
+                    <h3 class="service-title">Cloud & Admin</h3>
+                    <p class="service-description">
+                        Seamless cloud migration and administration. Leverage the power of
+                        modern cloud infrastructure with expert management.
+                    </p>
+                    <ul class="service-features">
+                        <li>Cloud migration</li>
+                        <li>Microsoft 365 admin</li>
+                        <li>Google Workspace</li>
+                        <li>Backup solutions</li>
+                    </ul>
+                </div>
+
+                <div class="service-card holo-card-shine">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="25" width="15" height="30" rx="2"/>
+                            <rect x="27.5" y="15" width="15" height="40" rx="2"/>
+                            <rect x="45" y="20" width="15" height="35" rx="2"/>
+                            <path d="M17.5 35v10M35 25v20M52.5 30v15"/>
+                            <circle cx="17.5" cy="32" r="3"/>
+                            <circle cx="35" cy="22" r="3"/>
+                            <circle cx="52.5" cy="27" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="service-number">04</div>
+                    <h3 class="service-title">Infrastructure</h3>
+                    <p class="service-description">
+                        Robust infrastructure design and implementation. Build a foundation
+                        that scales with your business and withstands any challenge.
+                    </p>
+                    <ul class="service-features">
+                        <li>Network architecture</li>
+                        <li>Server management</li>
+                        <li>Security hardening</li>
+                        <li>Disaster recovery</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Holographic Divider -->
+        <div class="holo-divider"></div>
+
+        <!-- Pricing Section -->
+        <section class="pricing" id="pricing">
+            <div class="section-header">
+                <div class="section-label">Transparent Pricing</div>
+                <h2 class="section-title">
+                    Choose Your <span class="highlight">Plan</span>
+                </h2>
+                <p class="section-description">
+                    Flexible pricing designed to match your business needs.
+                    All plans include our core features with varying levels of support.
+                </p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card holo-card-shine">
+                    <div class="pricing-tier">Silver</div>
+                    <div class="pricing-price">
+                        <span class="pricing-currency">$</span>
+                        <span class="pricing-amount">49</span>
+                    </div>
+                    <div class="pricing-period">per user / month</div>
+                    <p class="pricing-description">
+                        Essential IT support for small teams starting their technology journey.
+                    </p>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Business hours support
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Email & chat assistance
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Basic device management
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Cloud app support
+                        </li>
+                        <li>
+                            <svg class="minus" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="4" y1="10" x2="16" y2="10"/>
+                            </svg>
+                            24/7 emergency support
+                        </li>
+                        <li>
+                            <svg class="minus" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="4" y1="10" x2="16" y2="10"/>
+                            </svg>
+                            Dedicated account manager
+                        </li>
+                    </ul>
+                    <a href="#contact" class="pricing-cta">Get Started</a>
+                </div>
+
+                <div class="pricing-card featured holo-card-shine">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-tier">Gold</div>
+                    <div class="pricing-price">
+                        <span class="pricing-currency">$</span>
+                        <span class="pricing-amount">79</span>
+                    </div>
+                    <div class="pricing-period">per user / month</div>
+                    <p class="pricing-description">
+                        Comprehensive coverage for growing businesses demanding excellence.
+                    </p>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            24/7 priority support
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Phone, email & chat
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Advanced MDM
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Full cloud administration
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Network monitoring
+                        </li>
+                        <li>
+                            <svg class="minus" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="4" y1="10" x2="16" y2="10"/>
+                            </svg>
+                            On-site visits
+                        </li>
+                    </ul>
+                    <a href="#contact" class="pricing-cta">Get Started</a>
+                </div>
+
+                <div class="pricing-card holo-card-shine">
+                    <div class="pricing-tier">Platinum</div>
+                    <div class="pricing-price">
+                        <span class="pricing-currency">$</span>
+                        <span class="pricing-amount">129</span>
+                    </div>
+                    <div class="pricing-period">per user / month</div>
+                    <p class="pricing-description">
+                        White-glove service for enterprises requiring the ultimate IT partnership.
+                    </p>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Everything in Gold
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Dedicated account manager
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            On-site support visits
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Infrastructure design
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Disaster recovery
+                        </li>
+                        <li>
+                            <svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 10 8 14 16 6"/>
+                            </svg>
+                            Quarterly business reviews
+                        </li>
+                    </ul>
+                    <a href="#contact" class="pricing-cta">Get Started</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats" id="about">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" data-value="500">500+</div>
+                    <div class="stat-label">Clients Served</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" data-value="99.9">99.9%</div>
+                    <div class="stat-label">Uptime Guarantee</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" data-value="15">15min</div>
+                    <div class="stat-label">Avg Response Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" data-value="14">14+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact" id="contact">
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Let's Build Something Amazing Together</h3>
+                    <p>
+                        Ready to transform your IT infrastructure? Our team of experts is here
+                        to help you navigate the digital landscape and build solutions that scale.
+                    </p>
+                    <ul class="contact-details">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <span>Orange County, California</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                            <span>(714) 555-0405</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <span>hello@405network.com</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span>24/7 Support Available</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Full Name</label>
+                        <input type="text" id="name" class="form-input" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input type="email" id="email" class="form-input" placeholder="john@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="company">Company</label>
+                        <input type="text" id="company" class="form-input" placeholder="Your Company">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="message">Message</label>
+                        <textarea id="message" class="form-textarea" placeholder="Tell us about your IT needs..." required></textarea>
+                    </div>
+                    <button type="submit" class="form-submit">Send Message</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">405NETWORK</div>
+                <div class="footer-copyright">
+                    &copy; 2011-2024 405Network Inc. All rights reserved.
+                </div>
+                <ul class="footer-links">
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // =====================================================
+        // WebGL Holographic Interference Shader Scene
+        // =====================================================
+
+        class HolographicScene {
+            constructor() {
+                this.canvas = document.getElementById('webgl-canvas');
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    alpha: true,
+                    antialias: true
+                });
+
+                this.mouse = { x: 0, y: 0 };
+                this.time = 0;
+
+                this.init();
+            }
+
+            init() {
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.camera.position.z = 5;
+
+                this.createHolographicMesh();
+                this.addEventListeners();
+                this.animate();
+            }
+
+            createHolographicMesh() {
+                // Holographic interference shader
+                const vertexShader = `
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+                    uniform float uTime;
+
+                    void main() {
+                        vUv = uv;
+                        vPosition = position;
+
+                        vec3 pos = position;
+                        pos.z += sin(pos.x * 3.0 + uTime) * 0.1;
+                        pos.z += cos(pos.y * 2.0 + uTime * 0.8) * 0.1;
+
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                    }
+                `;
+
+                const fragmentShader = `
+                    uniform float uTime;
+                    uniform vec2 uMouse;
+                    uniform vec2 uResolution;
+
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+
+                    // Holographic spectrum colors
+                    vec3 spectrum(float t) {
+                        vec3 a = vec3(0.5, 0.5, 0.5);
+                        vec3 b = vec3(0.5, 0.5, 0.5);
+                        vec3 c = vec3(1.0, 1.0, 1.0);
+                        vec3 d = vec3(0.00, 0.33, 0.67);
+                        return a + b * cos(6.28318 * (c * t + d));
+                    }
+
+                    // Chromatic aberration
+                    vec3 chromaticAberration(vec2 uv, float amount) {
+                        float r = sin(uv.x * 10.0 + uTime) * 0.5 + 0.5;
+                        float g = sin(uv.x * 10.0 + uTime + 2.094) * 0.5 + 0.5;
+                        float b = sin(uv.x * 10.0 + uTime + 4.188) * 0.5 + 0.5;
+
+                        return vec3(r, g, b) * amount;
+                    }
+
+                    // Holographic interference pattern
+                    float interference(vec2 uv, float time) {
+                        float pattern = 0.0;
+
+                        for(float i = 1.0; i <= 4.0; i++) {
+                            pattern += sin(uv.x * i * 20.0 + time * i * 0.5) * (1.0 / i);
+                            pattern += sin(uv.y * i * 15.0 + time * i * 0.3) * (1.0 / i);
+                            pattern += sin((uv.x + uv.y) * i * 10.0 + time * i * 0.4) * (1.0 / i);
+                        }
+
+                        return pattern * 0.5 + 0.5;
+                    }
+
+                    // Scanline effect
+                    float scanline(vec2 uv, float time) {
+                        return sin(uv.y * 400.0 + time * 5.0) * 0.04 + 0.96;
+                    }
+
+                    // Fresnel-like edge glow
+                    float fresnel(vec2 uv, vec2 center) {
+                        float dist = distance(uv, center);
+                        return smoothstep(0.0, 0.5, dist);
+                    }
+
+                    void main() {
+                        vec2 uv = vUv;
+                        vec2 center = vec2(0.5, 0.5);
+
+                        // Mouse influence
+                        vec2 mouseInfluence = (uMouse - 0.5) * 0.1;
+                        uv += mouseInfluence * fresnel(uv, center);
+
+                        // Base holographic color
+                        float hue = mod(uv.x + uv.y + uTime * 0.1, 1.0);
+                        vec3 holoColor = spectrum(hue);
+
+                        // Interference pattern
+                        float interf = interference(uv, uTime);
+
+                        // Chromatic aberration
+                        vec3 chroma = chromaticAberration(uv, 0.3);
+
+                        // Combine effects
+                        vec3 color = mix(holoColor, chroma, interf * 0.5);
+
+                        // Add scanlines
+                        float scan = scanline(uv, uTime);
+                        color *= scan;
+
+                        // Edge glow
+                        float edge = 1.0 - fresnel(uv, center);
+                        color += holoColor * edge * 0.2;
+
+                        // Glitch effect
+                        float glitch = step(0.99, sin(uTime * 50.0));
+                        color = mix(color, 1.0 - color, glitch * 0.5);
+
+                        // Final alpha for blending
+                        float alpha = 0.15 + interf * 0.1;
+
+                        gl_FragColor = vec4(color, alpha);
+                    }
+                `;
+
+                // Create large plane for background effect
+                const geometry = new THREE.PlaneGeometry(15, 15, 50, 50);
+
+                this.uniforms = {
+                    uTime: { value: 0 },
+                    uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+                    uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+                };
+
+                const material = new THREE.ShaderMaterial({
+                    vertexShader,
+                    fragmentShader,
+                    uniforms: this.uniforms,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    side: THREE.DoubleSide
+                });
+
+                this.mesh = new THREE.Mesh(geometry, material);
+                this.scene.add(this.mesh);
+
+                // Add floating holographic elements
+                this.createFloatingPrisms();
+            }
+
+            createFloatingPrisms() {
+                const prismGeometry = new THREE.TetrahedronGeometry(0.3);
+                const prismMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x00ffcc,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.3
+                });
+
+                this.prisms = [];
+
+                for (let i = 0; i < 15; i++) {
+                    const prism = new THREE.Mesh(prismGeometry, prismMaterial.clone());
+                    prism.position.set(
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 5
+                    );
+                    prism.rotation.set(
+                        Math.random() * Math.PI,
+                        Math.random() * Math.PI,
+                        Math.random() * Math.PI
+                    );
+                    prism.userData = {
+                        rotationSpeed: {
+                            x: (Math.random() - 0.5) * 0.02,
+                            y: (Math.random() - 0.5) * 0.02,
+                            z: (Math.random() - 0.5) * 0.02
+                        },
+                        floatSpeed: Math.random() * 0.5 + 0.5,
+                        floatOffset: Math.random() * Math.PI * 2
+                    };
+
+                    // Color cycling
+                    const hue = i / 15;
+                    prism.material.color.setHSL(hue, 1, 0.5);
+
+                    this.prisms.push(prism);
+                    this.scene.add(prism);
+                }
+            }
+
+            addEventListeners() {
+                window.addEventListener('resize', () => this.onResize());
+                window.addEventListener('mousemove', (e) => this.onMouseMove(e));
+            }
+
+            onResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+            }
+
+            onMouseMove(e) {
+                this.mouse.x = e.clientX / window.innerWidth;
+                this.mouse.y = 1.0 - e.clientY / window.innerHeight;
+                this.uniforms.uMouse.value.set(this.mouse.x, this.mouse.y);
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                this.time += 0.01;
+                this.uniforms.uTime.value = this.time;
+
+                // Animate prisms
+                this.prisms.forEach((prism, i) => {
+                    prism.rotation.x += prism.userData.rotationSpeed.x;
+                    prism.rotation.y += prism.userData.rotationSpeed.y;
+                    prism.rotation.z += prism.userData.rotationSpeed.z;
+
+                    prism.position.y += Math.sin(this.time * prism.userData.floatSpeed + prism.userData.floatOffset) * 0.002;
+
+                    // Update color
+                    const hue = (i / 15 + this.time * 0.05) % 1;
+                    prism.material.color.setHSL(hue, 1, 0.5);
+                });
+
+                // Subtle mesh rotation based on mouse
+                this.mesh.rotation.x = (this.mouse.y - 0.5) * 0.1;
+                this.mesh.rotation.y = (this.mouse.x - 0.5) * 0.1;
+
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // =====================================================
+        // Custom Holographic Cursor
+        // =====================================================
+
+        class HolographicCursor {
+            constructor() {
+                this.cursor = document.getElementById('cursor');
+                this.trails = [];
+                for (let i = 1; i <= 5; i++) {
+                    this.trails.push(document.getElementById(`trail-${i}`));
+                }
+
+                this.cursorPos = { x: 0, y: 0 };
+                this.targetPos = { x: 0, y: 0 };
+                this.trailPositions = [];
+
+                for (let i = 0; i < 5; i++) {
+                    this.trailPositions.push({ x: 0, y: 0 });
+                }
+
+                this.colors = [
+                    '#ff3366', // red
+                    '#ff6633', // orange
+                    '#ffcc00', // yellow
+                    '#33ff66', // green
+                    '#00ffcc', // cyan
+                ];
+
+                this.init();
+            }
+
+            init() {
+                document.addEventListener('mousemove', (e) => {
+                    this.targetPos.x = e.clientX;
+                    this.targetPos.y = e.clientY;
+                });
+
+                this.animate();
+            }
+
+            animate() {
+                // Smooth cursor follow
+                this.cursorPos.x += (this.targetPos.x - this.cursorPos.x) * 0.15;
+                this.cursorPos.y += (this.targetPos.y - this.cursorPos.y) * 0.15;
+
+                this.cursor.style.left = `${this.cursorPos.x - 20}px`;
+                this.cursor.style.top = `${this.cursorPos.y - 20}px`;
+
+                // Trail effect
+                for (let i = 0; i < this.trails.length; i++) {
+                    const delay = (i + 1) * 0.08;
+
+                    if (i === 0) {
+                        this.trailPositions[i].x += (this.cursorPos.x - this.trailPositions[i].x) * (1 - delay);
+                        this.trailPositions[i].y += (this.cursorPos.y - this.trailPositions[i].y) * (1 - delay);
+                    } else {
+                        this.trailPositions[i].x += (this.trailPositions[i - 1].x - this.trailPositions[i].x) * (1 - delay);
+                        this.trailPositions[i].y += (this.trailPositions[i - 1].y - this.trailPositions[i].y) * (1 - delay);
+                    }
+
+                    this.trails[i].style.left = `${this.trailPositions[i].x - 4}px`;
+                    this.trails[i].style.top = `${this.trailPositions[i].y - 4}px`;
+                    this.trails[i].style.backgroundColor = this.colors[i];
+                    this.trails[i].style.opacity = 1 - (i * 0.15);
+                    this.trails[i].style.transform = `scale(${1 - i * 0.1})`;
+                }
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // =====================================================
+        // Glitch Line Effect
+        // =====================================================
+
+        class GlitchLine {
+            constructor() {
+                this.line = document.getElementById('glitchLine');
+                this.scheduleGlitch();
+            }
+
+            scheduleGlitch() {
+                const delay = Math.random() * 5000 + 2000;
+
+                setTimeout(() => {
+                    this.triggerGlitch();
+                    this.scheduleGlitch();
+                }, delay);
+            }
+
+            triggerGlitch() {
+                const y = Math.random() * window.innerHeight;
+                this.line.style.top = `${y}px`;
+                this.line.style.opacity = 1;
+
+                gsap.to(this.line, {
+                    opacity: 0,
+                    duration: 0.2,
+                    delay: 0.1
+                });
+            }
+        }
+
+        // =====================================================
+        // Hero Title Animation
+        // =====================================================
+
+        function initHeroTitle() {
+            const titleElement = document.getElementById('heroTitle');
+            const text = 'REIMAGINED';
+
+            text.split('').forEach((char, index) => {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = char;
+                span.style.setProperty('--char-index', index);
+                titleElement.appendChild(span);
+            });
+        }
+
+        // =====================================================
+        // GSAP Scroll Animations
+        // =====================================================
+
+        function initScrollAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Hero animations
+            gsap.from('.hero-badge', {
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                delay: 2.2
+            });
+
+            gsap.from('.hero-title .char', {
+                opacity: 0,
+                y: 50,
+                rotationX: -90,
+                stagger: 0.05,
+                duration: 0.8,
+                ease: 'back.out(1.7)',
+                delay: 2.4
+            });
+
+            gsap.from('.hero-title-sub', {
+                opacity: 0,
+                y: 20,
+                duration: 1,
+                delay: 2.8
+            });
+
+            gsap.from('.hero-tagline', {
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                delay: 3
+            });
+
+            gsap.from('.hero-cta-group', {
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                delay: 3.2
+            });
+
+            gsap.from('.hero-scroll-indicator', {
+                opacity: 0,
+                y: 20,
+                duration: 1,
+                delay: 3.5
+            });
+
+            // Section headers
+            gsap.utils.toArray('.section-header').forEach(header => {
+                gsap.from(header.children, {
+                    scrollTrigger: {
+                        trigger: header,
+                        start: 'top 80%'
+                    },
+                    opacity: 0,
+                    y: 50,
+                    stagger: 0.15,
+                    duration: 0.8,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Service cards with 3D rotation
+            gsap.utils.toArray('.service-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%'
+                    },
+                    opacity: 0,
+                    y: 80,
+                    rotationY: -15,
+                    duration: 0.8,
+                    delay: i * 0.1,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Pricing cards with 3D effect
+            gsap.utils.toArray('.pricing-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%'
+                    },
+                    opacity: 0,
+                    y: 100,
+                    rotationX: 15,
+                    duration: 0.8,
+                    delay: i * 0.15,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Stats animation
+            gsap.utils.toArray('.stat-item').forEach((stat, i) => {
+                gsap.from(stat, {
+                    scrollTrigger: {
+                        trigger: stat,
+                        start: 'top 85%'
+                    },
+                    opacity: 0,
+                    y: 50,
+                    duration: 0.8,
+                    delay: i * 0.1,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Color spectrum cycling on scroll
+            gsap.to(':root', {
+                scrollTrigger: {
+                    trigger: 'body',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: true
+                },
+                '--holo-cyan': '#ff33cc',
+                '--holo-magenta': '#00ffcc',
+                ease: 'none'
+            });
+
+            // Holographic divider animation
+            gsap.from('.holo-divider', {
+                scrollTrigger: {
+                    trigger: '.holo-divider',
+                    start: 'top 90%'
+                },
+                scaleX: 0,
+                duration: 1.5,
+                ease: 'power3.out'
+            });
+
+            // Contact section
+            gsap.from('.contact-info', {
+                scrollTrigger: {
+                    trigger: '.contact',
+                    start: 'top 70%'
+                },
+                opacity: 0,
+                x: -50,
+                duration: 0.8,
+                ease: 'power3.out'
+            });
+
+            gsap.from('.contact-form', {
+                scrollTrigger: {
+                    trigger: '.contact',
+                    start: 'top 70%'
+                },
+                opacity: 0,
+                x: 50,
+                duration: 0.8,
+                ease: 'power3.out'
+            });
+        }
+
+        // =====================================================
+        // Loading Screen
+        // =====================================================
+
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+
+            gsap.to(loader, {
+                opacity: 0,
+                duration: 0.5,
+                delay: 2,
+                onComplete: () => {
+                    loader.style.display = 'none';
+                }
+            });
+        }
+
+        // =====================================================
+        // Smooth Scroll
+        // =====================================================
+
+        function initSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        gsap.to(window, {
+                            scrollTo: target,
+                            duration: 1,
+                            ease: 'power3.inOut'
+                        });
+                    }
+                });
+            });
+        }
+
+        // =====================================================
+        // Form Handling
+        // =====================================================
+
+        function initForm() {
+            const form = document.getElementById('contactForm');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Visual feedback
+                const button = form.querySelector('.form-submit');
+                const originalText = button.textContent;
+                button.textContent = 'Sending...';
+
+                setTimeout(() => {
+                    button.textContent = 'Message Sent!';
+                    button.style.background = 'linear-gradient(135deg, #33ff66, #00ffcc)';
+
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '';
+                        form.reset();
+                    }, 2000);
+                }, 1500);
+            });
+        }
+
+        // =====================================================
+        // Parallax Effects
+        // =====================================================
+
+        function initParallax() {
+            const prisms = document.querySelectorAll('.holo-prism');
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+
+                prisms.forEach((prism, i) => {
+                    const speed = 0.1 + i * 0.05;
+                    prism.style.transform = `translateY(${scrollY * speed}px) rotate(${scrollY * 0.02}deg)`;
+                });
+            });
+        }
+
+        // =====================================================
+        // Interactive Hover Effects
+        // =====================================================
+
+        function initHoverEffects() {
+            // Service cards perspective effect
+            document.querySelectorAll('.service-card, .pricing-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = -(x - centerX) / 20;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
+            });
+        }
+
+        // =====================================================
+        // Nav Scroll Effect
+        // =====================================================
+
+        function initNavScroll() {
+            const nav = document.querySelector('.nav');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    nav.style.background = 'rgba(10, 10, 10, 0.95)';
+                    nav.style.backdropFilter = 'blur(20px)';
+                } else {
+                    nav.style.background = 'linear-gradient(180deg, rgba(10, 10, 10, 0.9) 0%, transparent 100%)';
+                    nav.style.backdropFilter = 'blur(10px)';
+                }
+            });
+        }
+
+        // =====================================================
+        // Chromatic Aberration Text Effect
+        // =====================================================
+
+        function initChromaticText() {
+            document.querySelectorAll('.chromatic-text').forEach(el => {
+                el.setAttribute('data-text', el.textContent);
+            });
+        }
+
+        // =====================================================
+        // Initialize Everything
+        // =====================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize hero title first
+            initHeroTitle();
+
+            // Initialize WebGL scene
+            const holoScene = new HolographicScene();
+
+            // Initialize cursor (only on desktop)
+            if (window.innerWidth > 768) {
+                const holoCursor = new HolographicCursor();
+            }
+
+            // Initialize glitch effect
+            const glitchLine = new GlitchLine();
+
+            // Hide loader and start animations
+            hideLoader();
+
+            // Initialize GSAP animations after loader
+            setTimeout(() => {
+                initScrollAnimations();
+            }, 100);
+
+            // Initialize other features
+            initSmoothScroll();
+            initForm();
+            initParallax();
+            initHoverEffects();
+            initNavScroll();
+            initChromaticText();
+        });
+
+        // =====================================================
+        // Performance: Reduce animations when tab not visible
+        // =====================================================
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                document.body.style.setProperty('--animation-play-state', 'paused');
+            } else {
+                document.body.style.setProperty('--animation-play-state', 'running');
+            }
+        });
+    </script>
+</body>
+</html>
