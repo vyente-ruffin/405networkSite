@@ -1,10 +1,11 @@
 # 405Network
 
 ## What
-The supplied small-business IT support and consulting website, prepared for migration from Google Sites. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. Production-domain cutover is not complete.
+The supplied small-business IT support and consulting website, accepted on a separate hosted preview for migration from Google Sites. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. Production-domain cutover is not complete.
 
 ## Where
 - Current public site: https://www.405network.com/
+- Tested preview: https://happy-tree-04726481e-migration.westus2.4.azurestaticapps.net/
 - Repository: https://github.com/vyente-ruffin/405networkSite
 - Release content: `website/` only. Historical root pages and design archives are not uploaded.
 - Hosting target: existing `swa-405network`, Free / West US 2, origin `happy-tree-04726481e.4.azurestaticapps.net`.
