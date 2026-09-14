@@ -6,17 +6,7 @@
       "statusCode": 301
     },
     {
-      "route": "/home/",
-      "redirect": "/",
-      "statusCode": 301
-    },
-    {
       "route": "/pricing-and-services",
-      "redirect": "/#help",
-      "statusCode": 301
-    },
-    {
-      "route": "/pricing-and-services/",
       "redirect": "/#help",
       "statusCode": 301
     }

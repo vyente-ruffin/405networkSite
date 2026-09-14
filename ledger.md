@@ -202,3 +202,7 @@ Official anchors: https://docs.python.org/3/library/unittest.html ; https://lear
 ## 2026-09-14 — Independent source review passed
 
 Independent read-only review found no blocking security or logic issues and independently ran all nine unittest checks successfully. Hosted redirects, headers, browser journeys and environment isolation remain the next acceptance task.
+
+## 2026-09-14 — Hosted validator correction
+
+First preview run 34903945045 passed nine tests but Azure rejected duplicate route `/home/`: trailing-slash variants normalize to the same route. Corrected the configuration to one rule per normalized legacy route; the test still checks all four requested URL forms and now rejects duplicate normalized rules (observed RED then GREEN). Actual hosted HTTP verification of all four remains required. No supplied design bytes changed. The reference-pinned action emits an unexpected deployment_environment input metadata warning; the input is passed into its container, but actual preview isolation is not assumed until Azure readback.

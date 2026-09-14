@@ -45,8 +45,16 @@ class PackageTests(unittest.TestCase):
         config = json.loads(config_path.read_text())
         expected = {"/home": "/", "/home/": "/",
                     "/pricing-and-services": "/#help", "/pricing-and-services/": "/#help"}
-        self.assertEqual({r["route"]: r["redirect"] for r in config["routes"]}, expected)
-        self.assertTrue(all(r["statusCode"] == 301 for r in config["routes"]))
+        # Azure's live validator treats trailing-slash forms as the same route.
+        # Preserve all four URL expectations without submitting duplicate rules.
+        rules = config["routes"]
+        self.assertEqual(len({r["route"].rstrip("/") for r in rules}), len(rules),
+                         "Azure rejects duplicate normalized route patterns")
+        for request, destination in expected.items():
+            matches = [r for r in rules if r["route"].rstrip("/") == request.rstrip("/")]
+            self.assertEqual(len(matches), 1, request)
+            self.assertEqual(matches[0]["redirect"], destination)
+            self.assertEqual(matches[0]["statusCode"], 301)
         self.assertNotIn("navigationFallback", config)
         self.assertNotIn("responseOverrides", config)
 
