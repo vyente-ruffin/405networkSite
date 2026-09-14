@@ -1,0 +1,21 @@
+/* Contact section only. Existing photography, layout, and motion stay unchanged. */
+.contact .contact-inner{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:start;gap:clamp(36px,5vw,78px)}
+.contact-copy{padding-top:24px}
+.contact-form{min-width:0;padding:36px;background:var(--paper);color:var(--ink);border:1px solid #ffffff66;border-radius:12px;box-shadow:0 16px 44px #071d6029}
+.contact-form h3{font-size:1.6rem;line-height:1.2;margin-bottom:28px}
+.contact-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 18px}
+.contact-field{display:flex;flex-direction:column;gap:9px;min-width:0}
+.contact-field-wide{grid-column:1/-1}
+.contact-field label{font-size:.9375rem;font-weight:600;line-height:1.4}
+.contact-field label span{color:var(--body);font-weight:400;font-size:.875rem}
+.contact-field input,.contact-field textarea{width:100%;min-width:0;min-height:50px;padding:13px 14px;border:1px solid #aab7ce;border-radius:5px;background:var(--wash);color:var(--ink);font:400 1rem/1.5 Arial,Helvetica,sans-serif}
+.contact-field textarea{resize:vertical;min-height:146px}
+.contact-field textarea::placeholder{color:#66738a;opacity:1}
+.contact-field input:focus-visible,.contact-field textarea:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-color:var(--blue)}
+.contact-submit{width:100%;margin-top:26px;border:0;font-family:inherit;cursor:pointer}
+.contact-submit:disabled{background:#e7edf8;color:#52617b;box-shadow:none;transform:none;cursor:not-allowed}
+.contact-status{margin-top:16px;font-size:.875rem;line-height:1.55;color:var(--body)}
+.contact-fallback{display:inline-block;margin-top:12px;color:var(--blue);font-size:.875rem;font-weight:600;text-decoration:underline;text-underline-offset:3px;line-height:1.6}
+.contact-fallback span{font-weight:400}
+@media(max-width:900px){.contact .contact-inner{grid-template-columns:minmax(0,1fr);gap:34px}.contact-copy{padding-top:0}.contact-form{max-width:640px;width:100%}}
+@media(max-width:480px){.contact-form{padding:26px 22px}.contact-fields{grid-template-columns:minmax(0,1fr);gap:20px}.contact-form h3{font-size:1.45rem}}
