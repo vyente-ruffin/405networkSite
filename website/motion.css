@@ -52,3 +52,11 @@ html.save-data .fixed-photo{background-attachment:scroll,scroll}
   .button:hover,.nav-contact:hover{transform:none}
 }
 @media print{.fixed-photo{background-attachment:scroll,scroll}}
+
+/* Expand effective tap areas without changing supplied layout or visible design.
+   Generated child boxes: https://drafts.csswg.org/css-pseudo/#generated-content */
+.wordmark,.text-link,.site-header nav>a,.contact-fallback{position:relative}
+.wordmark::after,.text-link::after,.site-header nav>a::after,.contact-fallback::after{
+  content:"";position:absolute;left:0;right:0;top:50%;height:100%;min-height:44px;
+  transform:translateY(-50%);
+}

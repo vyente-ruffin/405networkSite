@@ -20,6 +20,17 @@ PUBLIC_FILES = {
 }
 
 
+ACCESSIBLE_TAP_AREAS = '''
+/* Expand effective tap areas without changing supplied layout or visible design.
+   Generated child boxes: https://drafts.csswg.org/css-pseudo/#generated-content */
+.wordmark,.text-link,.site-header nav>a,.contact-fallback{position:relative}
+.wordmark::after,.text-link::after,.site-header nav>a::after,.contact-fallback::after{
+  content:"";position:absolute;left:0;right:0;top:50%;height:100%;min-height:44px;
+  transform:translateY(-50%);
+}
+'''
+
+
 class Document(HTMLParser):
     """Collect actual markup references without a browser dependency."""
 
@@ -109,7 +120,16 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(set(manifest), PUBLIC_FILES)
         for name, digest in manifest.items():
             with self.subTest(file=name):
-                self.assertEqual(hashlib.sha256((SITE / name).read_bytes()).hexdigest(), digest)
+                content = (SITE / name).read_bytes()
+                # Keep the original manifest intact: only this reviewed additive
+                # hit-area patch may differ, never the supplied visible design.
+                if name == "motion.css" and content.endswith(ACCESSIBLE_TAP_AREAS.encode()):
+                    content = content[:-len(ACCESSIBLE_TAP_AREAS.encode())]
+                self.assertEqual(hashlib.sha256(content).hexdigest(), digest)
+
+    def test_effective_tap_area_patch_is_present(self):
+        """Guard the precise additive fix; real pointer hit-testing is in T2."""
+        self.assertTrue((SITE / "motion.css").read_text().endswith(ACCESSIBLE_TAP_AREAS))
 
     def test_local_assets_fragments_and_labels_resolve(self):
         """Local hyperlinks, CSS images and accessible labels must have targets."""

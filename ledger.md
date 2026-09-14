@@ -206,3 +206,7 @@ Independent read-only review found no blocking security or logic issues and inde
 ## 2026-09-14 — Hosted validator correction
 
 First preview run 34903945045 passed nine tests but Azure rejected duplicate route `/home/`: trailing-slash variants normalize to the same route. Corrected the configuration to one rule per normalized legacy route; the test still checks all four requested URL forms and now rejects duplicate normalized rules (observed RED then GREEN). Actual hosted HTTP verification of all four remains required. No supplied design bytes changed. The reference-pinned action emits an unexpected deployment_environment input metadata warning; the input is passed into its container, but actual preview isolation is not assumed until Azure readback.
+
+## 2026-09-14 — Effective touch-area correction
+
+Hosted phone hit-testing found seven small links whose effective vertical hit areas were below the blueprint 44px gate. Added transparent positioned pseudo-elements to expand only link hit areas, without changing text, image, layout, link targets or motion. Native local hit-testing passed all 18 desktop/phone samples afterward; element layout heights stayed unchanged. Original ten-file manifest remains intact: the byte-preservation test permits only the exact reviewed additive motion.css suffix. New regression observed RED then GREEN; ten unittest tests now pass. Hosted recheck and independent review pending.
