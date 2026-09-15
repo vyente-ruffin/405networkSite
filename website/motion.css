@@ -1,0 +1,62 @@
+/* Normal document flow throughout. Only the background photographs stay fixed. */
+.fixed-photo{
+  background-image:var(--photo-shade),var(--photo-image);
+  background-position:center,center;
+  background-size:cover,cover;
+  background-repeat:no-repeat;
+  background-attachment:scroll,scroll;
+}
+.hero.depth-hero{
+  --photo-image:url("./assets/modern-office.jpg");
+  --photo-shade:linear-gradient(90deg,#0a1730ed 0%,#0a1730c9 34%,#0a173078 64%,#0a173033 100%);
+  position:relative;display:block;width:100%;min-height:clamp(650px,86svh,920px);
+  margin:0;padding:90px 0 110px;background-color:var(--navy);color:white;
+}
+.depth-hero .hero-copy{max-width:680px}
+.depth-hero .eyebrow{color:#c3d4ff}
+.depth-hero h1{font-size:clamp(3rem,5.6vw,5.2rem);line-height:1.04}
+.depth-hero h1 span{color:#b5cdff}
+.depth-hero .hero-description{color:#f1f4fc;max-width:510px}
+.depth-hero .hero-note{color:#d9e2f5}
+.quick-start{margin-top:0;margin-bottom:0;border-radius:0}
+.work-backdrop{
+  --photo-image:url("./assets/it-workspace.jpg");
+  --photo-shade:linear-gradient(90deg,#0a1730d9,#0a1730b8);
+  display:flex;align-items:center;min-height:410px;padding-block:95px;
+}
+.work-backdrop .engagement-heading{align-items:center}
+.work-backdrop .engagement-heading>p{color:#f1f4fc;font-size:1.1rem}
+.work-backdrop .eyebrow{color:#c3d4ff}
+.engagement-body{padding-block:60px 80px}
+.engagement-body .engagement-grid{margin-top:0}
+.support-photo-row{display:grid;grid-template-columns:1fr 150px;gap:24px;align-items:start}
+.network-detail{width:100%;height:auto;aspect-ratio:1;object-fit:cover;object-position:54% center;border-radius:6px}
+.button,.nav-contact{transition:background .2s,box-shadow .25s,transform .25s}
+.eyebrow,.service-number,.hero-note,.contact-note,.hero .eyebrow{font-size:.875rem}
+
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .fixed-photo{background-attachment:scroll,fixed}
+  .button:hover,.nav-contact:hover{transform:translateY(-2px);box-shadow:0 8px 20px #101d3620}
+}
+@media(max-width:1000px){.support-photo-row{grid-template-columns:1fr 112px;gap:18px}}
+@media(max-width:720px){
+  .hero.depth-hero{padding:54px 0 70px;min-height:660px;--photo-shade:linear-gradient(90deg,#0a1730e6,#0a1730a3)}
+  .depth-hero h1{font-size:clamp(2.5rem,9vw,4rem)}
+  .work-backdrop{min-height:380px;padding-block:72px}
+  .engagement-body{padding-block:40px 65px}
+}
+@media(max-width:420px){.support-photo-row{grid-template-columns:1fr}.network-detail{aspect-ratio:2/1;max-width:100%}}
+html.save-data .fixed-photo{background-attachment:scroll,scroll}
+@media(prefers-reduced-motion:reduce),(hover:none),(pointer:coarse){
+  .fixed-photo{background-attachment:scroll,scroll}
+  .button:hover,.nav-contact:hover{transform:none}
+}
+@media print{.fixed-photo{background-attachment:scroll,scroll}}
+
+/* Expand effective tap areas without changing supplied layout or visible design.
+   Generated child boxes: https://drafts.csswg.org/css-pseudo/#generated-content */
+.wordmark,.text-link,.site-header nav>a,.contact-fallback{position:relative}
+.wordmark::after,.text-link::after,.site-header nav>a::after,.contact-fallback::after{
+  content:"";position:absolute;left:0;right:0;top:50%;height:100%;min-height:44px;
+  transform:translateY(-50%);
+}

@@ -1,16 +1,16 @@
-name: Deploy 405Network production
-# Main-only delivery; see https://learn.microsoft.com/azure/static-web-apps/build-configuration
+name: Deploy 405Network migration preview
+# Named preview; see https://learn.microsoft.com/azure/static-web-apps/named-environments
 "on":
   push:
-    branches: [main]
+    branches: [feature/405network-migration]
 permissions:
   contents: read
 concurrency:
-  group: 405network-production
-  cancel-in-progress: false
+  group: 405network-migration
+  cancel-in-progress: true
 jobs:
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/405network-migration'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -25,4 +25,4 @@ jobs:
           api_location: ''
           output_location: ''
           skip_app_build: true
-          production_branch: main
+          deployment_environment: migration
