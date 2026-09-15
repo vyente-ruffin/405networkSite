@@ -1,7 +1,7 @@
 # 405Network
 
 ## What
-The supplied small-business IT support and consulting website is verified on the Azure production origin, with both custom-host certificates ready. Cloudflare authority and the apex-to-www redirect are active; the original Google Site still serves the public domain pending the separate cutover. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. [Release evidence and remaining acceptance](ledger.md).
+The supplied small-business IT support and consulting website is live at both public addresses, with verified desktop/phone cutover checks and preserved apex-to-www routing. Non-web records are unchanged and the original Google Site is retained for recovery. Full public-persona, visitor-reporting and mailbox acceptance remain pending. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. [Release evidence and remaining acceptance](ledger.md).
 
 ## Where
 - Current public site: https://www.405network.com/
@@ -18,8 +18,9 @@ Preserve the supplied design while moving to tested, isolated preview and produc
 ```text
 feature/405network-migration -> Python checks -> named migration preview
 main                       -> Python checks -> Azure default
-Current public: Visitors -> canonical www -> original Google Site
-Future public cutover: Visitors -> Cloudflare -> Azure default
+Public: apex -> Cloudflare permanent redirect -> canonical www
+Public: www -> Cloudflare proxy -> Azure default
+Recovery: original Google Site remains published, not current traffic
 Unchanged: GoDaddy registration and existing business-email services
 ```
 
