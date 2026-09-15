@@ -1,7 +1,7 @@
 # 405Network
 
 ## What
-The supplied small-business IT support and consulting website is live at both public addresses, with verified desktop/phone cutover checks and preserved apex-to-www routing. Non-web records are unchanged and the original Google Site is retained for recovery. Full public-persona, visitor-reporting and mailbox acceptance remain pending. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. [Release evidence and remaining acceptance](ledger.md).
+The supplied small-business IT support and consulting website is live at both public addresses, with verified desktop/phone cutover checks and preserved apex-to-www routing. Non-web records are unchanged and the original Google Site is retained for recovery. Public desktop/phone first/repeat service-persona checks and isolated free visitor reporting are verified. Required mailbox receipt remains unverified because existing read access is denied; final acceptance is blocked, not complete. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. [Release evidence and remaining acceptance](ledger.md).
 
 ## Where
 - Current public site: https://www.405network.com/
@@ -20,6 +20,7 @@ feature/405network-migration -> Python checks -> named migration preview
 main                       -> Python checks -> Azure default
 Public: apex -> Cloudflare permanent redirect -> canonical www
 Public: www -> Cloudflare proxy -> Azure default
+Public browser -> separate free Cloudflare page-load/source/country reports
 Recovery: original Google Site remains published, not current traffic
 Unchanged: GoDaddy registration and existing business-email services
 ```
