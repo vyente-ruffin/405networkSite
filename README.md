@@ -1,7 +1,7 @@
 # 405Network
 
 ## What
-The supplied small-business IT support and consulting website, accepted on a separate hosted preview for migration from Google Sites. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. Production-domain cutover is not complete.
+The supplied small-business IT support and consulting website, accepted on a separate hosted preview for migration from Google Sites. Cloudflare authority and the apex-to-www redirect are active; the original Google Site still serves the public domain while Azure production readiness is verified. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. Production-domain cutover is not complete.
 
 ## Where
 - Current public site: https://www.405network.com/
