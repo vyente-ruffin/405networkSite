@@ -1,11 +1,12 @@
 # 405Network
 
 ## What
-The supplied small-business IT support and consulting website, accepted on a separate hosted preview for migration from Google Sites. Cloudflare authority and the apex-to-www redirect are active; the original Google Site still serves the public domain while Azure production readiness is verified. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. Production-domain cutover is not complete.
+The supplied small-business IT support and consulting website is verified on the Azure production origin, with both custom-host certificates ready. Cloudflare authority and the apex-to-www redirect are active; the original Google Site still serves the public domain pending the separate cutover. The on-page contact form is intentionally disabled; the existing inquiry-form link remains available. [Release evidence and remaining acceptance](ledger.md).
 
 ## Where
 - Current public site: https://www.405network.com/
 - Tested preview: https://happy-tree-04726481e-migration.westus2.4.azurestaticapps.net/
+- Verified production origin: https://happy-tree-04726481e.4.azurestaticapps.net/
 - Repository: https://github.com/vyente-ruffin/405networkSite
 - Release content: `website/` only. Historical root pages and design archives are not uploaded.
 - Hosting target: existing `swa-405network`, Free / West US 2, origin `happy-tree-04726481e.4.azurestaticapps.net`.
@@ -17,6 +18,7 @@ Preserve the supplied design while moving to tested, isolated preview and produc
 ```text
 feature/405network-migration -> Python checks -> named migration preview
 main                       -> Python checks -> Azure default
+Current public: Visitors -> canonical www -> original Google Site
 Future public cutover: Visitors -> Cloudflare -> Azure default
 Unchanged: GoDaddy registration and existing business-email services
 ```
