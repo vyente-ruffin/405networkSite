@@ -1,85 +1,19 @@
-# CLAUDE.md
+# Repository guidance
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+The current production site is https://www.405network.com/ . Azure origin is https://happy-tree-04726481e.4.azurestaticapps.net/ , app `swa-405network`, resource group `rg-405network-prod`, Youni subscription, West US 2, Free tier. Use README.md and the latest ledger.md entries for operating details.
 
-## Project Overview
+Publish `website/` only. Root HTML, `sites/`, `designs/`, `mini-copy/`, and `hello-cli/` are separate historical/design projects and are not the current website. Preserve supplied styling, real portrait, existing redirects and business-mail DNS.
 
-405Network Inc. website rebuild - migrating from Google Sites to Azure Static Web Apps. This is a B2B Managed Service Provider (MSP) serving small-to-medium businesses in Orange County, CA.
+The release is plain HTML/CSS/JavaScript with no build or Azure API. Contact messages use native FormSubmit delivery and its default spam verification. Do not reintroduce the old submission-blocking script, disable CAPTCHA, or claim email delivery from source checks alone. Activation and receipt from the actual public website require separate evidence. Microsoft 365 mailbox deliverability work is a different task.
 
-**Production URL**: https://blue-wave-0b1655b10.2.azurestaticapps.net
+Run source checks before deployment:
 
-## Tech Stack
-
-- **Frontend**: Vanilla HTML/CSS/JavaScript (no framework or bundler)
-- **Libraries** (via CDN): Three.js (3D particles), GSAP (animations), ScrollTrigger
-- **Hosting**: Azure Static Web Apps
-- **CI/CD**: GitHub Actions → auto-deploys on push to main
-- **Analytics**: Application Insights
-
-## Development
-
-This is a static site with no build step. Edit HTML files directly and push to deploy.
-
-### Local Preview
-```bash
-# Any static file server works
-python -m http.server 8000
-# or
-npx serve .
+```sh
+python3 -m unittest discover -s tests -v
+node --test tests/contact.test.cjs
+python3 -m http.server 8000 --bind 127.0.0.1 --directory website
 ```
 
-### Deployment
-Push to `main` branch triggers automatic deployment via GitHub Actions.
+Main pushes alone deploy the Azure production environment. The listed preview branches deploy only the named `migration` environment. Use the site-specific GitHub deployment secret; never print it. Private execution evidence and credentials stay outside this public repository.
 
-## Project Structure
-
-```
-/                           # Root site (index.html is main landing page)
-├── sites/                  # Production design variations (8 versions)
-│   ├── arctic-minimalism/  # ✅ Approved - Scandinavian minimal
-│   ├── warm-brutalism/     # ✅ Approved (in designs/ as v23)
-│   └── ...                 # Other design options
-├── designs/                # Design development archive (25 iterations)
-│   └── DESIGN_PREFERENCES.md  # Design guidelines and approvals
-└── hello-cli/              # Separate Python CLI sub-project
-```
-
-## Design Guidelines
-
-See `designs/DESIGN_PREFERENCES.md` for full details.
-
-**Approved aesthetics**: Clean minimal Scandinavian, warm organic brutalism, premium holographic
-**Rejected aesthetics**: Cyberpunk/neon, terminal/command-line, "hacker" vibes
-
-All designs must be:
-- Mobile responsive (breakpoints: 480px, 768px, 1024px)
-- WCAG 2.1 AA compliant
-- Gracefully degrade without Three.js
-
-## hello-cli (Python Sub-Project)
-
-A separate Typer-based CLI in `/hello-cli/` used for testing workflows.
-
-```bash
-cd hello-cli
-
-# Setup
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e .
-
-# Run tests
-pytest tests/ -v
-
-# Run CLI
-hello Alice
-```
-
-## Azure Resources
-
-| Resource | Name |
-|----------|------|
-| Resource Group | 405network-website |
-| Static Web App | 405network-site |
-| Application Insights | 405network-insights |
-| Region | westus |
+Cloudflare Web Analytics supplies page-load/source reporting. The origin policy includes its script host; retain security headers when changing the contact form. The existing Application Insights resource is not evidence that its JavaScript is used by this published site.

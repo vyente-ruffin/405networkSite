@@ -69,8 +69,12 @@
           <h2 id="contact-title">What’s getting<br>in the way?</h2>
           <p>You don’t need to have it all figured out.<br>Tell us what your business needs. We’ll start there.</p>
         </div>
-        <form class="contact-form" id="contact-form" action="#contact" method="post" aria-labelledby="form-title" aria-describedby="contact-status">
+        <form class="contact-form" id="contact-form" action="https://formsubmit.co/ruffin4it@gmail.com" method="post" aria-labelledby="form-title" aria-describedby="contact-status">
           <h3 id="form-title">Start a conversation.</h3>
+          <input type="hidden" name="_subject" value="New inquiry from 405Network.com">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_url" value="https://www.405network.com/">
+          <div class="contact-honeypot" aria-hidden="true"><label for="contact-honey">Leave this field empty</label><input id="contact-honey" type="text" name="_honey" tabindex="-1" autocomplete="off"></div>
           <div class="contact-fields">
             <div class="contact-field">
               <label for="contact-name">Name</label>
@@ -89,9 +93,9 @@
               <textarea id="contact-message" name="message" rows="5" maxlength="5000" placeholder="Tell us a little about what you need." required></textarea>
             </div>
           </div>
-          <button class="button button-blue contact-submit" type="submit" disabled aria-describedby="contact-status">Send message <span aria-hidden="true">↗</span></button>
-          <p class="contact-status" id="contact-status" role="status">Sending isn’t connected yet. This form does not send or save messages.</p>
-          <a class="contact-fallback" href="https://docs.google.com/forms/d/e/1FAIpQLSeBRCLx9K78KhcanobwXIDd9fmf3AgdXb6NbJpk-oio46CU_g/viewform" target="_blank" rel="noopener noreferrer">Use our existing inquiry form for now <span>(opens a new tab)</span></a>
+          <button class="button button-blue contact-submit" type="submit" aria-describedby="contact-status">Send message <span aria-hidden="true">↗</span></button>
+          <p class="contact-status" id="contact-status" role="status" aria-live="polite">Messages are processed by FormSubmit. Complete the spam check when prompted.</p>
+          <a class="contact-fallback" href="https://docs.google.com/forms/d/e/1FAIpQLSeBRCLx9K78KhcanobwXIDd9fmf3AgdXb6NbJpk-oio46CU_g/viewform" target="_blank" rel="noopener noreferrer">Use our inquiry form instead <span>(opens a new tab)</span></a>
         </form>
       </div>
     </section>
