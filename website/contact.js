@@ -2,12 +2,17 @@
   'use strict';
   const form = document.getElementById('contact-form');
   if (!form) return;
-  // Delivery has not been configured. Do not transmit or store a visitor's
-  // message, expose a recipient, or claim that a message was sent.
-  // Keep the disabled HTML button as the no-JavaScript safeguard as well.
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    document.getElementById('contact-status').textContent =
-      'Sending isn’t connected yet. Nothing has been sent or saved. Please use our existing inquiry form for now.';
+  const button = form.querySelector('button[type="submit"]');
+  const status = document.getElementById('contact-status');
+  const notice = 'Messages are processed by FormSubmit. Complete the spam check when prompted.';
+
+  // Leave normal browser submission intact, including when JavaScript is off.
+  form.addEventListener('submit', () => {
+    button.disabled = true;
+    status.textContent = 'Opening secure spam verification…';
+  });
+  window.addEventListener('pageshow', () => {
+    button.disabled = false;
+    status.textContent = notice;
   });
 })();

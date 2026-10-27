@@ -92,8 +92,8 @@ class PackageTests(unittest.TestCase):
         preview = ROOT / ".github/workflows/azure-preview.yml"
         self.assertTrue(preview.is_file(), "Preview-only workflow is missing")
         flow = preview.read_text()
-        self.assertIn("branches: [feature/405network-migration]", flow)
-        self.assertIn("if: github.event_name == 'push' && github.ref == 'refs/heads/feature/405network-migration'", flow)
+        self.assertIn("branches: [feature/405network-migration, codex/405-contact-email]", flow)
+        self.assertIn("if: github.event_name == 'push' && (github.ref == 'refs/heads/feature/405network-migration' || github.ref == 'refs/heads/codex/405-contact-email')", flow)
         self.assertIn("deployment_environment: migration", flow)
         self.assertNotIn("production_branch:", flow)
         self.assertNotIn("pull_request:", flow)
@@ -115,10 +115,14 @@ class PackageTests(unittest.TestCase):
         self.assertFalse(any(p.is_symlink() for p in SITE.rglob("*")))
 
     def test_supplied_design_bytes_are_preserved(self):
-        """Characterize the reviewed supplied bytes, not a re-created design."""
+        """Preserve historical hashes for assets outside the contact upgrade."""
         manifest = json.loads((ROOT / "tests/public-manifest.json").read_text())
         self.assertEqual(set(manifest), PUBLIC_FILES)
         for name, digest in manifest.items():
+            # Contact delivery intentionally changes these files. Keep the old
+            # baseline as historical evidence rather than overwriting it.
+            if name in {"index.html", "contact.js", "contact.css"}:
+                continue
             with self.subTest(file=name):
                 content = (SITE / name).read_bytes()
                 # Keep the original manifest intact: only this reviewed additive
@@ -156,18 +160,27 @@ class PackageTests(unittest.TestCase):
                 if not urlsplit(value).scheme:
                     self.assertTrue((css.parent / value).is_file(), value)
 
-    def test_disabled_contact_has_honest_notice_and_external_fallback(self):
-        """Characterize disabled delivery without transmitting a test inquiry."""
+    def test_contact_uses_native_delivery_with_spam_check_and_fallback(self):
+        """Require the intended recipient, native POST and default spam check."""
         html = (SITE / "index.html").read_text()
         document = Document(html)
         buttons = [a for t, a in document.tags if t == "button" and a.get("type") == "submit"]
         self.assertEqual(len(buttons), 1)
-        self.assertIn("disabled", buttons[0])
-        self.assertIn("This form does not send or save messages.", html)
+        self.assertNotIn("disabled", buttons[0])
+        forms = [a for t, a in document.tags if t == "form"]
+        self.assertEqual(forms[0]["action"], "https://formsubmit.co/ruffin4it@gmail.com")
+        self.assertEqual(forms[0]["method"].lower(), "post")
+        inputs = {a.get("name"): a for t, a in document.tags if t == "input"}
+        self.assertNotIn("_captcha", inputs, "Keep provider spam verification enabled")
+        self.assertNotIn("_cc", inputs)
+        self.assertNotIn("_autoresponse", inputs)
+        self.assertEqual(inputs["_honey"].get("value", ""), "")
+        self.assertNotIn("_next", inputs, "Use the provider's native confirmation page")
+        self.assertEqual(inputs["_url"]["value"], "https://www.405network.com/")
         self.assertTrue(any(t == "a" and a.get("href", "").startswith(
             "https://docs.google.com/forms/d/e/") for t, a in document.tags))
         script = (SITE / "contact.js").read_text()
-        self.assertIn("event.preventDefault()", script)
+        self.assertNotIn("preventDefault", script)
         for forbidden in ("fetch(", "XMLHttpRequest", "sendBeacon", "localStorage", "sessionStorage"):
             self.assertNotIn(forbidden, script)
 
@@ -178,7 +191,8 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(headers["X-Content-Type-Options"], "nosniff")
         self.assertEqual(headers["X-Frame-Options"], "DENY")
         self.assertEqual(headers["Referrer-Policy"], "strict-origin-when-cross-origin")
-        self.assertIn("script-src 'self';", headers["Content-Security-Policy"])
+        self.assertIn("script-src 'self' https://static.cloudflareinsights.com;", headers["Content-Security-Policy"])
+        self.assertIn("form-action 'self' https://formsubmit.co", headers["Content-Security-Policy"])
         self.assertIn("frame-ancestors 'none';", headers["Content-Security-Policy"])
         self.assertNotIn("unsafe-inline", headers["Content-Security-Policy"])
         self.assertNotIn("platform", config)

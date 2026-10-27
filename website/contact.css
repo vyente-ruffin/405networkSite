@@ -19,3 +19,4 @@
 .contact-fallback span{font-weight:400}
 @media(max-width:900px){.contact .contact-inner{grid-template-columns:minmax(0,1fr);gap:34px}.contact-copy{padding-top:0}.contact-form{max-width:640px;width:100%}}
 @media(max-width:480px){.contact-form{padding:26px 22px}.contact-fields{grid-template-columns:minmax(0,1fr);gap:20px}.contact-form h3{font-size:1.45rem}}
+.contact-honeypot{display:none}

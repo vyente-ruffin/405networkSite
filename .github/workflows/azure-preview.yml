@@ -1,8 +1,8 @@
-name: Deploy 405Network migration preview
+name: Deploy 405Network preview
 # Named preview; see https://learn.microsoft.com/azure/static-web-apps/named-environments
 "on":
   push:
-    branches: [feature/405network-migration]
+    branches: [feature/405network-migration, codex/405-contact-email]
 permissions:
   contents: read
 concurrency:
@@ -10,13 +10,14 @@ concurrency:
   cancel-in-progress: true
 jobs:
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/405network-migration'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/feature/405network-migration' || github.ref == 'refs/heads/codex/405-contact-email')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - run: python3 -m unittest discover -s tests -v
+      - run: node --test tests/contact.test.cjs
       - uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_405NETWORK_API_TOKEN }}
