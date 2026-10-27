@@ -1,7 +1,7 @@
 # 405Network
 
 ## What
-The small-business IT website uses the existing Azure Static Web App and Cloudflare routing. Its contact form posts directly to FormSubmit, the established form-to-email provider, with default spam verification and a hidden honeypot. The Google inquiry link remains available. Production-origin activation and actual email receipt must be verified separately from source/deployment checks. Earlier Microsoft 365 mailbox acceptance is separate from this contact form. [Release evidence and remaining acceptance](ledger.md).
+The small-business IT website uses the existing Azure Static Web App and Cloudflare routing. Its contact form posts directly to FormSubmit, the established form-to-email provider, with default spam verification and a hidden honeypot. The Google inquiry link remains available. The owner confirmed activation for www.405network.com and receipt of a real website inquiry on October 26, 2026, Pacific time. Earlier Microsoft 365 mailbox acceptance is separate from this contact form. [Release evidence and remaining acceptance](ledger.md).
 
 ## Where
 - Current public site: https://www.405network.com/
@@ -41,7 +41,7 @@ The deployment workflows use a distinct site-specific secret and upload only `we
 
 The form works through a native browser POST, including when JavaScript is unavailable. Keep the default FormSubmit CAPTCHA enabled and `_honey` empty; do not add CC, automatic replies, attachments or webhooks without a separate reason. The visitor's `email` field supplies Reply-To. The provider shows its own confirmation page; no custom redirect is configured.
 
-FormSubmit may require an activation link in the recipient's inbox for this website. Activation of another website with the same email does not establish activation here. Confirm a uniquely labeled production inquiry arrives before describing delivery as verified. FormSubmit documents 30-day submission retention; neither the site nor a redirect can establish Gmail inbox placement. The native form uses the provider's spam controls, without an Azure contact API or custom shared quota.
+The owner activated this website’s FormSubmit form and confirmed a real inquiry arrived in the requested inbox on October 26, 2026, Pacific time. A future destination or origin change requires its own activation/delivery check. FormSubmit documents 30-day submission retention; neither the site nor a redirect can establish Gmail inbox placement. The native form uses the provider's spam controls, without an Azure contact API or custom shared quota.
 
 The origin CSP permits only FormSubmit in addition to same-origin form actions, and retains the Cloudflare analytics script allowance. No business-mail DNS changes are required. [Provider documentation](https://formsubmit.co/documentation) and [activation help](https://formsubmit.co/help).
 
